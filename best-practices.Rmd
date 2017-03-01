@@ -1,0 +1,12 @@
+---
+title: Best Practices
+output: 
+  html_document
+---
+
+Title | Description
+----------------------------- | ---------------------------------------------------------------
+[Database basics - dplyr and DBI](dplyr-dbi-basics.html) | Article that walks through how to connect to a database and use dplyr or DBI to analyze data.
+[Using the pool package (basics)](dplyr-dbi-basics.html) | 
+[Using the pool package (advanced)](dplyr-dbi-basics.html) | 
+[Using dplyr and pool to query a database](dplyr-dbi-basics.html) | 
