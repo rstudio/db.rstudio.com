@@ -1,8 +1,78 @@
 ---
-title: "Databases & R"
-output: html_document
+title: "Analyzing data using dplyr"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
 ---
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Install dbplyr
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The new [dbplyr](https://github.com/hadley/dbplyr) package has all of *dplyr*'s code related to databases, including the code that translates dplyr commands into vendor specific SQL commands.  This separation will make it easier to release fixes for bugs that relate to database management.
+
+```{r, eval = FALSE}
+devtools::install_github("hadley/dbplyr")
+```
+
+
+## Connect to the Database
+
+The [Drivers](drivers.html) section describes how to accomplish that.
+
+```{r, include = FALSE}
+library(odbc)
+library(config)
+library(DBI)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                              Server=", config::get("datawarehouse")$server ,";
+                              Port=1433;
+                              Database=", config::get("datawarehouse")$database ,";
+                              UID=", config::get("datawarehouse")$uid ,";
+                              PWD=", config::get("datawarehouse")$pwd ,";"))
+
+```
+
+## Using dplyr
+
+### Table reference with 'tbl'
+
+```{r, message = FALSE}
+library(dplyr)
+library(dbplyr)
+
+mssql_flights <- tbl(con, "flights")
+
+mssql_flights
+```
+
+### Data Wrangling
+
+```{r, echo = TRUE}
+mssql_flights %>%
+  group_by(month) %>%
+  tally %>%
+  arrange(month)
+```
+
+
+### Table Joins
+
+```{r, echo = TRUE}
+
+mssql_flights %>%
+  left_join(tbl(con, "airlines"), by = "carrier") %>%
+  group_by(name) %>%
+  tally %>%
+  arrange(desc(n))
+  
+  
+```
+
+
+```{r, include = FALSE}
+DBI::dbDisconnect(con)
+```

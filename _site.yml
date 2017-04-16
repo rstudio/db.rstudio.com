@@ -5,29 +5,28 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Using"
+    - text: "dplyr"
+      href: dplyr.html
+    - text: "DBI"
+      href: dbi.html
+    - text: "Drivers"
       menu:
-        - text: "Basic"
-          href: dplyr-dbi-basics.html
-        - text: "Advanced"
-          href: advanced.html 
-        - text: "Best Practices"
-          href: best-practices.html
-    - text: "Connecting"
-      href: packages.html
-    - text: "odbc"
-      href: odbc.html              
-    - text: "Security"
-      href: security.html              
-    - text: "References"
+        - text: "RStudio Drivers"
+          href: drivers.html
+        - text: "Open Source"
+          href: open-source.html
+    - text: "Best Practices"
       menu:
-        - text: "odbc"
-          href: odbc-reference.html
-        - text: "DBI"
-          href: DBI.html
-        - text: "Keychain"
-          href: keychain.html           
+        - text: "Secure Credentials"
+          href: keyring.html
+        - text: "Code Portability"
+          href: config.html
+    - text: "Examples"
+      href: examples.html  
 output:
   html_document:
     theme: cosmo
     highlight: textmate
+    include:
+      after_body: footer.html
+    css: styles.css

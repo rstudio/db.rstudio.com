@@ -1,7 +1,72 @@
 ---
-title: DBI - Reference Guide
+title: Interacting with the database using DBI
 output:
-  html_document
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
 ---
 
-Pardon our void, we are still working on content :)
+Start by first connecting to the database, [Drivers](drivers.html) section describes how to accomplish that.
+
+```{r, include = FALSE}
+library(odbc)
+library(config)
+library(DBI)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                              Server=", config::get("datawarehouse")$server ,";
+                              Port=1433;
+                              Database=", config::get("datawarehouse")$database ,";
+                              UID=", config::get("datawarehouse")$uid ,";
+                              PWD=", config::get("datawarehouse")$pwd ,";"))
+
+```
+
+### List tables
+
+```{r, eval = FALSE}
+dbListTables(con)
+```
+
+```{r, echo = FALSE}
+dbListTables(con)[1:5]
+```
+
+### Upload data to the database
+
+```{r, eval = FALSE}
+
+library(nycflights13)
+
+data(package = "nycflights13")
+
+dbWriteTable(con, "airlines", airlines)
+
+
+
+```
+
+### List Fields
+
+```{r, echo = TRUE}
+dbListFields(con, "iris")
+```
+
+### Run a query
+
+Using the appropriate SQL syntax for the type of connection, you can use the **dbGetQuery** run queries.
+
+```{r, echo = TRUE}
+dbGetQuery(con, "SELECT Species, `Sepal.Length`, `Sepal.Width` FROM iris")
+```
+
+
+
+```{r, include = FALSE}
+DBI::dbDisconnect(con)
+```
+
+

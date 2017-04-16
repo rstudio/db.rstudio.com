@@ -1,0 +1,115 @@
+---
+title: "Connections Testing"
+output:
+  html_document: default
+  html_notebook: default
+editor_options:
+  chunk_output_type: inline
+---
+
+
+```{r, eval = FALSE}
+devtools::install_github("rstats-db/odbc")
+devtools::install_github("tidyverse/dplyr")
+devtools::install_github("rstudio/config")
+devtools::install_github("edgararuiz/dbplyr")
+devtools::install_github("gaborcsardi/keyring")
+```
+
+
+```{r}
+library(odbc)
+library(dplyr)
+library(dbplyr)
+library(sparklyr)
+library(ggvis)
+library(keyring)
+library(DBI)
+library(config)
+```
+
+
+```{r}
+
+
+con <- dbConnect(odbc::odbc(), 
+                .connection_string = paste0("Driver={sqlserver};
+                                      Server=", config::get("datawarehouse")$server ,";
+                                      Port=1433;
+                                      Database=", config::get("datawarehouse")$database ,";
+                                      UID=", config::get("datawarehouse")$uid ,";
+                                      PWD=", config::get("datawarehouse")$pwd ,";"))
+              
+```
+
+
+
+```{r}
+
+server <- config::get("data_warehouse")
+
+user_id <- key_list(keyring = "rstudio.odbc")$username[]
+
+password <- key_get(server)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                        Server=", server ,";
+                        Port=1433;
+                        Database=airontime;
+                        UID=", user_id ,";
+                        PWD=", password ,";"))
+
+
+```
+
+```{r}
+
+sql_con <- dbConnect(odbc(),
+                             Driver              = "SQL Server Driver",
+                             Server              = "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com",
+                             Database            = "airontime",
+                             UID                 = "rstudioadmin",
+                             PWD                 = "ABCd4321",
+                             Port                = 1433)
+
+
+```
+
+```{r}
+keyring::key_set("rstudio.odbc", "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com")
+keyring::key_delete("rstudio.odbc", "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com")
+
+keyring::keyring_list()
+```
+
+```{r}
+server <- "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com"
+key_user_id <- "rstudioadmin"
+key_password <-"ABCd4321"
+
+keyring::keyring_create("rstudio.odbc")
+
+keyring::key_set_with_value(service = "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com", 
+                            username = "rstudioadmin", 
+                            password = "ABCd4321", 
+                            keyring = "rstudio.odbc")
+
+
+
+keyring::key_set_with_value(service = server, username = key_user_id, password = key_password, keyring = "rstudio.odbc")
+
+keyring::key_list(keyring = "rstudio.odbc")
+
+keyring::key_get(server)
+```
+
+
+```{r}
+newcars <- tbl(con, "mtcars")
+
+newcars %>%
+  ggvis(~cyl) %>%
+  layer_bars(stack = FALSE)
+```
+

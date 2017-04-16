@@ -1,8 +1,9 @@
 ---
-title: Packages that connect R to a Database
-output: 
+title: Open Source Packages
+output:
   html_document
 ---
+
 <br/><br/>
 
 ### DBI Compliant Packages
@@ -18,14 +19,8 @@ Database  | Packages
 
 ### Non-DBI Compliant
 
-Database  | Packages
---------------------- | -------------------------------------------------------------------------------------------------
-![](images/db-logos/impala-logo.png)| [RImpala](https://cran.r-project.org/web/packages/RImpala/index.html) - Cloudera 'Impala', which is a massively parallel processing (MPP) SQL query engine runs natively in Apache Hadoop. 'RImpala' facilitates the connection and execution of distributed queries through 'R'. 'Impala' supports JDBC integration which 'RImpala' utilizes to establish the connection between 'R' and 'Impala'
-![](images/db-logos/hive.png) | Combination of [RJDBC](https://cran.r-project.org/web/packages/RJDBC/index.html) and  [rJava](https://cran.r-project.org/web/packages/rJava/index.html) 
-
-### Other
-
-If the database you need to connect to is not listed here, then a sepparate driver may be needed.  The **odbc** package can then be used to have a DBI compliant interface to that driver.  To learn more, please visit our [odbc](odbc.html) page
+- Cloudera 'Impala', which is a massively parallel processing (MPP) SQL query engine runs natively in Apache Hadoop. 'RImpala' facilitates the connection and execution of distributed queries through 'R'. 'Impala' supports JDBC integration which 'RImpala' utilizes to establish the connection between 'R' and 'Impala'
+- Combination of [RJDBC](https://cran.r-project.org/web/packages/RJDBC/index.html) and  [rJava](https://cran.r-project.org/web/packages/rJava/index.html) 
 
 
 
