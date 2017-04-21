@@ -1,4 +1,4 @@
-baseurl = "https://db.rstudio.com/"
+baseurl = "/"
 languageCode = "en-us"
 title = "Using Databases in R"
 theme = "hugo-material-docs"
