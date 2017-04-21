@@ -1,0 +1,21 @@
+---
+title: Using Databases in R
+output: 
+  html_document
+---
+
+<img src="images/homepage/new-conn.png" width=400 height=250 align="right"/>
+
+</br>
+
+#### Connect to a variety of databases from R with production quality ODBC drivers, provided by RStudio
+
+</br>
+
+#### Filter and aggregate in the database then bring them into R for analysis and visualization
+
+</br>
+
+#### Create database connections, browsing tables and columns and preview the first 1,000 rows with the latest version of the RStudio IDE
+
+</br></br></br>

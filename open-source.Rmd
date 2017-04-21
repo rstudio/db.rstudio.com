@@ -1,0 +1,27 @@
+---
+title: Open Source Packages
+output:
+  html_document
+---
+
+<br/><br/>
+
+### DBI Compliant Packages
+
+Database  | Packages
+--------------------- | -------------------------------------------------------------------------------------------------
+![](images/db-logos/sqllite.png) | [RSQLite](https://cran.r-project.org/web/packages/RSQLite/index.html) - Embeds the 'SQLite' database engine in R and provides an interface compliant with the 'DBI' package. The source for the 'SQLite' engine (version 3.8.8.2) is included.
+![](images/db-logos/mysql.png) | [RMySQL](https://cran.r-project.org/web/packages/RMySQL/index.html) - Implements 'DBI' Interface to 'MySQL' and 'MariaDB' Databases.
+![](images/db-logos/postgresql.png) | [RPostgreSQL](https://cran.r-project.org/web/packages/RPostgreSQL/index.html) Database interface and PostgreSQL driver for R This package provides a Database Interface (DBI) compliant driver for R to access PostgreSQL database systems. On Microsoft Windows system the attached libpq library source will be used. A wiki and issue tracking system for the package are available at Google Code at https://code.google.com/p/rpostgresql/ 
+![](images/db-logos/oracle.png)| [Oracle DB](https://cran.r-project.org/web/packages/ROracle/index.html) - Oracle Database interface (DBI) driver for R. This is a DBI-compliant Oracle driver based on the OCI.
+
+<br/><br/>
+
+### Non-DBI Compliant
+
+- Cloudera 'Impala', which is a massively parallel processing (MPP) SQL query engine runs natively in Apache Hadoop. 'RImpala' facilitates the connection and execution of distributed queries through 'R'. 'Impala' supports JDBC integration which 'RImpala' utilizes to establish the connection between 'R' and 'Impala'
+- Combination of [RJDBC](https://cran.r-project.org/web/packages/RJDBC/index.html) and  [rJava](https://cran.r-project.org/web/packages/rJava/index.html) 
+
+
+
+

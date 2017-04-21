@@ -1,4 +1,5 @@
 ---
+<<<<<<< HEAD:content/getting-started.Rmd
 title: "Untitled"
 output: html_document
 ---
@@ -26,3 +27,82 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+=======
+title: "Analyzing data using dplyr"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+---
+
+## Install dbplyr
+
+The new [dbplyr](https://github.com/hadley/dbplyr) package has all of *dplyr*'s code related to databases, including the code that translates dplyr commands into vendor specific SQL commands.  This separation will make it easier to release fixes for bugs that relate to database management.
+
+```{r, eval = FALSE}
+devtools::install_github("hadley/dbplyr")
+```
+
+
+## Connect to the Database
+
+The [Drivers](drivers.html) section describes how to accomplish that.
+
+```{r, include = FALSE}
+library(odbc)
+library(config)
+library(DBI)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                              Server=", config::get("datawarehouse")$server ,";
+                              Port=1433;
+                              Database=", config::get("datawarehouse")$database ,";
+                              UID=", config::get("datawarehouse")$uid ,";
+                              PWD=", config::get("datawarehouse")$pwd ,";"))
+
+```
+
+## Using dplyr
+
+### Table reference with 'tbl'
+
+```{r, message = FALSE}
+library(dplyr)
+library(dbplyr)
+
+mssql_flights <- tbl(con, "flights")
+
+mssql_flights
+```
+
+### Data Wrangling
+
+```{r, echo = TRUE}
+mssql_flights %>%
+  group_by(month) %>%
+  tally %>%
+  arrange(month)
+```
+
+
+### Table Joins
+
+```{r, echo = TRUE}
+
+mssql_flights %>%
+  left_join(tbl(con, "airlines"), by = "carrier") %>%
+  group_by(name) %>%
+  tally %>%
+  arrange(desc(n))
+  
+  
+```
+
+
+```{r, include = FALSE}
+DBI::dbDisconnect(con)
+```
+>>>>>>> 5f17dbee1adc7ce545cb0273b30d3f3ebe15d82e:dplyr.Rmd
