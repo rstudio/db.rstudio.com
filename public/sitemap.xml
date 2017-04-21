@@ -2,7 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>/examples/simple/</loc>
+    <loc>/categories/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
@@ -35,6 +36,11 @@
   </url>
   
   <url>
+    <loc>/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/getting-started/</loc>
   </url>
   
@@ -48,7 +54,11 @@
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>/examples/simple/</loc>
+  </url>
+  
+  <url>
+    <loc>/index/</loc>
   </url>
   
 </urlset>

@@ -1,0 +1,42 @@
+---
+title: RStudio Drivers
+output:
+  html_document
+---
+
+<!-- BLOGDOWN-HEAD -->
+<!-- /BLOGDOWN-HEAD -->
+
+<!-- BLOGDOWN-BODY-BEFORE -->
+<!-- /BLOGDOWN-BODY-BEFORE -->
+<div id="install-rstudios-odbc-drivers" class="section level2">
+<h2>Install RStudio’s ODBC drivers</h2>
+<p>The <a href="https://github.com/rstudio/odbc-install">odbc-install</a> repository has a script that simplifies the installation of the ODBC drivers in the client machine.</p>
+<div id="red-hat-enterprise-linuxcentos-linux-6.0" class="section level3">
+<h3>Red Hat Enterprise Linux/CentOS Linux (6.0+)</h3>
+<p>There are two system dependencies that need to be installed prior to installing the drivers</p>
+<pre><code>sudo yum install wget
+sudo yum install unixODBC</code></pre>
+<p>The following script will download and install the drivers:</p>
+<pre><code># Placeholder path
+wget -O - https://s3-us-west-2.amazonaws.com/rstudio-odbc/...</code></pre>
+</div>
+</div>
+<div id="connecting-to-a-database-using-the-odbc-package" class="section level2">
+<h2>Connecting to a Database using the odbc package</h2>
+<p>The <a href="https://github.com/rstats-db/odbc">odbc</a> package provides a DBI-compliant interface to ODBC drivers. Drivers to a wide assortment of database types are provided as part of RStudio’s commercial products.</p>
+<p><strong>Why is a DBI compliant interface important? </strong> Apart from enabling the analyst to leverage <a href="http://rstats-db.github.io/DBI/">DBI</a> for their analysis, it also opens the door for a <a href="https://github.com/tidyverse/dplyr">dplyr</a> back end to be developed which makes data wrangling transparent to the analysts since they can continue using the same <em>dplyr</em> commands.</p>
+<pre class="r"><code>devtools::install_github(&quot;rstats-db/odbc&quot;)</code></pre>
+<p>Use <strong>dbConnect</strong> to access the database. Passing the values from the <strong>config</strong> file enables us to protect the credentials and abstracts the server and database name in case we need to promote the code to point from a test to a production database.</p>
+<pre class="r"><code>library(odbc)
+library(config)
+library(DBI)
+
+con &lt;- dbConnect(odbc::odbc(), 
+  .connection_string = paste0(&quot;Driver={sqlserver};
+                              Server=&quot;, config::get(&quot;datawarehouse&quot;)$server ,&quot;;
+                              Port=1433;
+                              Database=&quot;, config::get(&quot;datawarehouse&quot;)$database ,&quot;;
+                              UID=&quot;, config::get(&quot;datawarehouse&quot;)$uid ,&quot;;
+                              PWD=&quot;, config::get(&quot;datawarehouse&quot;)$pwd ,&quot;;&quot;))</code></pre>
+</div>

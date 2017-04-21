@@ -10,10 +10,10 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Securing Credentials using the keyring package - Using Databases in R</title>
-    <meta name="generator" content="Hugo 0.18.1" />
+    <meta name="generator" content="Hugo 0.20" />
 
     
-    <link rel="canonical" href="../keyring/">
+    <link rel="canonical" href="/keyring/">
     
 
     <meta property="og:url" content="/keyring/">
@@ -23,8 +23,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico">
-    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 
     <style>
       @font-face {
@@ -43,10 +43,10 @@
       }
     </style>
 
-    <link rel="stylesheet" href="../stylesheets/application.css">
-    <link rel="stylesheet" href="../stylesheets/temporary.css">
-    <link rel="stylesheet" href="../stylesheets/palettes.css">
-    <link rel="stylesheet" href="../stylesheets/highlight/highlight.css">
+    <link rel="stylesheet" href="/stylesheets/application.css">
+    <link rel="stylesheet" href="/stylesheets/temporary.css">
+    <link rel="stylesheet" href="/stylesheets/palettes.css">
+    <link rel="stylesheet" href="/stylesheets/highlight/highlight.css">
 
     
     
@@ -62,15 +62,9 @@
     </style>
 
     
-    <script src="../javascripts/modernizr.js"></script>
+    <script src="/javascripts/modernizr.js"></script>
 
     
-
-
-
-
-
-
 
   </head>
   <body class="palette-primary-light-blue palette-accent-green">
@@ -96,7 +90,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        <a href="../" title="db.rstudio.com">db.rstudio.com</a>
+        <a href="/" title="db.rstudio.com">db.rstudio.com</a>
       </div>
     </div>
 
@@ -141,24 +135,7 @@
 
 
 
-<a  title="Examples" href="../examples/">
-	
-	Examples
-</a>
-
-
-  
-</li>
-
-
-
-<li>
-  
-    
-
-
-
-<a  title="Getting started" href="../getting-started/">
+<a  title="Getting started" href="/getting-started/">
 	
 	Getting started
 </a>
@@ -179,7 +156,7 @@
 
 
 
-<a  title="dplyr package" href="../dplyr/">
+<a  title="dplyr package" href="/dplyr/">
 	
 	dplyr package
 </a>
@@ -191,7 +168,7 @@
 
 
 
-<a  title="DBI package" href="../dbi/">
+<a  title="DBI package" href="/dbi/">
 	
 	DBI package
 </a>
@@ -214,7 +191,7 @@
 
 
 
-<a  title="RStudio Drivers" href="../drivers/">
+<a  title="RStudio Drivers" href="/drivers/">
 	
 	RStudio Drivers
 </a>
@@ -226,7 +203,7 @@
 
 
 
-<a  title="Open source packages" href="../open-source/">
+<a  title="Open source packages" href="/open-source/">
 	
 	Open source packages
 </a>
@@ -249,7 +226,7 @@
 
 
 
-<a class="current" title="Secure credentials" href="../keyring/">
+<a class="current" title="Secure credentials" href="/keyring/">
 	
 	Secure credentials
 </a>
@@ -264,7 +241,7 @@
 
 
 
-<a  title="Simplify connections" href="../config/">
+<a  title="Simplify connections" href="/config/">
 	
 	Simplify connections
 </a>
@@ -283,9 +260,26 @@
 
 
 
-<a  title="References" href="../">
+<a  title="References" href="/">
 	
 	References
+</a>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Examples" href="/examples/">
+	
+	Examples
 </a>
 
 
@@ -307,8 +301,11 @@
 	<article class="article">
 		<div class="wrapper">
 		  <h1>Securing Credentials using the keyring package </h1>
+			<!-- BLOGDOWN-HEAD -->
+<!-- /BLOGDOWN-HEAD -->
 
-
+<!-- BLOGDOWN-BODY-BEFORE -->
+<!-- /BLOGDOWN-BODY-BEFORE -->
 <p>The <a href="https://github.com/gaborcsardi/keyring">keyring</a> package enables us to access the operating system’s credential store.</p>
 <pre class="r"><code>devtools::install_github(&quot;gaborcsardi/keyring&quot;)</code></pre>
 <p>In this example, we will create a new key ring called <em>rstudio.odbc</em> and add a single key with the server path and credentials. Additional servers can be added to the same key ring by adding additional keys.</p>
@@ -320,9 +317,6 @@ keyring::key_set_with_value(service = &quot;sol-eng-sqlserv.cihykudhzbgw.us-west
                             username = &quot;rstudioadmin&quot;, 
                             password = &quot;ABCd4321&quot;, 
                             keyring = &quot;rstudio.odbc&quot;)</code></pre>
-
-
-
 
 
 			<aside class="copyright" role="note">
@@ -337,7 +331,7 @@ keyring::key_set_with_value(service = &quot;sol-eng-sqlserv.cihykudhzbgw.us-west
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="../drivers/" title="RStudio Drivers">
+      <a href="/drivers/" title="RStudio Drivers">
         <span class="direction">
           Previous
         </span>
@@ -357,7 +351,7 @@ keyring::key_set_with_value(service = &quot;sol-eng-sqlserv.cihykudhzbgw.us-west
 
   <div class="next">
   
-      <a href="../config/" title="Simplify connections using the config package">
+      <a href="/config/" title="Simplify connections using the config package">
         <span class="direction">
           Next
         </span>
@@ -403,7 +397,7 @@ keyring::key_set_with_value(service = &quot;sol-eng-sqlserv.cihykudhzbgw.us-west
     
     </script>
 
-    <script src="../javascripts/application.js"></script>
+    <script src="/javascripts/application.js"></script>
     
 
     <script>
