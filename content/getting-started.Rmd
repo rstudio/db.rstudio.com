@@ -1,5 +1,4 @@
 ---
-<<<<<<< HEAD:content/getting-started.Rmd
 title: "Untitled"
 output: html_document
 ---
@@ -105,4 +104,4 @@ mssql_flights %>%
 ```{r, include = FALSE}
 DBI::dbDisconnect(con)
 ```
->>>>>>> 5f17dbee1adc7ce545cb0273b30d3f3ebe15d82e:dplyr.Rmd
+
