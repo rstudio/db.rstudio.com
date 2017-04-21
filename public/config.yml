@@ -1,0 +1,7 @@
+
+default:
+  datawarehouse: 
+    server: "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com"
+    uid: !expr keyring::key_list("sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com",  keyring = "rstudio.odbc")[1,2]
+    pwd: !expr keyring::key_get("sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com",  keyring = "rstudio.odbc")
+    database: "airontime"

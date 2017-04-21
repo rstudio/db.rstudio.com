@@ -1,0 +1,164 @@
+---
+title: Using Databases in R
+output: 
+  html_document
+---
+# Initial Setup
+
+## Install RStudio's ODBC drivers 
+
+The [odbc-install](https://github.com/rstudio/odbc-install) repository has a script that simplifies the installation of the ODBC drivers in the client machine.
+
+### Red Hat Enterprise Linux/CentOS Linux (6.0+)
+
+There are two system dependencies that need to be installed prior to installing the drivers
+
+```{}
+sudo yum install wget
+sudo yum install unixODBC
+``` 
+
+The following script will download and install the drivers:
+
+```{}
+# Placeholder path
+wget -O - https://s3-us-west-2.amazonaws.com/rstudio-odbc/...
+```
+
+## Securing Credentials using the keyring package
+
+The [keyring](https://github.com/gaborcsardi/keyring) package enables us to access the operating system's credential store. 
+
+```{r, eval = FALSE}
+devtools::install_github("gaborcsardi/keyring")
+```
+
+In this example, we will create a new key ring called *rstudio.odbc* and add a single key with the server path and credentials. Additional servers can be added to the same key ring by adding additional keys.  
+
+The way **keyring** retrieves data is by passing the Key Ring name and a **service** name.  In this method, we will use the server path as the **service** so it will act as our key to retrieve user name and password to use for that particular server. 
+
+To prevent passing the server path in our code, we will use another package called **config**, which is discussed in the next section.
+
+```{r, eval = FALSE}
+keyring::keyring_create("rstudio.odbc")
+
+keyring::key_set_with_value(service = "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com", 
+                            username = "rstudioadmin", 
+                            password = "ABCd4321", 
+                            keyring = "rstudio.odbc")
+```
+
+## Simplify connections using the config package
+
+The [config](https://github.com/rstudio/config) package simplifies management of environment specific configuration values.  
+
+```{r, eval = FALSE}
+devtools::install_github("rstudio/config")
+```
+
+The values are saved in a YAML file called **config.yml**.  The package also allows R code to be used as values, we will use this capability to retrieve the credentials from Key Ring.  
+
+This is the YAML file used for this exercise:
+
+```{}
+  default:
+    datawarehouse: 
+      server: "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com"
+      uid: !expr keyring::key_list("sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com",  
+           keyring = "rstudio.odbc")[1,2]
+      pwd: !expr keyring::key_get("sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com",  
+           keyring = "rstudio.odbc")
+      database: "airontime"
+```
+
+# Using Databases for analysis
+
+## Connecting to a Database using the odbc package
+
+The [odbc](https://github.com/rstats-db/odbc) package provides a DBI-compliant interface to ODBC drivers.  Drivers to a wide assortment of database types are provided as part of RStudio's commercial products.  
+
+**Why is a DBI compliant interface important? ** Apart from enabling the analyst to leverage [DBI](http://rstats-db.github.io/DBI/) for their analysis, it also opens the door for a [dplyr](https://github.com/tidyverse/dplyr) back end to be developed which makes data wrangling transparent to the analysts since they can continue using the same *dplyr* commands.
+
+```{r, eval = FALSE}
+devtools::install_github("rstats-db/odbc")
+```
+
+Use **dbConnect** to access the database. Passing the values from the **config** file enables us to protect the credentials and abstracts the server and database name in case we need to promote the code to point from a test to a production database.
+
+```{r, message=FALSE, eval = FALSE}
+library(odbc)
+library(config)
+library(DBI)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                              Server=", config::get("datawarehouse")$server ,";
+                              Port=1433;
+                              Database=", config::get("datawarehouse")$database ,";
+                              UID=", config::get("datawarehouse")$uid ,";
+                              PWD=", config::get("datawarehouse")$pwd ,";"))
+
+```
+
+## Interacting with the database using DBI
+
+Here are a few basic DBI commands that can be used to access the database.  
+
+### List tables
+
+```{r, eval = FALSE}
+dbListTables(con)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+dbListTables(con)[1:5]
+```
+
+### List Fields
+
+```{r, echo = TRUE, eval = FALSE}
+dbListFields(con, "mtcars")
+```
+
+### Run a query
+
+Using the appropriate SQL syntax for the type of connection, you can use the **dbGetQuery** run queries.
+
+```{r, echo = TRUE, eval = FALSE}
+dbGetQuery(con, "SELECT row_names, mpg, cyl FROM mtcars WHERE mpg > 25 ORDER BY row_names")
+```
+
+## Analyzing data using dplyr
+
+### Install dbplyr
+
+The new [dbplyr](https://github.com/hadley/dbplyr) package has all of *dplyr*'s code related to databases, including the code that translates dplyr commands into vendor specific SQL commands.  This separation will make it easier to release fixes for bugs that relate to database management.
+
+```{r, eval = FALSE}
+devtools::install_github("hadley/dbplyr")
+```
+
+### Using dplyr
+
+```{r, message = FALSE, eval = FALSE}
+library(dplyr)
+library(dbplyr)
+
+mssql_mtcars <- tbl(con, "mtcars")
+
+mssql_mtcars
+```
+
+```{r, echo = TRUE, eval = FALSE}
+mssql_mtcars %>%
+  select(row_names, mpg, cyl) %>%
+  filter(mpg > 25) %>%
+  arrange(row_names)
+```
+
+### Disconnect
+
+```{r, eval = FALSE}
+dbDisconnect(con)
+
+```

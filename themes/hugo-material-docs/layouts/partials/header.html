@@ -1,0 +1,28 @@
+<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        <a href="/" title="db.rstudio.com">db.rstudio.com</a>
+      </div>
+    </div>
+
+
+    {{ with .Site.Social.twitter }}
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/{{ . }}" title="@{{ . }} on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    {{ end }}
+
+    {{ with .Site.Social.github }}
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/{{ . }}" title="@{{ . }} on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    {{ end }}
+    
+   </div>
+</nav>

@@ -1,0 +1,53 @@
+---
+title: RStudio Drivers
+output:
+  html_document
+---
+
+## Install RStudio's ODBC drivers 
+
+The [odbc-install](https://github.com/rstudio/odbc-install) repository has a script that simplifies the installation of the ODBC drivers in the client machine.
+
+### Red Hat Enterprise Linux/CentOS Linux (6.0+)
+
+There are two system dependencies that need to be installed prior to installing the drivers
+
+```{}
+sudo yum install wget
+sudo yum install unixODBC
+``` 
+
+The following script will download and install the drivers:
+
+```{}
+# Placeholder path
+wget -O - https://s3-us-west-2.amazonaws.com/rstudio-odbc/...
+```
+
+
+## Connecting to a Database using the odbc package
+
+The [odbc](https://github.com/rstats-db/odbc) package provides a DBI-compliant interface to ODBC drivers.  Drivers to a wide assortment of database types are provided as part of RStudio's commercial products.  
+
+**Why is a DBI compliant interface important? ** Apart from enabling the analyst to leverage [DBI](http://rstats-db.github.io/DBI/) for their analysis, it also opens the door for a [dplyr](https://github.com/tidyverse/dplyr) back end to be developed which makes data wrangling transparent to the analysts since they can continue using the same *dplyr* commands.
+
+```{r, eval = FALSE}
+devtools::install_github("rstats-db/odbc")
+```
+
+Use **dbConnect** to access the database. Passing the values from the **config** file enables us to protect the credentials and abstracts the server and database name in case we need to promote the code to point from a test to a production database.
+
+```{r, message=FALSE}
+library(odbc)
+library(config)
+library(DBI)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                              Server=", config::get("datawarehouse")$server ,";
+                              Port=1433;
+                              Database=", config::get("datawarehouse")$database ,";
+                              UID=", config::get("datawarehouse")$uid ,";
+                              PWD=", config::get("datawarehouse")$pwd ,";"))
+
+```

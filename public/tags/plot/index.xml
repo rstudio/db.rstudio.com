@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Plot on Using Databases in R</title>
+    <link>/tags/plot/</link>
+    <description>Recent content in Plot on Using Databases in R</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/plot/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hello R Markdown</title>
+      <link>/dbi/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/dbi/</guid>
+      <description>Start by first connecting to the database, Drivers section describes how to accomplish that.
+List tables dbListTables(con) ## [1] &amp;quot;airlines&amp;quot; &amp;quot;airport&amp;quot; &amp;quot;airports&amp;quot; &amp;quot;faithful&amp;quot; &amp;quot;flights&amp;quot; &amp;quot;iris&amp;quot;  Upload data to the database library(nycflights13) data(package = &amp;quot;nycflights13&amp;quot;) dbWriteTable(con, &amp;quot;airlines&amp;quot;, airlines)  List Fields dbListFields(con, &amp;quot;iris&amp;quot;) ## [1] &amp;quot;Sepal.Length&amp;quot; &amp;quot;Sepal.Width&amp;quot; &amp;quot;Petal.Length&amp;quot; &amp;quot;Petal.Width&amp;quot; ## [5] &amp;quot;Species&amp;quot;  Run a query Using the appropriate SQL syntax for the type of connection, you can use the dbGetQuery run queries.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,67 @@
+---
+title: "DBI"
+
+---
+
+Start by first connecting to the database, [Drivers](drivers.html) section describes how to accomplish that.
+
+```{r, include = FALSE, cache = TRUE}
+library(odbc)
+library(config)
+library(DBI)
+
+con <- dbConnect(odbc::odbc(), 
+  .connection_string = paste0("Driver={sqlserver};
+                              Server=", config::get("datawarehouse")$server ,";
+                              Port=1433;
+                              Database=", config::get("datawarehouse")$database ,";
+                              UID=", config::get("datawarehouse")$uid ,";
+                              PWD=", config::get("datawarehouse")$pwd ,";"))
+
+```
+
+## List tables
+
+```{r, eval = FALSE}
+dbListTables(con)
+```
+
+```{r, echo = FALSE, cache = TRUE}
+dbListTables(con)[1:6]
+```
+
+## Upload data to the database
+
+```{r, eval = FALSE}
+
+library(nycflights13)
+
+data(package = "nycflights13")
+
+dbWriteTable(con, "airlines", airlines)
+
+
+
+```
+
+## List Fields
+
+```{r, echo = TRUE, cache = TRUE}
+dbListFields(con, "iris")
+```
+
+## Run a query
+
+Using the appropriate SQL syntax for the type of connection, you can use the **dbGetQuery** run queries.
+
+```{r, echo = TRUE, cache = TRUE}
+dbGetQuery(con, "SELECT TOP 10 * from airports")
+```
+
+
+
+```{r, include = FALSE, cache = TRUE}
+DBI::dbDisconnect(con)
+```
+
+
