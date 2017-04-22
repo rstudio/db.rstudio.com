@@ -1,9 +1,6 @@
 ---
 title: Databases & dplyr
-output:
-  html_document:
-    toc_depth: 2
-
+weight: 3
 ---
 
 After connecting R to a database, we have to tackle the challenge manipulating data using two languages, R and SQL. 

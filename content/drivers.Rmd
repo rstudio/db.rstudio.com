@@ -1,7 +1,6 @@
 ---
 title: RStudio Drivers
-output:
-  html_document
+weight: 5
 ---
 
 ## Install RStudio's ODBC drivers 

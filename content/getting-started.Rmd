@@ -1,6 +1,6 @@
 ---
-title: "Untitled"
-output: html_document
+title: "Getting started"
+weight: 2
 ---
 
 ```{r setup, include=FALSE}

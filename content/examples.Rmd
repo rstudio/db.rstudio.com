@@ -1,7 +1,6 @@
 ---
 title: Using Databases in R
-output:
-  html_document
+weight: 9
 ---
 
 
