@@ -13,14 +13,14 @@ The [odbc-install](https://github.com/rstudio/odbc-install) repository has a scr
 
 There are two system dependencies that need to be installed prior to installing the drivers
 
-```{}
+```bash
 sudo yum install wget
 sudo yum install unixODBC
 ``` 
 
 The following script will download and install the drivers:
 
-```{}
+```bash
 # Placeholder path
 wget -O - https://s3-us-west-2.amazonaws.com/rstudio-odbc/...
 ```

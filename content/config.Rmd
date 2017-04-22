@@ -1,7 +1,6 @@
 ---
 title: Simplify connections using the config package
-output:
-  html_document
+weight: 8
 ---
 
 The [config](https://github.com/rstudio/config) package simplifies management of environment specific configuration values.  
