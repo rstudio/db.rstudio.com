@@ -1,7 +1,6 @@
 ---
 title: Using Databases in R
-type: index
-weight: 0
+weight: 1
 ---
 
 </br>
