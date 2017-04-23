@@ -67,8 +67,6 @@ keyring::key_get("mssql-database",
            keyring = "rstudio.odbc")
 ```
 
-## Using in an R script
-
 We can paste the credentials from the `keyring` into the `.connection_string`, so the user name and password are not displayed in plain text:
 
 ```{r, eval = FALSE}
@@ -81,7 +79,7 @@ con <- dbConnect(odbc::odbc(),
                               PWD=", keyring::key_get("mssql-database",  keyring = "rstudio.odbc") ,";"))
 ```
 
-When executed, the Operating System will prompt you for the `keyring` password:
+When the code is executed the Operating System will prompt us for the `keyring` password:
 
 <br/>
 

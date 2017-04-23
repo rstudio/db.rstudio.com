@@ -53,9 +53,6 @@ weight: 7
 <pre class="r"><code>keyring::key_get(&quot;mssql-database&quot;,  
            keyring = &quot;rstudio.odbc&quot;)</code></pre>
 <pre><code>## [1] &quot;abc123&quot;</code></pre>
-</div>
-<div id="using-in-an-r-script" class="section level2">
-<h2>Using in an R script</h2>
 <p>We can paste the credentials from the <code>keyring</code> into the <code>.connection_string</code>, so the user name and password are not displayed in plain text:</p>
 <pre class="r"><code>con &lt;- dbConnect(odbc::odbc(), 
   .connection_string = paste0(&quot;Driver={sqlserver};
@@ -64,7 +61,7 @@ weight: 7
                               Database=default;
                               UID=&quot;, keyring::key_list(&quot;mssql-database&quot;, keyring = &quot;rstudio.odbc&quot;)[1,2] ,&quot;;
                               PWD=&quot;, keyring::key_get(&quot;mssql-database&quot;,  keyring = &quot;rstudio.odbc&quot;) ,&quot;;&quot;))</code></pre>
-<p>When executed, the Operating System will prompt you for the <code>keyring</code> password:</p>
+<p>When the code is executed the Operating System will prompt us for the <code>keyring</code> password:</p>
 <p><br/></p>
 <div class="figure">
 <img src="keyring.png" />
