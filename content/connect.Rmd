@@ -1,0 +1,42 @@
+---
+title: "Connect to a Database"
+weight: 3
+
+---
+
+
+<img src="first-conn.png" width = 400 align="right"/>
+
+</br></br></br></br>
+
+## 1.  Click *New Connection* 
+
+</br></br></br></br>
+
+<img src="new-conn.png" width = 400 height = 300 align="right"/>
+
+</br></br></br></br></br></br></br>
+
+## 2.  Select the database vendor  
+
+</br></br></br></br></br></br>
+
+<img src="conn-setup.png" width = 400 height = 300 align="right"/>
+
+</br></br></br></br></br></br></br>
+
+## 3.  Fill-in the connection settings, click OK
+
+</br></br></br></br></br></br>
+
+<img src="conn-pane.png" width = 400 height = 300 align="right"/>
+
+</br></br></br></br></br>
+
+### Now that you are succesfully connected, you can explore the database schema and tables. 
+
+
+
+</br></br></br></br></br></br>
+
+
