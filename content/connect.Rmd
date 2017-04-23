@@ -31,12 +31,14 @@ weight: 3
 
 <img src="conn-pane.png" width = 400 height = 300 align="right"/>
 
-</br></br></br></br></br>
+</br></br></br>
 
-### Now that you are succesfully connected, you can explore the database schema and tables. 
+Now that you are succesfully connected, you can explore the database schema and tables. 
 
+**Important:** Credentials used to connect to the database are included in the code for the connection string.  Please read the [Secure Credentials](/keyring/) page to review some best practices.
 
-
-</br></br></br></br></br></br>
+</br></br>
+</br></br>
+</br></br>
 
 
