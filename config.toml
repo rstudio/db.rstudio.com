@@ -7,9 +7,14 @@ canonifyurls = true
 # Enable Google Analytics by entering your tracking id
 googleAnalytics = ""
 
+
+[blackfriday]
+	smartypants	= true
+	fractions = true
+	smartDashes = true
+	plainIDAnchors = true
+
 [params]
-
-
 
 	[params.palette]
     	primary = "light-blue"
@@ -42,22 +47,6 @@ googleAnalytics = ""
 	url    = "dbi/"
 	parent = "Analyzing"
 
-[[menu.main]]
-  weight = 20
-	name   = "Drivers"
-	url    = "/"
-
-[[menu.main]]
-  weight = 21
-	name   = "RStudio Drivers"
-	url    = "drivers/"
-	parent = "Drivers"
-
-[[menu.main]]
-  weight = 22
-	name   = "Open source packages"
-	url    = "open-source/"
-	parent = "Drivers"	
 
 [[menu.main]]
   weight = 30
@@ -74,28 +63,20 @@ googleAnalytics = ""
 	url    = "keyring/"
 	parent = "Best Practices"	
 
-[[menu.main]]
-  weight = 40
-	name   = "References"
-	url    = "/"
+
+
 
 [[menu.main]]
 	name   = "Examples"
 	url    = "examples/"
-	parent = "References"	
-	
-[[menu.main]]
-	name   = "Examples"
-	url    = "examples/"
 
-[blackfriday]
-	smartypants	= true
-	fractions = true
-	smartDashes = true
-	plainIDAnchors = true
 
 
 [social]
 	twitter = "rstudio"
 	github  = "rstudio"
 	email   = "info@rstudio.com"
+
+
+
+

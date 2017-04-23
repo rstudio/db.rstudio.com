@@ -1,5 +1,5 @@
 ---
-title: Using Databases in R
+title: Simple Example
 weight: 10
 ---
 # Initial Setup
