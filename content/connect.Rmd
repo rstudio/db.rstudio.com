@@ -7,11 +7,9 @@ weight: 3
 
 <img src="first-conn.png" width = 400 align="right"/>
 
-</br></br></br></br>
+## 1.  Click **New Connection**
 
-## 1.  Click *New Connection* 
-
-</br></br></br></br>
+</br></br></br></br></br>
 
 <img src="new-conn.png" width = 400 height = 300 align="right"/>
 
@@ -19,11 +17,11 @@ weight: 3
 
 ## 2.  Select the database vendor  
 
-</br></br></br></br></br></br>
+</br></br>
 
 <img src="conn-setup.png" width = 400 height = 300 align="right"/>
 
-</br></br></br></br></br></br></br>
+</br></br></br></br></br>
 
 ## 3.  Fill-in the connection settings, click OK
 

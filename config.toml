@@ -16,6 +16,8 @@ googleAnalytics = ""
 
 [params]
 
+  favicon = "favicon.png"
+
 	[params.palette]
     	primary = "light-blue"
     	accent  = "green"
@@ -68,12 +70,13 @@ googleAnalytics = ""
 	url    = "keyring/"
 	parent = "Best Practices"	
 
-
-
-
 [[menu.main]]
 	name   = "Examples"
 	url    = "examples/"
+
+[[menu.main]]
+	name   = "References"
+	url    = "reference/"
 
 
 
