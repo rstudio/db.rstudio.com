@@ -61,6 +61,11 @@ googleAnalytics = ""
 	url    = "/"
 
 [[menu.main]]
+	name   = "Run Queries Safely"
+	url    = "run-queries-safely/"
+	parent = "Best Practices"
+
+[[menu.main]]
 	name   = "Simplify connections"
 	url    = "config/"
 	parent = "Best Practices"
