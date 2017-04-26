@@ -1,9 +1,24 @@
 ---
-title: "DBI"
+title: "Interact with databases using DBI"
 weight: 5
 ---
 
-Start by first connecting to the database, [Drivers](drivers.html) section describes how to accomplish that.
+## When to use
+
+The [DBI](http://rstats-db.github.io/DBI/) package provides an interface between R and databases; it separates the operations that run against the database from the functions that are exposed to the user and other applications.  By doing this, the same R commands can be used to perform the same operations over a variety of databases.
+
+We recommend using [dplyr](/dplyr/) for day-to-day data preparation and tidying.   The [DBI](http://rstats-db.github.io/DBI/) package is a great tool to help with the rest of database-related tasks such as the following:
+
+- Connecting to and disconnecting from a database
+- Retrieving the list of tables and fields
+- Adding or removing tables 
+- Writing data back to a table
+- Running recurring queries 
+- Executing stored procedures (if supported)
+
+
+The [DBI: R Database Interface](https://cran.r-project.org/web/packages/DBI/vignettes/spec.html) provides a comprehensive review of how DBI works. 
+
 
 ```{r, include = FALSE, cache = TRUE}
 library(odbc)
@@ -20,7 +35,21 @@ con <- dbConnect(odbc::odbc(),
 
 ```
 
-## List tables
+## Connecting to a Database
+
+When using the Connections interface, The RStudio IDE generates an R code snippet that connects to the database (see [Connect to a Database](/connect/)).  
+
+<BR/>
+
+![](conn-setup.png)
+
+The connection snippet uses DBI's `dbConnect()` command to open the connection.  This is the command where we specify the driver, user, password, database name, and other arguments needed to properly start a session with the database.  Conversely, `dbDisconnect()` will close the connection.
+
+## Tables & Fields
+
+If you are using the RStudio IDE, then exploring an open database connection is as easy as expanding and drilling down into the schema using the Connections tab. 
+
+Using code, to get a list of the tables in an existing database connection, use `dbListTables()`
 
 ```{r, eval = FALSE}
 dbListTables(con)
@@ -30,38 +59,111 @@ dbListTables(con)
 dbListTables(con)[1:6]
 ```
 
-## Upload data to the database
+For a list of the fields in a particular table inside the database connection use `dbListFields()`
+
+```{r, echo = TRUE, cache = TRUE}
+dbListFields(con, "flights")
+```
+
+## Adding and Removing Tables
+
+The `dbWriteTable()` and `dbRemoveTable()` can be used to perform their respective operations.  The user will need to have the proper database rights to be able to run these operations.
+
+A data frame can be passed to `dbWriteTable()` to create and simultaneously populate the table:
+
+```{r, eval = FALSE , cache = TRUE}
+library(nycflights13)
+dbWriteTable(con, "flights", flights)
+```
+
+## Run Queries Safely
+
+In this section we will review two options to run SQL commands safely; the first uses a method called **parameterized sql** and the second uses **stored procedures**.  
+
+The `dbGetQuery()` allows us to write queries and retrieve the results.  The query has to be written using the SQL syntax that matches to the database type.  In this example, since we're using a MS SQL database, we will use T-SQL syntax:
+
+```{r, echo = TRUE, cache = TRUE}
+
+dbGetQuery(con, "SELECT TOP 5 * FROM airports ")
+
+```
+
+As mentioned at the top of this page, [dplyr](/dplyr/) is the recommended way to perform ad-hoc analytics. But in cases when we need to run the same query multiple times but each time using a different value, concatenating the SQL command using `paste0()` may be considered first.  
+
+For times when the code is exposed to end-users, such as for interactive dashboards and apps, it is better to run a **parameterized query** using the `sqlInterpolate()` command; this will prevent a bad actor from passing a malicious value to the app this is called **SQL Injection**.
+
+In the following example, we will use the `airport_code` variable to simulate a valued entered in an app.  The query expect one airport code passed in by the app:
+
+
+```{r, echo = TRUE, cache = TRUE}
+airport_code <- "GPT"
+dbGetQuery(con, paste0("SELECT * FROM airports  where faa = '", airport_code ,"'"))
+```
+
+In this **SQL Injection** example we have closed the single quote and added, or injected, an additional *WHERE* statement.  This will make the database return 2 records, which is not the desired outcome.  
+
+```{r, echo = TRUE, cache = TRUE}
+airport_code <- "GPT' or faa = 'MSY"
+dbGetQuery(con, paste0("SELECT * FROM airports  where faa = '", airport_code ,"'"))
+```
+
+This is a rather innocuous example; most notably, malicious SQL Injections will try to pass statements that modify the database, including completely deleting tables.
+
+There are two steps to creating a **parameterized query**:
+
+- Create a query that uses the question mark as a prefix of variables that will be passed
+- Use `sqlInterpolate()`, instead of `paste0()`, inside `dbGetQuery()` and pass an argument for each variable defined in the SQL statement
+
+This is what it looks like using current example:
+
+```{r, echo = TRUE, cache = TRUE}
+airport_code <- "GPT"
+airport_sql <- "SELECT * FROM airports  where faa = ?code"
+dbGetQuery(con, sqlInterpolate(con, airport_sql, code = airport_code))
+```
+
+In this case, the **SQL Injection** is unsuccessful. 
+
+```{r, echo = TRUE, cache = TRUE}
+airport_code <- "GPT' or faa = 'MSY"
+airport_sql <- "SELECT * FROM airports  where faa = ?code"
+dbGetQuery(con, sqlInterpolate(con, airport_sql, code = airport_code))
+```
+
+### Stored Procedures
+
+**Stored Procedures** are scripts that reside inside the database and execute a series of steps that typically modify tables or records inside the database; many enterprise-grade databases support them.  
+
+A common use of Store Procedures is to record new business transactions records that impact multiple tables. In this case, the Stored Procedure handles the creation of new keys and ensures that all of the updates are performed correctly.  
+Usually, implementing Stored Procedures involves collaborating with a Database Administrator or Database Developer.  If there are Stored Procedures we are instructed to use, we can use the `EXEC` command in SQL.  The following example calls a Stored Procedure called [sp_stored_procedures](https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-stored-procedures-transact-sql) which returns a data set containing a list of all of the Stored Procedures available in the database.
+
+```{r, echo = TRUE, cache = TRUE}
+head(dbGetQuery(con, "EXEC sp_stored_procedures"))
+```
+
+We are able to pass parameters to a Stored Procedure, similarly to how we pass an argument to an R function.  Here is the spec from taken from the [MS SQL page](https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-stored-procedures-transact-sql): 
+
+```
+sp_stored_procedures [ [ @sp_name = ] 'name' ]   
+    [ , [ @sp_owner = ] 'schema']   
+    [ , [ @sp_qualifier = ] 'qualifier' ]  
+    [ , [@fUsePattern = ] 'fUsePattern' ]  
+```
+
+```{r}
+head(dbGetQuery(con, "EXEC sp_stored_procedures @sp_owner = 'sys'"))
+```
+
+The main goal of this Stored Procedure is to retrieve data.  If we run one that aims at making updates to the database we would then run it as a SQL transaction
 
 ```{r, eval = FALSE}
-
-library(nycflights13)
-
-data(package = "nycflights13")
-
-dbWriteTable(con, "airlines", airlines)
-
-
-
-```
-
-## List Fields
-
-```{r, echo = TRUE, cache = TRUE}
-dbListFields(con, "iris")
-```
-
-## Run a query
-
-Using the appropriate SQL syntax for the type of connection, you can use the **dbGetQuery** run queries.
-
-```{r, echo = TRUE, cache = TRUE}
-dbGetQuery(con, "SELECT TOP 10 * from airports")
+dbBegin(con)
+dbExecute(con, "EXEC sp_stored_procedures @sp_owner = 'sys'")
+dbCommit(con)
 ```
 
 
 
-```{r, include = FALSE, cache = TRUE}
-DBI::dbDisconnect(con)
-```
+
 
 

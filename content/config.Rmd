@@ -6,7 +6,7 @@ weight: 8
 The [config](https://github.com/rstudio/config) package simplifies management of environment specific configuration values.  
 
 ```{r, eval = FALSE}
-devtools::install_github("rstudio/config")
+install.packages("config")
 ```
 
 The values are saved in a YAML file called **config.yml**.  The package also allows R code to be used as values, we will use this capability to retrieve the credentials from Key Ring.  

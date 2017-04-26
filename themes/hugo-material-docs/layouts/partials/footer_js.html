@@ -15,7 +15,7 @@
 
     <script>
       {{ "/* Add headers to scrollspy */" | safeJS }}
-      var headers   = document.getElementsByTagName("div");
+      var headers   = document.querySelectorAll('div.level2');
       var scrollspy = document.getElementById('scrollspy');
 
       if(scrollspy) {
@@ -27,7 +27,7 @@
   
               var a  = document.createElement("a");
               a.setAttribute("href", "#" + headers[i].id);
-              a.setAttribute("title", headers[i].innerHTML);
+              a.setAttribute("title", headers[i].getElementsByTagName("h2")[0].innerHTM);
               a.innerHTML = headers[i].getElementsByTagName("h2")[0].innerHTML;
   
               li.appendChild(a)
@@ -38,7 +38,6 @@
         } else {
           scrollspy.parentElement.removeChild(scrollspy)
         }
-
 
       }
     </script>

@@ -12,7 +12,7 @@ In the background, the *dbplyr* package translates the *dplyr* commands into *SQ
 
 The main goal should be to push as much of the aggregating and filtering to the database and to bring back as little data as possible into R memory.
 
-If new to dplyr, it would be a good idea to first step will be to check out the package's official site: http://dplyr.tidyverse.org/
+If new to dplyr, please start by reviewing package's official site: http://dplyr.tidyverse.org/
 
 ## Package installation
 
@@ -25,7 +25,7 @@ devtools::install_github("tidyverse/dplyr")
 ```
 
 
-```{r, include = FALSE, cache = FALSE}
+```{r, include = FALSE, cache = TRUE}
 library(odbc)
 library(config)
 library(DBI)
@@ -46,12 +46,16 @@ con <- dbConnect(odbc::odbc(),
 
 We have pre-loaded the *flights*, *airlines* and *airports* datasets from the *nycflights13* package into tables inside a Microsoft SQL database. The *Connections* pane in the **RStudio IDE** shows the tables currently available in the database:
 
+<br/>
+
+![](conn-pane.png)
+
 
 ## Referencing tables
 
 The simplest way to preview a table with *dplyr* is by using the `tbl()` command.  
 
-```{r, message = FALSE, cache = FALSE}
+```{r, message = FALSE, cache = TRUE}
 library(dplyr)
 library(dbplyr)
 
@@ -64,13 +68,13 @@ The table preview's header also displays information about the database, such as
 
 Notice that the following command does not return an output.  The `flights_count` variable is not a data frame in our environment.  
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 flights_count <- tally(tbl(con, "flights"))
 ```
 
 The resulting SQL statement will not be executed until we ask R to do something with the variable, which is why is called 'lazy'. Because calling the variable inside the R Markdown code chunk triggers a 'preview' of the variable, is up until this point that the query is executed.
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 flights_count
 ```
 
@@ -78,7 +82,7 @@ flights_count
 
 To take a look behind the scenes, we can use the `show_query()` command to see what is the SQL statement that *dplyr* will execute. This is not something that we will do on a regular basis, but we are including it in this example to provide an idea what the packages are doing.
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 show_query(flights_count)
 ```
 
@@ -91,7 +95,7 @@ To group data, we use dplyr's `group_by()` command, which allows us to group one
 The following code retrieves the *total number of flights by carrier*.  We start with the *flights* table by using `tbl()`, then `group_by()` the `carrier` field, and get the record count using `tally()`.  The SQL translation will more likely not be sequenced in the same way, but that's taken cared of by the translation inside *dbplyr*.
 
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 tbl(con, "flights") %>%
   group_by(carrier) %>%
   tally
@@ -103,7 +107,7 @@ Combining different datasets is a common practice in data analysis, and the way 
 
 We will join the *airlines* table with the *flights* table so we can get the actual name of the airline instead of the code:
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 tbl(con, "flights") %>%
   left_join(tbl(con, "airlines"), by = "carrier") %>%
   group_by(name) %>%
@@ -117,7 +121,7 @@ tbl(con, "flights") %>%
 
 As mentioned at the top of this page, our main goal should be to push as much as much of the data wrangling to the database and to retrieve into R as small data as possible, like summarized results.  To retrieve the results from the database, we will use the `collect` command:
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 carrier_totals <- tbl(con, "flights") %>%
   left_join(tbl(con, "airlines"), by = "carrier") %>%
   group_by(name) %>%
@@ -134,7 +138,7 @@ After running the code above, we finally have our first dataframe loaded to our 
 
 The preferred approach for visualization is to perform the aggregations inside the database and bring the results back into R for visualization.  Here will use the *ggplot2* package to visualize the `carrier_totals` data frame:
 
-```{r, cache = FALSE}
+```{r, cache = TRUE}
 library(ggplot2)
 
 ggplot(data = carrier_totals) +
@@ -155,6 +159,6 @@ There are more data transformation verbs in *dplyr* than the ones covered in thi
 The [R for Data Science](http://r4ds.had.co.nz/transform.html) book and the [Data Transformation Cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/data-transformation-cheatsheet.pdf) are two great resources to dive deeper into *dplyr*.
 
 
-```{r, include = FALSE, cache = FALSE}
+```{r, include = FALSE, cache = TRUE}
 dbDisconnect(con)
 ```
