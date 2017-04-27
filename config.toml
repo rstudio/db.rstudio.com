@@ -61,20 +61,32 @@ googleAnalytics = ""
 	url    = "/"
 
 [[menu.main]]
-	name   = "Run Queries Safely"
+	weight = 31
+  name   = "Run Queries Safely"
 	url    = "run-queries-safely/"
 	parent = "Best Practices"
 
+
 [[menu.main]]
+  weight = 32
 	name   = "Simplify connections"
 	url    = "config/"
 	parent = "Best Practices"
 
 [[menu.main]]
+  weight = 33
 	name   = "Secure credentials"
 	url    = "keyring/"
 	parent = "Best Practices"	
 
+
+[[menu.main]]
+  weight = 34
+	name   = "Deploying Content"
+	url    = "deployment/"
+	parent = "Best Practices"	
+  
+  
 [[menu.main]]
 	name   = "Examples"
 	url    = "examples/"
