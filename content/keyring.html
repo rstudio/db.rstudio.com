@@ -10,11 +10,9 @@ weight: 7
 <!-- /BLOGDOWN-BODY-BEFORE -->
 <p>One of the most appealing features of using R is being able to share code with others. When a database connection is part of our code, it it very important to avoid leaving as plain text the credentials we used. Ideally, those credentials should be encrypted and protected.</p>
 <p>In this article we will review 3 methods, that in order, we could them call good, better, best. The goal of the first method is use the <code>config</code> package to allow us to store our credentials in a separate file, and in plain text. The second uses the <code>keyring</code> package to encrypt and store the credentials, primarily in the Operating System’s key storage. The third one combines both methods.</p>
-<div id="the-keyring-package" class="section level2">
-<h2>The <code>keyring</code> package</h2>
+<p>ke ## The <code>keyring</code> package</p>
 <p>The <a href="https://github.com/gaborcsardi/keyring">keyring</a> package enables us to secure any credential by leveraging the operating system’s credential store. We will use this capability to securely store database credentials.</p>
 <pre class="r"><code>devtools::install_github(&quot;gaborcsardi/keyring&quot;)</code></pre>
-</div>
 <div id="keyrings-and-keys" class="section level2">
 <h2>Keyrings and keys</h2>
 <p>Inside the credential store there are <code>keyrings</code> that contain multiple <code>keys</code>. A <code>keyring</code> is secured with a single password, which then grants acccess to to all of its <code>keys</code>. In our case, we will store a single database connection credential per <code>key</code>. We will use the default keyring, which is automatically un-locked when a user signs in.</p>
