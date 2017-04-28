@@ -3,6 +3,12 @@ title: Securing Credentials
 weight: 7
 ---
 
+One of the most appealing features of using R is being able to share code with others. When a database connection is part of our code, it it very important to avoid leaving as plain text the credentials we used. Ideally, those credentials should be encrypted and protected.
+
+In this article we will review 3 methods,  that in order, we could them call good, better, best.  The goal of the first method is use the `config` package to allow us to store our credentials in a separate file, and in plain text.  The second uses the `keyring` package to encrypt and store the credentials, primarily in the Operating System's key storage.  The third one combines both methods.
+
+
+
 ## The `keyring` package
 
 The [keyring](https://github.com/gaborcsardi/keyring) package enables us to secure any credential by leveraging the operating system's credential store. We will use this capability to securely store database credentials.
@@ -13,35 +19,25 @@ devtools::install_github("gaborcsardi/keyring")
 
 ## Keyrings and keys
 
-Inside the credential store there are `keyrings` that contain multiple `keys`.  A `keyring` is secured with a single password, which then grants acccess to to all of its `keys`.  In our case, we will store a single database connection credential per `key` so we will need only one `keyring` for all of our database related credentials.
-
-## New Keyring
-
-In this example, we will create a new `keyring` called `rstudio.odbc` and add a single key with the server path and credentials. Additional servers can be added to the same key ring by adding additional keys.  During the creation of the `keyring` we will be prompted to supply a new password for the `keyring`.
-
-```{r, eval = FALSE}
-keyring::keyring_create("rstudio.odbc")
-```
+Inside the credential store there are `keyrings` that contain multiple `keys`.  A `keyring` is secured with a single password, which then grants acccess to to all of its `keys`.  In our case, we will store a single database connection credential per `key`. We will use the default keyring, which is automatically un-locked when a user signs in.
 
 ## Our first key
 
 A `key` has four main attributes:
 
 - `service` - This is the key's unique identifier, we will use the database server's path for our keys.
-- `keyring` - The key's 'parent' keyring 
-- `username` 
+- `keyring` - The key's 'parent' keyring. If not specified, the default keyring is used.
+- `username`
 - `password` 
 
-The way `keyring` retrieves data is by passing the `keyring` name and a `service` name.  
+The way `keyring` retrieves data is by passing the `keyring` name and a `service` name. If no `keyring` is passed, the default keyring is used.
 
 We only create the key one time:
 
 ```{r, eval = FALSE}
-
 keyring::key_set_with_value(service = "mssql-database", 
                             username = "newuser", 
-                            password = "abc123", 
-                            keyring = "rstudio.odbc")
+                            password = "abc123")
 ```
 
 ## Retrieve credentials
@@ -49,41 +45,31 @@ keyring::key_set_with_value(service = "mssql-database",
 The `key_list()` command is used to retrieve the `username`:
 
 ```{r}
-keyring::key_list("mssql-database",  
-           keyring = "rstudio.odbc")
+keyring::key_list("mssql-database")
 ```
 
-To extract the only the `username` so as to pass it inside the connection string use something like this:
+To extract the only the `username`, so as to pass it inside the connection string, use:
 
 ```{r}
-keyring::key_list("mssql-database",  
-           keyring = "rstudio.odbc")[1,2]
+keyring::key_list("mssql-database")[1,2]
 ```
 
-To extract the `password` we will use `key_get()`:
+To extract the `password`, use `key_get()`:
 
 ```{r}
-keyring::key_get("mssql-database",  
-           keyring = "rstudio.odbc")
+keyring::key_get("mssql-database")
 ```
 
-We can paste the credentials from the `keyring` into the `.connection_string`, so the user name and password are not displayed in plain text:
+These functions can be used to supply the database credentials without storing them in plain text or an environment variable:
 
 ```{r, eval = FALSE}
 con <- dbConnect(odbc::odbc(), 
-  .connection_string = paste0("Driver={sqlserver};
-                              Server=mssql-database;
-                              Port=1433;
-                              Database=default;
-                              UID=", keyring::key_list("mssql-database", keyring = "rstudio.odbc")[1,2] ,";
-                              PWD=", keyring::key_get("mssql-database",  keyring = "rstudio.odbc") ,";"))
+  "SQLServer", # A driver defined in odbcinst.ini
+  Server="mssql-database",
+  Port=1433,
+  Database="default",
+  UID= keyring::key_list("mssql-database")[1,2],
+  PWD= keyring::key_get("mssql-database"))
 ```
 
-When the code is executed the Operating System will prompt us for the `keyring` password:
-
-<br/>
-
-![](keyring.png)
-
-<br/>
-<br/>
+The default keyring is unlocked anytime the user is signed in. If a new keyring is created and used, the Operating System will prompt the user for the `keyring` password when the code executes.
