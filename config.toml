@@ -19,7 +19,7 @@ googleAnalytics = ""
   favicon = "favicon.png"
 
 	[params.palette]
-    	primary = "blue"
+    	primary = "light-blue"
     	accent  = "green"
 
     [params.font]
@@ -39,7 +39,7 @@ googleAnalytics = ""
 
 [[menu.main]]
   weight = 10
-	name   = "odbc package"
+	name   = "dbi package"
 	url    = "dbi/"
 
 [[menu.main]]
