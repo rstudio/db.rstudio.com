@@ -19,7 +19,7 @@ googleAnalytics = ""
   favicon = "favicon.png"
 
 	[params.palette]
-    	primary = "light-blue"
+    	primary = "blue"
     	accent  = "green"
 
     [params.font]
