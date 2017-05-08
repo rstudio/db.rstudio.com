@@ -10,17 +10,10 @@ weight: 1
 
 RStudio provides enterprise-ready drivers that will enable you to connect to a vareity of databases and easily analyze your data.
 
-<br/><br/><br/><br/>
 
-<img src="ide.png" width = 450 align="right"/>
-<h2>Inside the RStudio IDE view the database schema and preview the first 1,000 rows</h2>
+<br/><br/><br/><br/><br/><br/>
 
-RStudio IDE version 1.1 (or higher) provides a great UI interface to setup new connections, manage connections, view the database schema and preview the first 1,000 rows.
-
-
-<br/><br/><br/>
-
-<img src="dplyr.png" width = 350 align="left"/>
+<img src="dplyr.png" width = 350 align="right"/>
 
 
 <h2>Filter and aggregate inside the database and then bring the results into R </h2>
