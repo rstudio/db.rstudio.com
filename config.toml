@@ -16,26 +16,25 @@ googleAnalytics = ""
 
 [params]
 
+	author = "RStudio"
+	description = "test"
+	copyright = ""
+	
+	provider = ""
+	repo_url = ""
+
+  version = "1.0.0"
+  logo = "/RStudio-Logo-All-White.png"
   favicon = "favicon.png"
 
 	[params.palette]
     	primary = "light-blue"
-    	accent  = "green"
+    	accent  = "orange"
 
     [params.font]
     	text = "Ubuntu"
     	code = "Ubuntu Mono"
 
-
-[[menu.main]]
-  weight = 5
-	name   = "Getting started"
-	url    = "/getting-started/"
-
-[[menu.main]]
-  weight = 7
-	name   = "Connect to a Database"
-	url    = "connect/"
 
 [[menu.main]]
   weight = 10
@@ -46,10 +45,6 @@ googleAnalytics = ""
   weight = 11
 	name   = "dplyr package"
 	url    = "dplyr/"
-
-
-
-
 
 [[menu.main]]
   weight = 30
@@ -73,12 +68,6 @@ googleAnalytics = ""
 [[menu.main]]
 	name   = "Examples"
 	url    = "examples/"
-
-[[menu.main]]
-	name   = "References"
-	url    = "reference/"
-
-
 
 [social]
 	twitter = "rstudio"
