@@ -32,8 +32,8 @@ googleAnalytics = ""
     	accent  = "orange"
 
     [params.font]
-    	text = "Ubuntu"
-    	code = "Ubuntu Mono"
+    	text = "Source Sans Pro"
+    	code = "Courier New"
 
 
 [[menu.main]]
