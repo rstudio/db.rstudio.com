@@ -33,7 +33,7 @@ googleAnalytics = ""
 
     [params.font]
     	text = "Source Sans Pro"
-    	code = "Courier New"
+    	code = "monospace"
 
 
 [[menu.main]]
