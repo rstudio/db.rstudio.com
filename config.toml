@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://db.rstudio.com/"
 relativeurls = true
 languageCode = "en-us"
 title = "Using Databases in R"
