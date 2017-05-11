@@ -3,7 +3,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   {{ if .Prev }}
-      <a href="{{ .Prev.Permalink }}" title="{{ .Prev.Title }}">
+      <a href="{{ .Prev.RelPermalink }}" title="{{ .Prev.Title }}">
         <span class="direction">
           Previous
         </span>
@@ -23,7 +23,7 @@
 
   <div class="next">
   {{ if .Next }}
-      <a href="{{ .Next.Permalink }}" title="{{ .Next.Title }}">
+      <a href="{{ .Next.RelPermalink }}" title="{{ .Next.Title }}">
         <span class="direction">
           Next
         </span>

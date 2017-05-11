@@ -8,9 +8,9 @@
     {{ end }}
     </script>
 
-    <script src="{{ "javascripts/application.js" | absURL }}"></script>
+    <script src="{{ "javascripts/application.js" | relURL }}"></script>
     {{ range .Site.Params.custom_js }}
-    <script src="{{ . | absURL }}"></script>
+    <script src="{{ . | relURL }}"></script>
     {{ end }}
 
     <script>
