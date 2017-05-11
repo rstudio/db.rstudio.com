@@ -3,7 +3,8 @@
  * theme that is used as fallback in codeblocks 
  */
 .article pre code {
-	color: rgba(0, 0, 0, 0.8) !important;
+	color:#303030;
+  font-weight:550;
 }
 
 
@@ -20,15 +21,15 @@ overflow-x:auto;
 
 .hljs-comment,
 .hljs-quote {
-color:#998;
+color:#303030;
 font-style:italic;
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-subst {
-color:#333;
-font-weight:700;
+color:#303030;
+font-weight:550;
 }
 
 .hljs-number,
@@ -36,36 +37,36 @@ font-weight:700;
 .hljs-variable,
 .hljs-template-variable,
 .hljs-tag .hljs-attr {
-color:teal;
+color:#303030;
 }
 
 .hljs-string,
 .hljs-doctag {
-color:#d14;
+color:#789d57;
 }
 
 .hljs-title,
 .hljs-section,
 .hljs-selector-id {
-color:#900;
-font-weight:700;
+color:#303030;
+font-weight:550;
 }
 
 .hljs-subst {
-font-weight:400;
+font-weight:550;
 }
 
 .hljs-type,
 .hljs-class .hljs-title {
-color:#458;
-font-weight:700;
+color:#303030;
+font-weight:550;
 }
 
 .hljs-tag,
 .hljs-name,
 .hljs-attribute {
-color:navy;
-font-weight:400;
+color:#303030;
+font-weight:550;
 }
 
 .hljs-regexp,
@@ -75,17 +76,17 @@ color:#009926;
 
 .hljs-symbol,
 .hljs-bullet {
-color:#990073;
+color:#303030;
 }
 
 .hljs-built_in,
 .hljs-builtin-name {
-color:#0086b3;
+color:#303030;
 }
 
 .hljs-meta {
-color:#999;
-font-weight:700;
+color:#303030;
+font-weight:550;
 }
 
 .hljs-deletion {
@@ -101,5 +102,5 @@ font-style:italic;
 }
 
 .hljs-strong {
-font-weight:700;
+font-weight:550;
 }
