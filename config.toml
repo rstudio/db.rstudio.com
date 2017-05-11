@@ -24,21 +24,21 @@ googleAnalytics = ""
 	repo_url = ""
 
   version = "1.0.0"
-  logo = "/RStudio-Logo-All-White.png"
+  logo = "/rstudio-logo.png"
   favicon = "favicon.png"
 
 	[params.palette]
-    	primary = "light-blue"
+    	primary = "rstudio-theme"
     	accent  = "orange"
 
     [params.font]
-    	text = "Source Sans Pro"
-    	code = "monospace"
+    	text = "sans-serif"
+    	code = "Ubuntu Mono"
 
 
 [[menu.main]]
   weight = 10
-	name   = "dbi package"
+	name   = "DBI package"
 	url    = "dbi/"
 
 [[menu.main]]
