@@ -70,10 +70,7 @@ googleAnalytics = ""
 	name   = "Examples"
 	url    = "examples/"
 
-[social]
-	twitter = "rstudio"
-	github  = "rstudio"
-	email   = "info@rstudio.com"
+
 
 
 
