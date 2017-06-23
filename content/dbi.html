@@ -1,0 +1,73 @@
+---
+title: "Interact with Databases Using DBI"
+weight: 5
+---
+
+
+
+<p>The <a href="http://rstats-db.github.io/DBI/">DBI</a> package provides an interface between R and databases. Because DBI separates the operations that run against the database from the functions that are exposed to the user and other applications, the same R commands can be used to perform the same operations over a variety of databases.</p>
+<div id="when-to-use" class="section level2">
+<h2>When to Use</h2>
+<p>You should use <a href="/dplyr/">dplyr</a> for day-to-day data preparation and tidying. The <a href="http://rstats-db.github.io/DBI/">DBI</a> package is a great tool to help with the rest of database related tasks such as:</p>
+<ul>
+<li>Connecting to and disconnecting from a database</li>
+<li>Retrieving the list of tables and fields</li>
+<li>Adding or removing tables</li>
+<li>Writing data back to a table</li>
+<li>Running recurring queries</li>
+<li>Executing stored procedures</li>
+</ul>
+<p>The <a href="https://cran.r-project.org/web/packages/DBI/vignettes/spec.html">DBI: R Database Interface</a> provides a comprehensive review of how DBI works.</p>
+</div>
+<div id="connect-to-a-database" class="section level2">
+<h2>Connect to a Database</h2>
+<p>There are two ways to connect to a database. The first way is to use a <strong>community supported R package</strong>. Here are the most commonly used packages:</p>
+<ul>
+<li><a href="">RMySQL</a> - Connects to MySQL and MariaDB</li>
+<li><a href="">RPostgreSQL</a> - Connects to Postgres and Redshift</li>
+<li><a href="">RSQLite</a> - Embeds a SQLite database</li>
+<li><a href="">bigrquery</a> - Connects to Google’s BigQuery</li>
+<li><a href="">sparklyr</a> - Connect to a Spark context</li>
+</ul>
+<p>The second way to connect is to use the <a href="">odbc</a> package along with an <a href="">ODBC</a> driver. Most commercialy available databases provide their own ODBC driver.</p>
+</div>
+<div id="open-a-connection" class="section level2">
+<h2>Open a connection</h2>
+<p>Use the <code>dbConnect()</code> command to open the connection. Is in this command where we specify the driver, user, password, database name, and other arguments needed to properly start a session with the database. Conversely, <code>dbDisconnect()</code> will close the connection.</p>
+<p>A typical <code>dbConnect()</code> will look like this:</p>
+<pre class="r"><code>library(DBI)
+library(odbc)
+
+con &lt;- dbConnect(odbc,
+                   Driver    = &quot;SQL Server&quot;, 
+                   Server    = &quot;localhost&quot;,
+                   Database  = &quot;airontime&quot;,
+                   UID       = [My User ID],
+                   PWD       = [My Password],
+                   Port      = 1433)</code></pre>
+</div>
+<div id="tables-fields" class="section level2">
+<h2>Tables &amp; Fields</h2>
+<p>If you are using the RStudio IDE, then exploring an open database connection is as easy as expanding and drilling down into the schema using the Connections tab.</p>
+<p>Using code, to get a list of the tables in an existing database connection, use <code>dbListTables()</code></p>
+<pre class="r"><code>dbListTables(con)</code></pre>
+<pre><code>## [1] &quot;airlines&quot; &quot;airport&quot;  &quot;airports&quot; &quot;faithful&quot; &quot;flights&quot;  &quot;iris&quot;</code></pre>
+<p>For a list of the fields in a particular table inside the database connection use <code>dbListFields()</code></p>
+<pre class="r"><code>dbListFields(con, &quot;flights&quot;)</code></pre>
+<pre><code>##  [1] &quot;year&quot;           &quot;month&quot;          &quot;day&quot;            &quot;dep_time&quot;      
+##  [5] &quot;sched_dep_time&quot; &quot;dep_delay&quot;      &quot;arr_time&quot;       &quot;sched_arr_time&quot;
+##  [9] &quot;arr_delay&quot;      &quot;carrier&quot;        &quot;flight&quot;         &quot;tailnum&quot;       
+## [13] &quot;origin&quot;         &quot;dest&quot;           &quot;air_time&quot;       &quot;distance&quot;      
+## [17] &quot;hour&quot;           &quot;minute&quot;         &quot;time_hour&quot;</code></pre>
+</div>
+<div id="adding-and-removing-tables" class="section level2">
+<h2>Adding and Removing Tables</h2>
+<p>The <code>dbWriteTable()</code> and <code>dbRemoveTable()</code> can be used to perform their respective operations. The user will need to have the proper database rights to be able to run these operations.</p>
+<p>A data frame can be passed to <code>dbWriteTable()</code> to create and simultaneously populate the table:</p>
+<pre class="r"><code>library(nycflights13)
+dbWriteTable(con, &quot;flights&quot;, flights)</code></pre>
+</div>
+<div id="running-a-query" class="section level2">
+<h2>Running a Query</h2>
+<p>The <code>dbGetQuery()</code> command allows us to write queries and retrieve the results. How to best use this command is examined in this article: <a href="/run-queries-safely/">Run Queries Safely</a></p>
+</div>

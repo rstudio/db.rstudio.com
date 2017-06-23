@@ -1,0 +1,200 @@
+---
+title: "Deployment"
+output: html_document
+weight: 9
+---
+
+
+
+<p>There are two primary considerations when deploying content with database connections:</p>
+<ol style="list-style-type: decimal">
+<li>Ensuring the connection details for the development and deployment environments are in-sync</li>
+<li>Managing database credentials</li>
+</ol>
+<p>There are many different ways to meet these two requirements. The following examples show common deployment strategies:</p>
+<div id="managing-connections-during-deployment" class="section level1">
+<h1>Managing Connections During Deployment</h1>
+<div id="deploying-with-dsns" class="section level2">
+<h2>Deploying with DSNs</h2>
+<p>One way to manage ODBC connections is through DSNs. DSNs define the details for a connection including the server IP address, the database name, and often access credentials. DSNs are typically defined by an administrator and are accessible across the server. It also possible to have user-specific or project-specific DSNs.</p>
+<p>Deploying content that uses a DSN is easy. The R code would look like:</p>
+<pre class="r"><code>library(DBI)
+library(odbc)
+
+con &lt;- dbConnect(odbc::odbc(), &quot;My DSN Name&quot;)</code></pre>
+<p><code>My DSN Name</code> would correspond to an entry in an odbc.ini file. For example, the DSN name “PostgresSQL2” would be used to reference the corresponding entry in this hypothetical odic.ini file:</p>
+<pre class="ini"><code>[PostgreSQL2]
+Driver = /etc/lib/driver/libpsql.so
+Database = mydb.company.com
+Port = 5432
+UID = service
+PWD = serviceAcc0unt
+
+[SalesWarehouse]
+Driver = /etc/lib/drivers/oraclesqlib.so
+...</code></pre>
+<p>The key is to ensure the DSN in the development environment and the DSN in the deployment environment refer to the same database. It is possible that the two DSNs will use different credentials or even different drivers, but the queries submitted to the connection should work in both environments.</p>
+<p>Be careful, it is easy for DSNs to differ between the development and deployment environment. In some cases the differences will lead to an error. For example, if the DSN used locally does not exist on the server, the deployment will likely fail. In other cases, it is possible the DSNs will be similar enough for deployment to succeed, but different enough for other parts of the code to fail.</p>
+<p>When in doubt, be sure to ask your administrator to compare the odbc.ini and odbcinst.ini files used locally and on the deployed server.</p>
+</div>
+<div id="deploying-with-config-package" class="section level2">
+<h2>Deploying with Config Package</h2>
+<p>An alternative to relying on DSNs is to use the <a href="https://github.com/rstudio/config">config</a> package. The config package allows the connection code in R to reference an external file that defines values based on the environment. This process makes it easy to specify values to use for a connection locally and values to use after deployment.</p>
+<p>For example:</p>
+<p>R code:</p>
+<pre class="r"><code>library(DBI)
+library(odbc)
+library(config)
+
+dw &lt;- get(&quot;datawarehouse&quot;)
+
+con &lt;- dbConnect(
+   Driver = dw$driver,
+   Server = dw$server,
+   UID    = dw$uid,
+   PWD    = dw$pwd,
+   Port   = dw$port,
+   Database = dw$database
+)</code></pre>
+<p>config.yml:</p>
+<pre class="ini"><code>default:
+  datawarehouse:
+    driver: &#39;Postgres&#39; 
+    server: &#39;mydb-test.company.com&#39;
+    uid: &#39;local-account&#39;
+    pwd: &#39;my-password&#39;  // not recommended, see alternatives below
+    port: 5432
+    database: &#39;regional-sales-sample&#39;
+    
+rsconnect:
+  datawarehouse:
+    driver: &#39;PostgresPro&#39;
+    server: &#39;mydb-prod.company.com&#39;
+    uid: &#39;service-account&#39;
+    pwd: &#39;service-password&#39; // not recommended, see alternatives below
+    port: 5432
+    database: &#39;regional-sales-full&#39;</code></pre>
+<p>The config package determines the active configuration by looking at the <code>R_CONFIG_ACTIVE</code> environment variable. By default, RStudio Connect sets <code>R_CONFIG_ACTIVE</code> to the value <code>rsconnect</code>. In the config file above, the default datawarehouse values would be used locally and the datawarehouse values defined in the <code>rsconnect</code> section would be used on RStudio Connect. Administrators can optionally customize the name of the active configuration used in Connect.</p>
+</div>
+<div id="deploying-with-config-package-and-credentials" class="section level2">
+<h2>Deploying with Config Package and Credentials</h2>
+<p>In the previous example, the credentials used locally and after deployment were stored in plain text in the configuration file. There are many ways to avoid plain text storage. It is common that the method used to access credentials locally may vary from the method used for deployed content. For example, the following config uses keyring to access credentials locally, but accesses an environment variable on the deployed server.</p>
+<p>config.yml:</p>
+<pre class="ini"><code>default:
+  datawarehouse:
+    driver: &#39;Postgres&#39; 
+    server: &#39;mydb-test.company.com&#39;
+    uid: !expr keyring::key_get(&quot;db-credentials&quot;)[1,2]&#39;
+    pwd: !expr keyring::key_get(&quot;db-credentials&quot;)[1,2]&#39;
+    port: 5432
+    database: &#39;regional-sales-sample&#39;
+    
+rsconnect:
+  datawarehouse:
+    driver: &#39;PostgresPro&#39;
+    server: &#39;mydb-prod.company.com&#39;
+    uid: !expr Sys.getenv(&quot;DBUSER&quot;)
+    pwd: !expr Sys.getenv(&quot;DBPWD&quot;)
+    port: 5432
+    database: &#39;regional-sales-full&#39;</code></pre>
+</div>
+<div id="deploying-with-different-dsns" class="section level2">
+<h2>Deploying with Different DSNs</h2>
+<p>The config package provides a very flexible way to specify connections. It is even possible to use the config package with DSNs! For example, if the local DSN entry was named “DatawarehouseTest” and the DSN on the production server was named “DatawarehouseProd”:</p>
+<p>R code:</p>
+<pre class="r"><code>library(DBI)
+library(odbc)
+library(config)
+
+dsn &lt;- get(&quot;datawarehouse&quot;)
+
+con &lt;- dbConnect(odbc::odbc(), dsn)
+</code></pre>
+<p>config.yml</p>
+<pre class="ini"><code>default:
+  datawarehouse: &#39;DatawarehouseTest&#39;
+
+rsconnect:
+  datawarehouse: &#39;DatawarehouseProd&#39;</code></pre>
+<p>In all cases, it is important that the R code (whether a R Markdown document or a Shiny application) be able to run successfully in both the development and deployment environment without changes. It is not possible to change hard-coded values prior to deployment.</p>
+</div>
+</div>
+<div id="securing-access-to-data" class="section level1">
+<h1>Securing Access to Data</h1>
+<p>There are multiple ways to secure access to a database in deployed content. The most common methods are:</p>
+<div id="service-account" class="section level2">
+<h2>Service Account</h2>
+<p>It is typical for shiny applications and R Markdown reports to provide insight from data that is not directly accessible by the content audience. In these 1-to-many cases, it is common to define service accounts that access the database on behalf of the content audience. The previous examples assumed this type of model.</p>
+<p>Sometimes during local development the data scientist might be expected to use their own credentials. It is possible through a DSN or the config package to specify that local connections use the data scientist’s credentials and deployed connections use a service account. Be sure the code works for results for both accounts!</p>
+</div>
+<div id="query-by-user-shiny" class="section level2">
+<h2>Query by User (Shiny)</h2>
+<p>Even when a service account is used, it is still possible to restrict access to data using logic inside the application code. One option is to update the query based on the logged-in user. The username is available in Shiny applications through the <code>session$user</code> object. For example:</p>
+<pre class="r"><code>library(shiny)
+library(DBI)
+library(odbc)
+
+con &lt;- dbConnect(odbc::odbc(), &quot;Datawarehouse&quot;)
+
+# ... rest of shiny code 
+
+server &lt;- function(input, output, session) {
+   data &lt;- reactive({
+       q &lt;- &quot;SELECT * FROM sales-data WHERE user == ?user&quot;
+       query &lt;- sqlInterpolate(con, q, user = session$user)
+       sqlGetQuery(con, query)
+   })
+   
+   # ... some code that uses data()
+}
+</code></pre>
+</div>
+<div id="prompt-for-credentials-shiny" class="section level2">
+<h2>Prompt for Credentials (Shiny)</h2>
+<p>In Shiny it is also possible to prompt the user for their database credentials. For example:</p>
+<pre class="r"><code>library(shiny)
+library(DBI)
+library(odbc)
+
+# ... rest of shiny code 
+
+server &lt;- function(input, output, session) {
+   data &lt;- reactive({
+      req(input$uid, input$pwd)
+      con &lt;- dbConnect(odbc::odbc(),
+        Driver = &quot;Postgres&quot;,
+        Server = &quot;mydb.company.com&quot;,
+        Port = 5432,
+        Database = &quot;sales-data&quot;,
+        UID = input$uid,
+        PWD = input$pwd,
+      )
+      
+      data &lt;- dbGetQuery(con, &quot;SELECT * FROM sales&quot;)
+      
+      dbDisconnect(con)
+   
+   })
+   
+   # ... some code that uses data()
+}
+</code></pre>
+</div>
+<div id="run-as-the-logged-in-user-kerberos" class="section level2">
+<h2>Run As the Logged-in User (Kerberos)</h2>
+<p>In rare cases, it may be necessary for the data to be accessed by the application or report on behalf of the specific logged-in user without prompting the user for their credentials.</p>
+<p>This scenario is rare because it implies that each end user of the report or application has an account and access controls in the database. In other words, this model assumes a 1-to-1 model instead of the 1-to-many distribution model facilitated by a service account.</p>
+<p>In these scenarios it is most common to use Kerberos. RStudio Connect will need to be setup to run the application as the logged-in user. The <a href="http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current">admin guide</a> contains more details.</p>
+<p>Deployment of this type of content is usually straightforward because the connection code does not include any credentials and is the same in the local and deployed context.</p>
+<p>For example:</p>
+<pre class="r"><code>library(DBI)
+library(odbc)
+
+con &lt;- dbConnect(odbc::odbc(),
+  Driver = &quot;SQLServer&quot;,
+  Database  = &quot;Datawarehouse&quot;,
+  trusted_connection = &quot;True&quot;
+)</code></pre>
+<p>For more information on data access see this <a href="https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases">article</a>. In all cases, the credentials should not be stored as plain text in either the configuration file or the R code. See <a href="keyring.html">securing credentials</a> for more details.</p>
+</div>
+</div>

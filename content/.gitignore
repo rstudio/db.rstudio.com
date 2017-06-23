@@ -1,5 +1,4 @@
 config.yml
-*.html
 /dbi_cache
 /dplyr_cache
 /run-queries-safely_cache
