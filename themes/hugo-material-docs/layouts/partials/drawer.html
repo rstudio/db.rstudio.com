@@ -1,7 +1,4 @@
 <nav aria-label="Navigation">
-
-
-
   <div class="scrollable">
     <div class="wrapper">
 
@@ -13,36 +10,6 @@
         </ul>
         {{ end }}
 
-        {{ if isset .Site.Params "author" }}
-        <hr>
-        <span class="section">The author</span>
-        
-        <ul>
-          {{ with .Site.Social.twitter }}
-          <li>
-            <a href="https://twitter.com/{{ . }}" target="_blank" title="@{{ . }} on Twitter">
-              @{{ . }} on Twitter
-            </a>
-          </li>
-          {{ end }}
-
-          {{ with .Site.Social.github }}
-          <li>
-            <a href="https://github.com/{{ . }}" target="_blank" title="@{{ . }} on GitHub">
-              @{{ . }} on GitHub
-            </a>
-          </li>
-          {{ end }}
-
-          {{ with .Site.Social.email }}
-          <li>
-            <a href="mailto:{{ . }}" title="Email of {{ . }}">
-              Contact via email
-            </a>
-          </li>
-          {{ end }}
-        </ul>
-        {{ end }}
       </div>
     </div>
   </div>
