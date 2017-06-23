@@ -30,13 +30,19 @@ library(odbc)
 library(config)
 library(DBI)
 
-con <- dbConnect(odbc::odbc(), 
-  .connection_string = paste0("Driver={sqlserver};
-                              Server=", config::get("datawarehouse")$server ,";
-                              Port=1433;
-                              Database=", config::get("datawarehouse")$database ,";
-                              UID=", config::get("datawarehouse")$uid ,";
-                              PWD=", config::get("datawarehouse")$pwd ,";"))
+db <- config::get("mssql")
+
+con <- DBI::dbConnect(
+  odbc::odbc(),
+  Driver = db$Driver,
+  Server = db$Server,
+  Host = db$Host,
+  SVC = db$SVC,
+  Database = db$Database,
+  Schema = db$Schema,
+  UID  = db$UID,
+  PWD = db$PWD,
+  Port = db$Port)
 
 ```
 

@@ -43,7 +43,7 @@ con <- DBI::dbConnect(
 
 ## Connect to a Database
 
-There are two ways that DBI connects to a database.  The first way is to use a **community supported R package** that connect to a specific type of database.  Here are the most commonly used packages: 
+There are two ways to connect to a database.  The first way is to use a **community supported R package**.  Here are the most commonly used packages: 
 
 - [RMySQL]() - Connects to MySQL and MariaDB
 - [RPostgreSQL]() - Connects to Postgres and Redshift
@@ -51,7 +51,7 @@ There are two ways that DBI connects to a database.  The first way is to use a *
 - [bigrquery]() - Connects to Google’s BigQuery
 - [sparklyr]() - Connect to a Spark context
 
-The second way that DBI connects to a database is by using the **ODBC driver**.  Most commercialy available databases provide their own ODBC driver.  
+The second way to connect is to use the [odbc]() package along with an [ODBC]() driver.  Most commercialy available databases provide their own ODBC driver.  
 
 ## Open a connection
 

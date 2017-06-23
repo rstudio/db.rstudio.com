@@ -38,13 +38,22 @@ googleAnalytics = ""
 
 
 [[menu.main]]
+  weight = 5
+	name   = "Packages"
+	url    = "/"
+
+
+
+[[menu.main]]
   weight = 10
-	name   = "DBI package"
+	name   = "DBI"
+	parent = "Packages"
 	url    = "dbi/"
 
 [[menu.main]]
   weight = 11
-	name   = "dplyr package"
+	name   = "dplyr"
+	parent = "Packages"
 	url    = "dplyr/"
 
 [[menu.main]]
@@ -68,10 +77,17 @@ googleAnalytics = ""
   
 [[menu.main]]
 	name   = "Examples"
-	url    = "examples/"
+	url    = "/"
+
+[[menu.main]]
+	name   = "Simple example"
+	parent = "Examples"
+	url    = "/mssql-example"
 
 
-
-
+[social]
+	twitter = "rstudio"
+	github  = "rstudio"
+	email   = "info@rstudio.com"
 
 
