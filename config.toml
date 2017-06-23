@@ -67,6 +67,11 @@ googleAnalytics = ""
 	url    = "run-queries-safely/"
 	parent = "Best Practices"
 
+[[menu.main]]
+  weight = 34
+	name   = "Secure Credentials"
+	url    = "secure-credentials/"
+	parent = "Best Practices"	
 
 [[menu.main]]
   weight = 34

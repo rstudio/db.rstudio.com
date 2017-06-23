@@ -1,25 +1,10 @@
 ---
-weight: 1
-title: Databases using R
-
+output: md_document 
 ---
 
-## Current State
+<center><img src="/examples/mssql/better.png"  height="280" width="470" align="middle"></center>
 
-Using databases is unavoidable for those who analyze data as part of their jobs. As R developers, our first instinct may be to approach databases the same way we do regular files.  We may attempt to read the data either all at once or as few times as possible. The aim is to reduce the number of times we go back to the data ‘well’,  so our queries extract as much data as possible.  After that, we spend cycles analyzing the data in memory.  Here is what this model looks like:
-
-<img src="/examples/mssql/today.png"  height="250" width="400">
-
-Because the volume of data is significant with this approach, we usually attempt to come up with strategies to minimize the resources and time it takes to analyze the data.  We may try to retrieve all rows of a few columns, or a few rows of several of columns.  Another tactic is to save the query results into individual files for later analysis. 
-
-An improvement to the current approach would be to use the database’s SQL Engine to perform as much of the data exploration as possible.  An enterprise-grade SQL server will have more power, and will be better tuned, to execute transformations of large amounts of data.  Our goal would then be to bring into R a more targeted data set that will be used for visualization and modeling.
-
-This improvement comes at a cost: we will need to know how to write SQL queries, and will have to switch between both languages.  We may also end up using an external querying tool that is able to provide a list of tables and inline SQL code helpers. Of course, this involves switching between tools.  On a personal note, I used to switch from R to Microsoft SQL Management Studio. After I that, I would bring the finalized query back into my code in R.
-
-
-## A better way
-
-<img src="/examples/mssql/better.png"  height="250" width="400">
+</br>
 
 The `dplyr` package simplifies data transformation.  It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.  The first time I re-wrote R code using `dplyr`, the new script was at least half as long and much easier to understand.   
 
@@ -51,7 +36,7 @@ In this section, we will demonstrate how to access a Microsoft SQL Server databa
 
 A **database driver** is a program that allows the workstation and the database to communicate.  In Microsoft Windows, the drivers that connect to MS SQL databases are installed by default.  We need the **name** of the driver that will be used inside our code in R.  The easiest way to do this is to open the ODBC Data Source Administrator. To find it in your, system please refer to this article: [Check the ODBC SQL Server Driver Version (Windows)]( https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows) . Once the administrator program is open,  click on the **Drivers** tab.  In my laptop, these are the drivers available.  I will use **SQL Server** for the Driver argument in my connection in R.
 
-<img src="/examples/mssql/odbc.png"  height="250" width="400">
+<center><img src="/examples/mssql/odbc.png"  height="270" width="450" align="middle"></center>
 
 ### R packages
 
@@ -64,9 +49,9 @@ Besides `dplyr`, the following packages are required:
 The database accessibility feature is still being developed, so we will use the development versions of `dbplyr` and `dplyr`.
 
 ```
-devtools::install_github("tidyverse/dplyr")
-devtools::install_github("tidyverse/dbplyr")
-devtools::install_github("rstats-db/odbc")
+install.packages("dplyr")
+install.packages("odbc")
+install.packages("dbplyr")
 install.packages("DBI")
 ```
 
@@ -75,9 +60,8 @@ install.packages("DBI")
 We will use the `dbConnect()` function from the `DBI` package to connect to the database.  The value for the `Driver` argument is the name we determined in the *Database Driver* section above. 
 
 ```
-library(DBI)
 
-con <- dbConnect(odbc::odbc(),
+con <- DBI::dbConnect(odbc::odbc(),
                    Driver    = "SQL Server", 
                    Server    = "localhost",
                    Database  = "airontime",
@@ -214,13 +198,4 @@ Here are links that will provide a deeper look into their respective subjects:
 - [Vignette of the DBI package](https://cran.r-project.org/web/packages/DBI/vignettes/DBI-1.html)
 
 - [R for Data Science](http://r4ds.had.co.nz/) - An online book that covers how to use `dplyr` and other like packages that together are called the `tidyverse`.
-
-
-## Conclusion
-
-When we have only one method available to us, it is sometimes hard to see its inherent flaws. The method does what we need, so we do our best to overcome its shortfalls.  
-
-Our hope is that highlighting the issues related to importing large amounts of data into R, and the advantages of using `dplyr` to interact with databases, will be the encouragement needed to learn more about `dplyr` and to give it a try. 
-
-We plan to continue writing about the subject of databases using R in future posts. We will cover different aspects and techniques to get the most out of working with these two great technologies.
 
