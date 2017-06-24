@@ -14,7 +14,7 @@
     {{ end }}
 
     <script>
-      {{ "/* Add headers to scrollspy */" | safeJS }}
+      
       var headers   = document.querySelectorAll('div.level2');
       var scrollspy = document.getElementById('scrollspy');
 
@@ -24,12 +24,10 @@
             if(headers[i].id.length > 0){
               var li = document.createElement("li");
               li.setAttribute("class", "anchor");
-  
               var a  = document.createElement("a");
               a.setAttribute("href", "#" + headers[i].id);
               a.setAttribute("title", headers[i].getElementsByTagName("h2")[0].innerHTM);
               a.innerHTML = headers[i].getElementsByTagName("h2")[0].innerHTML;
-  
               li.appendChild(a)
               scrollspy.appendChild(li);
             }            
@@ -37,9 +35,7 @@
           }
         } else {
           scrollspy.parentElement.removeChild(scrollspy)
-        }
-
-      }
+        }}
     </script>
 
     {{ with .Site.GoogleAnalytics }}

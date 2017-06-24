@@ -1,4 +1,4 @@
-baseurl = "https://db.rstudio.com/"
+baseurl = "/"
 relativeurls = true
 languageCode = "en-us"
 title = "Using Databases in R"
@@ -29,7 +29,7 @@ googleAnalytics = ""
   favicon = "favicon.png"
 
 	[params.palette]
-    	primary = "rstudio-theme"
+    	primary = "rstudio-dark"
     	accent  = "orange"
 
     [params.font]
