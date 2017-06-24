@@ -1,5 +1,5 @@
 <center>
-<img src="/examples/mssql/better.png"  height="280" width="470" align="middle">
+<img src="/architecture.png"  height="220" width="470" align="middle">
 </center>
 </br>
 
