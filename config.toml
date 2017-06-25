@@ -42,19 +42,20 @@ googleAnalytics = ""
 	name   = "Packages"
 	url    = "/"
 
+[[menu.main]]
+  weight = 10
+	name   = "dplyr"
+	parent = "Packages"
+	url    = "dplyr/"
 
 
 [[menu.main]]
-  weight = 10
+  weight = 11
 	name   = "DBI"
 	parent = "Packages"
 	url    = "dbi/"
 
-[[menu.main]]
-  weight = 11
-	name   = "dplyr"
-	parent = "Packages"
-	url    = "dplyr/"
+
 
 [[menu.main]]
   weight = 30

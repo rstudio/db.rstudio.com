@@ -1,8 +1,7 @@
-<center>
-<img src="/architecture.png"  height="220" width="470" align="middle">
-</center>
-</br>
+    <img src="/homepage/header.png"  height="300" width="500" align="right">
+    <p>The `dplyr` package simplifies data transformation.  It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.  The first time I re-wrote R code using `dplyr`, the new script was at least half as long and much easier to understand.   
 
+</p>
 The `dplyr` package simplifies data transformation. It provides a
 consistent set of functions, called verbs, that can be used in
 succession and interchangeably to gain understanding of the data
@@ -33,6 +32,15 @@ in the previous section:
     communicate with the database, there is no need to change language,
     or tools, to perform the data exploration.
 
+Connection Options
+------------------
+
+<center>
+<img src="/homepage/commercial.png"  height="250" width="500">
+</center>
+<center>
+<img src="/homepage/open-source.png"  height="250" width="500">
+</center>
 Example
 -------
 
@@ -207,18 +215,3 @@ at any time, we just use `dplyr` to get the results quickly.
      9   Southwest Airlines Co. 12275
     10           Virgin America  5162
     # ... with more rows
-
-Additional Resources
---------------------
-
-Here are links that will provide a deeper look into their respective
-subjects:
-
--   [dplyr's Official Site](http://dplyr.tidyverse.org/)
-
--   [Vignette of the DBI
-    package](https://cran.r-project.org/web/packages/DBI/vignettes/DBI-1.html)
-
--   [R for Data Science](http://r4ds.had.co.nz/) - An online book that
-    covers how to use `dplyr` and other like packages that together are
-    called the `tidyverse`.
