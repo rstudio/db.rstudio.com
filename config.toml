@@ -102,6 +102,7 @@ googleAnalytics = ""
 	url    = "/backend"
 	
 [[menu.main]]
+  weight = 56
 	name   = "SQL Translation"
 	parent = "Advanced"
 	url    = "/translation"
