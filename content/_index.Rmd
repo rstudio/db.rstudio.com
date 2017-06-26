@@ -235,3 +235,6 @@ Ordered by: desc(n)
 10           Virgin America  5162
 # ... with more rows
 ```
+
+More examples are available on the left menu under the **Examples** section.
+

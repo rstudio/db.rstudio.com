@@ -4,35 +4,36 @@ weight: 5
 ---
 
 ```{r, include = FALSE, cache = FALSE}
-library(odbc)
-library(config)
+library(dplyr)
 library(DBI)
+library(dbplyr)
 
-db <- config::get("mssql")
+con <- DBI::dbConnect(RSQLite::SQLite(), path = ":memory:")
 
-con <- DBI::dbConnect(
-  odbc::odbc(),
-  Driver = db$Driver,
-  Server = db$Server,
-  Host = db$Host,
-  SVC = db$SVC,
-  Database = db$Database,
-  Schema = db$Schema,
-  UID  = db$UID,
-  PWD = db$PWD,
-  Port = db$Port)
+db_airports <- nycflights13::airports %>%
+  select(-tzone)
+
+copy_to(con,  db_airports, "airports",
+  temporary = FALSE
+)
 
 ```
 
-We will review two options to run SQL commands safely using the [DBI](/dbi/) package. The first option uses a method called **parameterized sql** and the second one uses **stored procedures**.  
+We will review three options to run SQL commands safely using the [DBI](/dbi/) package. These are:
 
-The `dbGetQuery()` command allows us to write queries and retrieve the results.  The query has to be written using the SQL syntax that matches to the database type.  In this example we're using a MS SQL database, so we will use T-SQL syntax:
+- Parameterised queries
+- Interpolation by "hand"
+- Manual escaping
+
+## SQL Injection Attack
+
+The `dbGetQuery()` command allows us to write queries and retrieve the results.  The query has to be written using the SQL syntax that matches to the database type. 
+
+For example, here is a database that contains the *airports* data from NYC Flights data:
 
 ```{r, echo = TRUE, cache = FALSE}
-dbGetQuery(con, "SELECT TOP 5 * FROM airports ")
+dbGetQuery(con, "SELECT * FROM airports LIMIT 5")
 ```
-
-## User inputs
 
 Often you need to write queries that depend on user input. For example, you might want to allow the user to pick an airport to focus their analysis on. To do this, it's tempting to create the SQL string yourself by pasting strings together:
 
@@ -41,7 +42,7 @@ airport_code <- "GPT"
 dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
 ```
 
-(Here `airport_code` is created in the script, in real-life it might be an input typed into a shiny app)
+Here `airport_code` is created in the script, in real-life it might be an input typed into a Shiny app.
 
 The problem with creating SQL strings with `paste0()` is that the careful attacker can create inputs that return more rows than you want:
 
@@ -50,10 +51,10 @@ airport_code <- "GPT' or faa = 'MSY"
 dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
 ```
 
-Or take destructive actions on your database:
+Or take **destructive actions on your database**:
 
 ```{r, eval = FALSE}
-airport_code <- "GPT'; DROP TABLE airports--"
+airport_code <- "GPT'; DROP TABLE 'airports"
 dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
 ```
 
@@ -67,7 +68,7 @@ There are three ways to avoid this problem:
 
 These are ordered by the level of safety they provide: if you can use `dbSendQuery()` and `dbBind()`, you should.
 
-### Parameterized queries
+## Parameterized queries
 
 All modern database engines provide a way to write __parameterised queries__, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit the database can often better optimise the query so it runs faster.
 
@@ -78,13 +79,14 @@ Using a parameterised query with DBI requires three steps.
     
     ```{r}
     airport <- dbSendQuery(con, "SELECT * FROM airports WHERE faa = ?")
+    
     ```
 
 1.  Use `dbBind()` to execute the query with specific values, then `dbFetch()`
     to get the results:
 
     ```{r}
-    dbBind(airport, "GPT")
+    dbBind(airport, list("GPT"))
     dbFetch(airport)
     ```
 
@@ -95,11 +97,14 @@ Using a parameterised query with DBI requires three steps.
     dbClearResult(airport)
     ```
 
-### Interpolation by "hand"
+## Interpolation by "hand"
 
 While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that `dbBind()` doesn't work with the database connector you are using you can fall back to `sqlInterpolate()` which will safely do the interpolation for you.
 
 ```{r, echo = TRUE, cache = FALSE}
+
+airport_code <- "GPT"
+
 sql <- sqlInterpolate(con, 
   "SELECT * FROM airports  where faa = ?code", 
   code = airport_code
@@ -109,70 +114,36 @@ sql
 dbGetQuery(con, sql)
 ```
 
-### Manual escaping
+The query returns no records if we try the same SQL Injection:
+
+```{r, echo = TRUE, cache = FALSE}
+
+airport_code <- "GPT' or faa = 'MSY"
+
+sql <- sqlInterpolate(con, 
+  "SELECT * FROM airports  where faa = ?code", 
+  code = airport_code
+)
+sql
+
+dbGetQuery(con, sql)
+```
+
+## Manual escaping
 
 Sometimes you can't create the SQL you want using either of the previous methods. If you're in this unhappy situation first make absolutely sure that you haven't missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it's better to rely on existing code that multiple people have carefully reviewed.
 
-However, if there's no other way around it, you can use `dbQuoteString()` to add the quotes for you. This method will automatically take care of dangerous characters in the same way as `sqlInterpolate()` (better)` and `dbBind()` (best).
+However, if there's no other way around it, you can use `dbQuoteString()` to add the quotes for you. This method will automatically take care of dangerous characters in the same way as `sqlInterpolate()` (*better*) and `dbBind()` (*best*).
 
 ```{r, echo = TRUE, cache = FALSE}
+
+airport_code <- "GPT' or faa = 'MSY"
+
 sql <- paste0("SELECT * FROM airports WHERE faa = ", dbQuoteString(con, airport_code))
 
 sql
 dbGetQuery(con, sql)
+
 ```
 
 You may also need `dbQuoteIdentifier()` if you are creating tables or using user input to choose which column to filter on.
-
-## Stored Procedures
-
-**Stored Procedures** are scripts that reside inside the database and execute a series of steps that typically modify tables or records inside the database.  Many enterprise-grade databases support Stored Procedures.  
-
-A common example of the use of Store Procedures is to record new business transactions that impact multiple tables. In this case, the Stored Procedure handles the creation of new keys and ensures that all of the updates are performed correctly.  
-
-Usually, implementing Stored Procedures involves collaborating with a Database Administrator or Database Developer.  If there are Stored Procedures we are instructed to use, we can use the `EXEC` command in SQL.  
-
-The following example calls a Stored Procedure called
-[sp_stored_procedures](https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-stored-procedures-transact-sql) which returns a data set containing a list of all of the Stored Procedures available in the database.
-
-```{r, echo = TRUE, cache = FALSE}
-head(dbGetQuery(con, "EXEC sp_stored_procedures"))
-```
-
-We are able to pass parameters to a Stored Procedure, similarly to how we pass an argument to an R function.  Here is the spec from taken from the [MS SQL page](https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-stored-procedures-transact-sql): 
-
-```
-sp_stored_procedures [ [ @sp_name = ] 'name' ]   
-    [ , [ @sp_owner = ] 'schema']   
-    [ , [ @sp_qualifier = ] 'qualifier' ]  
-    [ , [@fUsePattern = ] 'fUsePattern' ]  
-```
-
-```{r}
-sql <- sqlInterpolate("EXEC sp_stored_procedures @sp_owner = ?sp", sp = sys)
-head(dbGetQuery(con, sql))
-```
-
-The main goal of this Stored Procedure is to retrieve data.  If we run one that aims at making updates to the database we would then run it as a SQL transaction
-
-```{r, eval = FALSE}
-sql <- sqlInterpolate("EXEC sp_stored_procedures @sp_owner = ?sp", sp = sys)
-
-dbBegin(con)
-dbExecute(con, sql)
-dbCommit(con)
-```
-
-If you're going to call a stored procedure frequently, you should make an R function wrapper:
-
-```{r}
-list_stored_procedures <- function(name) {
-  sql <- sqlInterpolate("EXEC sp_stored_procedures @sp_owner = ?name", name = name)
-  
-  dbBegin(con)
-  res <- dbExecute(con, sql)
-  dbCommit(con)
-  
-  res
-}
-```

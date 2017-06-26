@@ -275,3 +275,6 @@ at any time, we just use `dplyr` to get the results quickly.
      9   Southwest Airlines Co. 12275
     10           Virgin America  5162
     # ... with more rows
+
+More examples are available on the left menu under the **Examples**
+section.

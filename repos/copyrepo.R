@@ -47,7 +47,7 @@ remove_lines("content/translation.Rmd", 247, 248)
 # DBI article -----------------------------------------------------------------
 copy_article("DBI/README.md", "content/DBI.md")
 replace_text("content/DBI.md", "# DBI", "# Introduction to DBI" )
-remove_lines("content/DBI.md", 3, 8)
+remove_lines("content/DBI.md", 3, 13)
 
 # DBI Backend -----------------------------------------------------------------
 copy_article("DBI/vignettes/backend.Rmd", "content/backend.Rmd")
