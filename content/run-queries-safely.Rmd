@@ -29,55 +29,100 @@ We will review two options to run SQL commands safely using the [DBI](/dbi/) pac
 The `dbGetQuery()` command allows us to write queries and retrieve the results.  The query has to be written using the SQL syntax that matches to the database type.  In this example we're using a MS SQL database, so we will use T-SQL syntax:
 
 ```{r, echo = TRUE, cache = FALSE}
-
 dbGetQuery(con, "SELECT TOP 5 * FROM airports ")
-
 ```
 
+## User inputs
 
-## Parameterized Query
-
-The [dplyr](/dplyr/) package is the recommended way to perform ad-hoc analyses. But in cases when we need to run the same query multiple times and each time using a different value, concatenating the SQL command using `paste0()` may be considered first.  
-
-For times when the code is exposed to end-users, such as for interactive dashboards and apps, it is better to run a **parameterized query** using the `sqlInterpolate()` command; this will prevent a bad actor from passing a malicious value to the app this is called **SQL Injection**.
-
-In the following example, we will use the `airport_code` variable to simulate a valued entered in an app.  The query expect one airport code passed in by the app:
-
+Often you need to write queries that depend on user input. For example, you might want to allow the user to pick an airport to focus their analysis on. To do this, it's tempting to create the SQL string yourself by pasting strings together:
 
 ```{r, echo = TRUE, cache = FALSE}
 airport_code <- "GPT"
-dbGetQuery(con, paste0("SELECT * FROM airports  where faa = '", airport_code ,"'"))
+dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
 ```
 
-In this **SQL Injection** example we have closed the single quote and added, or injected, an additional *WHERE* statement.  This will make the database return 2 records, which is not the desired outcome.  
+(Here `airport_code` is created in the script, in real-life it might be an input typed into a shiny app)
+
+The problem with creating SQL strings with `paste0()` is that the careful attacker can create inputs that return more rows than you want:
 
 ```{r, echo = TRUE, cache = FALSE}
 airport_code <- "GPT' or faa = 'MSY"
-dbGetQuery(con, paste0("SELECT * FROM airports  where faa = '", airport_code ,"'"))
+dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
 ```
 
-This is a rather innocuous example; most notably, malicious SQL Injections will try to pass statements that modify the database, including deleting tables.
+Or take destructive actions on your database:
 
-There are two steps to creating a **parameterized query**:
+```{r, eval = FALSE}
+airport_code <- "GPT'; DROP TABLE airports--"
+dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
+```
 
-- Create a query that uses the question mark as a prefix of variables that will be passed
-- Use `sqlInterpolate()`, instead of `paste0()`, inside `dbGetQuery()` and pass an argument for each variable defined in the SQL statement
+This is called __SQL injection attack__.
 
-This is what it looks like using current example:
+There are three ways to avoid this problem:
+
+* Use a parameterised query with `dbSendQuery()` and `dbBind()`.
+* Use the `sqlInterpolate()` function to safely combine a SQL string with data
+* Manually escape the inputs using `dbQuoteString()`.
+
+These are ordered by the level of safety they provide: if you can use `dbSendQuery()` and `dbBind()`, you should.
+
+### Parameterized queries
+
+All modern database engines provide a way to write __parameterised queries__, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit the database can often better optimise the query so it runs faster.
+
+Using a parameterised query with DBI requires three steps. 
+
+1.  You create a query containing a `?` placeholder and send it to the database
+    with `dbSendQuery()`:
+    
+    ```{r}
+    airport <- dbSendQuery(con, "SELECT * FROM airports WHERE faa = ?")
+    ```
+
+1.  Use `dbBind()` to execute the query with specific values, then `dbFetch()`
+    to get the results:
+
+    ```{r}
+    dbBind(airport, "GPT")
+    dbFetch(airport)
+    ```
+
+1.  Once you're done using the parameterised query, clean it up by calling 
+    `dbClearResult()`
+    
+    ```{r}
+    dbClearResult(airport)
+    ```
+
+### Interpolation by "hand"
+
+While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that `dbBind()` doesn't work with the database connector you are using you can fall back to `sqlInterpolate()` which will safely do the interpolation for you.
 
 ```{r, echo = TRUE, cache = FALSE}
-airport_code <- "GPT"
-airport_sql <- "SELECT * FROM airports  where faa = ?code"
-dbGetQuery(con, sqlInterpolate(con, airport_sql, code = airport_code))
+sql <- sqlInterpolate(con, 
+  "SELECT * FROM airports  where faa = ?code", 
+  code = airport_code
+)
+sql
+
+dbGetQuery(con, sql)
 ```
 
-In this case, the **SQL Injection** is unsuccessful. 
+### Manual escaping
+
+Sometimes you can't create the SQL you want using either of the previous methods. If you're in this unhappy situation first make absolutely sure that you haven't missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it's better to rely on existing code that multiple people have carefully reviewed.
+
+However, if there's no other way around it, you can use `dbQuoteString()` to add the quotes for you. This method will automatically take care of dangerous characters in the same way as `sqlInterpolate()` (better)` and `dbBind()` (best).
 
 ```{r, echo = TRUE, cache = FALSE}
-airport_code <- "GPT' or faa = 'MSY"
-airport_sql <- "SELECT * FROM airports  where faa = ?code"
-dbGetQuery(con, sqlInterpolate(con, airport_sql, code = airport_code))
+sql <- paste0("SELECT * FROM airports WHERE faa = ", dbQuoteString(con, airport_code))
+
+sql
+dbGetQuery(con, sql)
 ```
+
+You may also need `dbQuoteIdentifier()` if you are creating tables or using user input to choose which column to filter on.
 
 ## Stored Procedures
 
@@ -104,19 +149,30 @@ sp_stored_procedures [ [ @sp_name = ] 'name' ]
 ```
 
 ```{r}
-head(dbGetQuery(con, "EXEC sp_stored_procedures @sp_owner = 'sys'"))
+sql <- sqlInterpolate("EXEC sp_stored_procedures @sp_owner = ?sp", sp = sys)
+head(dbGetQuery(con, sql))
 ```
 
 The main goal of this Stored Procedure is to retrieve data.  If we run one that aims at making updates to the database we would then run it as a SQL transaction
 
 ```{r, eval = FALSE}
+sql <- sqlInterpolate("EXEC sp_stored_procedures @sp_owner = ?sp", sp = sys)
+
 dbBegin(con)
-dbExecute(con, "EXEC sp_stored_procedures @sp_owner = 'sys'")
+dbExecute(con, sql)
 dbCommit(con)
 ```
 
+If you're going to call a stored procedure frequently, you should make an R function wrapper:
 
-
-
-
-
+```{r}
+list_stored_procedures <- function(name) {
+  sql <- sqlInterpolate("EXEC sp_stored_procedures @sp_owner = ?name", name = name)
+  
+  dbBegin(con)
+  res <- dbExecute(con, sql)
+  dbCommit(con)
+  
+  res
+}
+```
