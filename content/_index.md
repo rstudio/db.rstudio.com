@@ -1,18 +1,26 @@
-    <img src="/homepage/header.png"  height="300" width="500" align="right">
-    <p>The `dplyr` package simplifies data transformation.  It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.  The first time I re-wrote R code using `dplyr`, the new script was at least half as long and much easier to understand.   
+Using databases with R
+======================
+
+<img src="/homepage/header.png"   align="right">
+
+<p>
+    RStudio makes it easier to access and analyze your data with R.  There are tools and best practices that are needed when working with data in databases.  Additionally, a new approach is needed to be more effective at 'getting to know' the information found in databases, this website is dedicated to cover such approach.
 
 </p>
+
+Focus on **dplyr**
+------------------
+
 The `dplyr` package simplifies data transformation. It provides a
 consistent set of functions, called verbs, that can be used in
 succession and interchangeably to gain understanding of the data
-iteratively. The first time I re-wrote R code using `dplyr`, the new
-script was at least half as long and much easier to understand.
+iteratively.
 
-Another nice thing about `dplyr` is that it can interact with databases
-directly. It accomplishes this by translating the `dplyr` verbs into SQL
-queries. This incredibly convenient feature allows us to ‘speak’
-directly with the database from R, thus resolving the issues brought up
-in the previous section:
+Another nice thing about `dplyr` is that it can **interact** with
+databases directly. It accomplishes this by translating the `dplyr`
+verbs into SQL queries. This incredibly convenient feature allows us to
+‘speak’ directly with the database from R. Other advantages of this
+approach are:
 
 -   **Run data exploration over all of the data** - Instead of coming up
     with a plan to decide what data to import, we can focus on analyzing
@@ -32,17 +40,49 @@ in the previous section:
     communicate with the database, there is no need to change language,
     or tools, to perform the data exploration.
 
+<center>
+<img src="/homepage/interact.png"  height="250" width="420" >
+</center>
+<br/>
+
 Connection Options
 ------------------
 
+At the center of this approach is the `DBI` package. This package acts
+as 'middle-ware' between packages that allow connectivity with the
+database and the user or other packages. It provides a consistent set of
+functions regardless of the database type we are connecting to. The
+`dplyr` package depends on the `DBI` package for communication with
+databases.
+
+There are packages that enables a direct connection between the an
+open-source database and R. Currently, such packages exist for the
+following databases: MySQL, SQLite, PostgreSQL and bigquery. A
+functional architecture would look something like this:
+
 <center>
-<img src="/homepage/commercial.png"  height="250" width="500">
+<img src="/homepage/open-source.png"  height="250" width="500" align="middle">
 </center>
+<br/>
+
+Most commercial databases, like Oracle and Microsoft SQL Server, offer
+ODBC drivers that allow you to connect your tool to the database. Even
+though there are R packages that allow you to use ODBC drivers, the
+connection will more likely not be compatible with DBI. The new `odbc`
+package solves that problem by providing a, what is called, DBI-back-end
+to any ODBC driver connection. The functional architecture for this mode
+would look like this:
+
 <center>
-<img src="/homepage/open-source.png"  height="250" width="500">
+<img src="/homepage/commercial.png"  height="250" width="500" align = "middle">
 </center>
-Example
--------
+<br/>
+
+Quick Example
+-------------
+
+We will cover how to access a Microsoft SQL Server database from a
+workstation that is running on Microsoft Windows.
 
 There are three things that we will need to get started:
 
@@ -52,9 +92,6 @@ There are three things that we will need to get started:
     Server
 
 -   All of the required packages installed in R
-
-In this section, we will demonstrate how to access a Microsoft SQL
-Server database from a workstation that is running on Microsoft Windows.
 
 ### Database Driver
 
@@ -71,7 +108,7 @@ In my laptop, these are the drivers available. I will use **SQL Server**
 for the Driver argument in my connection in R.
 
 <center>
-<img src="/examples/mssql/odbc.png"  height="270" width="450" align="middle">
+<img src="/homepage/odbc.png"  height="270" width="450" align="middle">
 </center>
 ### R packages
 
