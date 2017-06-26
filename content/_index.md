@@ -78,6 +78,29 @@ would look like this:
 </center>
 <br/>
 
+If you are interested in creating your own package that connects `DBI`
+to a database, please review the article [DBI Backend](backend).
+
+SQL Translations for dplyr
+--------------------------
+
+A complimentary package called `dbplyr` contains the translations of the
+vendor specific SQL for `dplyr` to use. As of today, we have
+translations for the following databases:
+
+-   Microsoft SQL Server
+-   Oracle
+-   Apache Hive
+-   Apache Impala
+-   PostgreSQL
+-   MySQL
+-   SQLite
+
+If the database you are interested in working with is not listed here
+yet, then you can still use `DBI` and `odbc` to connect and send SQL
+queries. If you would like to contribute a translation, please see the
+[SQL Translation](translation) page in this website.
+
 Quick Example
 -------------
 
