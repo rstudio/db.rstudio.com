@@ -42,19 +42,20 @@ googleAnalytics = ""
 	name   = "Packages"
 	url    = "/"
 
+[[menu.main]]
+  weight = 10
+	name   = "dplyr"
+	parent = "Packages"
+	url    = "dplyr/"
 
 
 [[menu.main]]
-  weight = 10
+  weight = 11
 	name   = "DBI"
 	parent = "Packages"
 	url    = "dbi/"
 
-[[menu.main]]
-  weight = 11
-	name   = "dplyr"
-	parent = "Packages"
-	url    = "dplyr/"
+
 
 [[menu.main]]
   weight = 30
@@ -81,6 +82,7 @@ googleAnalytics = ""
   
   
 [[menu.main]]
+  weight = 44
 	name   = "Examples"
 	url    = "/"
 
@@ -88,6 +90,22 @@ googleAnalytics = ""
 	name   = "Simple example"
 	parent = "Examples"
 	url    = "/mssql-example"
+
+[[menu.main]]
+  weight = 54
+	name   = "Advanced"
+	url    = "/"
+
+[[menu.main]]
+	name   = "DBI Backend"
+	parent = "Advanced"
+	url    = "/backend"
+	
+[[menu.main]]
+	name   = "SQL Translation"
+	parent = "Advanced"
+	url    = "/translation"
+	
 
 
 [social]
