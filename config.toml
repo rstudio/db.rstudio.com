@@ -68,11 +68,6 @@ googleAnalytics = ""
 	url    = "run-queries-safely/"
 	parent = "Best Practices"
 
-[[menu.main]]
-  weight = 34
-	name   = "Secure Credentials"
-	url    = "secure-credentials/"
-	parent = "Best Practices"	
 
 [[menu.main]]
   weight = 34
@@ -80,16 +75,6 @@ googleAnalytics = ""
 	url    = "deployment/"
 	parent = "Best Practices"	
   
-  
-[[menu.main]]
-  weight = 44
-	name   = "Examples"
-	url    = "/"
-
-[[menu.main]]
-	name   = "Simple example"
-	parent = "Examples"
-	url    = "/mssql-example"
 
 [[menu.main]]
   weight = 54
