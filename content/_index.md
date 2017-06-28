@@ -2,7 +2,6 @@ Using databases with R
 ======================
 
 <img src="/homepage/header.png"   align="right">
-
 <p>
     RStudio makes it easier to access and analyze your data with R.  There are tools and best practices that are needed when working with data in databases.  Additionally, a new approach is needed to be more effective at 'getting to know' the information found in databases, this website is dedicated to cover such approach.
 
