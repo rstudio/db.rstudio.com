@@ -171,5 +171,4 @@ Database=/tmp/testing
 ```
 
 See also: [unixODBC without the GUI](http://www.unixodbc.org/odbcinst.html) for more information and examples.
-NA
-```
+
