@@ -61,6 +61,12 @@ googleAnalytics = ""
   weight = 30
 	name   = "Best Practices"
 	url    = "/"
+	
+[[menu.main]]
+  weight = 31
+  name = "Finding ODBC Drivers"
+  url = "drivers/"
+  parent = "Best Practices"
 
 [[menu.main]]
 	weight = 31
