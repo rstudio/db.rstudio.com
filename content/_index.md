@@ -4,7 +4,7 @@ Using databases with R
 <img src="/homepage/header.png"   align="right">
 
 <p>
-    RStudio makes it easier to access and analyze your data with R.  There are tools and best practices that are needed when working with data in databases.  Additionally, a new approach is needed to be more effective at 'getting to know' the information found in databases, this website is dedicated to cover such approach.
+    RStudio makes it easier to access and analyze your data with R.  Many analysts have most of their data in databases. At RStudio we are actively working to make it as easy as possible to get data out of databases and into R. This website is meant to document, over time, all database best practices and tools for R, so you can find everything you need in one place.
 
 </p>
 
@@ -275,6 +275,3 @@ at any time, we just use `dplyr` to get the results quickly.
      9   Southwest Airlines Co. 12275
     10           Virgin America  5162
     # ... with more rows
-
-More examples are available on the left menu under the **Examples**
-section.
