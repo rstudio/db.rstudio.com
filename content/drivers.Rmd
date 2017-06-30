@@ -1,11 +1,7 @@
 ---
-title: Finding ODBC Drivers
-  
-    
+title: Setting up ODBC Drivers 
 ---
 
-
-## Installation
 For Unix and MacOS ODBC drivers should be compiled against
 [unixODBC](http://www.unixodbc.org/). Drivers compiled against [iODBC](http://www.iodbc.org/) _may_ also
 work, but are not fully supported.
@@ -14,22 +10,23 @@ After installation of the driver manager and driver, you will have to
 register the driver in a [odbcinst.ini](#dsn-configuration-files) file for it
 to appear in `odbc::odbcListDrivers()`.
 
-### Windows
+## Microsoft Windows
+
 Windows is bundled with ODBC libraries however drivers for each database
 need to be installed separately. Windows ODBC drivers typically include an
 installer that needs to be run and will install the driver to the proper
 locations.
 
-### MacOS
+## Apple macOS
 [homebrew](http://brew.sh/) can be used to easily install database drivers on MacOS.
 
-#### UnixODBC - Required for all databases
+### UnixODBC - Required for all databases
 ```shell
 # Install the unixODBC library
 brew install unixodbc
 ```
 
-#### Common DB drivers
+### Common DB drivers
 ```shell
 # SQL Server ODBC Drivers (Free TDS)
 brew install freetds --with-unixodbc
@@ -44,17 +41,17 @@ brew install mysql
 brew install sqliteodbc
 ```
 
-### Linux - Debian / Ubuntu
+##Linux - Debian / Ubuntu
 [apt-get](https://wiki.debian.org/Apt) can be used to easily install database
 drivers on Linux distributions which support it, such as Debian and Ubuntu.
 
-#### UnixODBC - Required for all databases
+### UnixODBC - Required for all databases
 ```shell
 # Install the unixODBC library
 apt-get install unixodbc unixodbc-dev
 ```
 
-#### Common DB drivers
+### Common DB drivers
 ```shell
 # SQL Server ODBC Drivers (Free TDS)
 apt-get install tdsodbc
@@ -69,7 +66,8 @@ apt-get install libmyodbc
 apt-get install libsqliteodbc
 ```
 
-### R
+## R
+
 ```R
 # Install the latest odbc release from CRAN:
 install.packages("odbc")
@@ -80,6 +78,7 @@ devtools::install_github("rstats-db/odbc")
 ```
 
 ## Connecting to a Database
+
 Databases can be connected by specifying a connection string directly, or with
 DSN configuration files.
 
@@ -95,16 +94,6 @@ con <- dbConnect(odbc::odbc(),
   pwd = "password",
   host = "localhost",
   port = 5432)
-```
-
-Alternatively you can pass a complete connection string as the
-`.connection_string` argument. [The Connection Strings
-Reference](https://www.connectionstrings.com) is a useful resource that has
-example connection strings for a large variety of databases.
-```r
-library(DBI)
-con <- dbConnect(odbc::odbc(),
-  .connection_string = "Driver={PostgreSQL Driver};Uid=postgres;Pwd=password;Host=localhost;Port=5432;Database=test_db;")
 ```
 
 ### DSN Configuration files

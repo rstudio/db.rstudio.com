@@ -77,10 +77,15 @@ googleAnalytics = ""
 
 [[menu.main]]
   weight = 34
-	name   = "Deploying Content"
+	name   = "Securing Deployed Content"
 	url    = "deployment/"
 	parent = "Best Practices"	
-  
+
+[[menu.main]]
+  weight = 34
+	name   = "Making Scripts Portable"
+	url    = "portable-code/"
+	parent = "Best Practices"	  
 
 [[menu.main]]
   weight = 54
