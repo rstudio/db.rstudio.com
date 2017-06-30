@@ -13,36 +13,35 @@ output: md_document
 
 ## Focus on **dplyr**
 
-The `dplyr` package simplifies data transformation.  It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.  
+The `dplyr` package simplifies data transformation. It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.
 
+Another nice thing about **dplyr is that it can interact with databases directly**. It accomplishes this by translating the dplyr verbs into SQL queries. This incredibly convenient feature allows us to ‘speak’ directly with the database from R. Other advantages of this approach are:
 
+ 1. **Run data exploration over all of the data** - Instead of coming up with a plan to decide what data to import, we can focus on analyzing the data inside the database, which in turn should yield faster insights.
 
+ 1. **Use the SQL Engine to run the data transformations**- We are, in effect, pushing the computation to the database because dplyr is sending SQL queries to the database.
 
-Another nice thing about `dplyr` is that it can **interact** with databases directly.  It accomplishes this by translating the `dplyr` verbs into SQL queries.  This incredibly convenient feature allows us to ‘speak’ directly with the database from R. Other advantages of this approach are:
+ 1. **Collect a targeted dataset** - After become familiar with the data and choosing the data points that will either be shared or modeled, a final query can then be used to bring back only that data into memory in R.
 
-- **Run data exploration over all of the data**  -  Instead of coming up with a plan to decide what data to import, we can focus on analyzing the data inside the database, which in turn should yield faster insights.
+ 1. **All your code is in R! ** - Because we are using dplyr to communicate with the database, there is no need to change language, or tools, to perform the data exploration.
 
-- **Use the SQL Engine to run the data transformations** -  We are, in effect, pushing the computation to the database because `dplyr` is sending SQL queries to the database.
-
-- **Collect a targeted dataset** - After become familiar with the data and choosing the data points that will either be shared or modeled, a final query can then be used to bring back only that data into memory in R. 
-
-- **All your code is in R!** - Because we are using `dplyr` to communicate with the database, there is no need to change language, or tools, to perform the data exploration.
 
   <center><img src="/homepage/interact.png"  height="250" width="420" > </center><br/>
 
 
 ## Connection Options
 
-At the center of this approach is the `DBI` package.  This package acts as 'middle-ware' between packages that allow connectivity with the database and the user or other packages.  It provides a consistent set of functions regardless of the database type we are connecting to.  The `dplyr` package depends on the `DBI` package for communication with databases.
+At the center of this approach is the `DBI` package. This package acts as *‘middle-ware’* between packages that allow connectivity with the database and the user or other packages. It provides a consistent set of functions regardless of the database type we are connecting to. The dplyr package depends on the DBI package for communication with databases.
 
-There are packages that enables a direct connection between the an open-source database and R. Currently, such packages exist for the following databases: MySQL, SQLite, PostgreSQL and bigquery. A functional architecture would look something like this:
+There are packages that enables a direct connection between the an open-source database and R. Currently, such packages exist for the following databases: *MySQL, SQLite, PostgreSQL and bigquery*. A functional architecture would look something like this:
 
 <center>
   <img src="/homepage/open-source.png"  height="250" width="500" align="middle">
 </center>
 <br/>
 
-Most commercial databases, like Oracle and Microsoft SQL Server, offer ODBC drivers that allow you to connect your tool to the database.  Even though there are R packages that allow you to use ODBC drivers, the connection will more likely not be compatible with DBI.  The new `odbc` package solves that problem by providing a, what is called, DBI-back-end to any ODBC driver connection. The functional architecture for this mode would look like this:
+
+Most commercial databases, like Oracle and Microsoft SQL Server, offer ODBC drivers that allow you to connect your tool to the database. Even though there are R packages that allow you to use ODBC drivers, the connection will more likely not be compatible with DBI. The new odbc package solves that problem by providing a, what is called, DBI-back-end to any ODBC driver connection. The functional architecture for this mode would look like this:
 
 <center>
 <img src="/homepage/commercial.png"  height="250" width="500" align = "middle">
@@ -55,15 +54,20 @@ If you are interested in creating your own package that connects `DBI` to a data
 
 A complimentary package called `dbplyr` contains the translations of the vendor specific SQL for `dplyr` to use. As of today, we have translations for the following databases:
 
-- Microsoft SQL Server
-- Oracle
-- Apache Hive
-- Apache Impala
-- PostgreSQL
-- MySQL
-- SQLite
+  - <img src="/logos/mssql.png", width = 50, height = 50> Microsoft SQL Server
+  - <img src="/logos/oracle.png", width = 50, height = 50>  Oracle
+  - <img src="/logos/hive.png", width = 50, height = 50> Apache Hive
+  - <img src="/logos/impala.png", width = 50, height = 50> Apache Impala
+  - <img src="/logos/postgresql.png", width = 50, height = 50> PostgreSQL
 
-If the database you are interested in working with is not listed here yet, then you can still use `DBI` and `odbc` to connect and send SQL queries.  If you would like to contribute a translation, please see the [SQL Translation](translation) page in this website.
+In the development version of `dbplyr` we also have translations for:
+
+  - <img src="/logos/redshift.png", width = 50, height = 50> Amazon Redshift
+
+
+The database you are interested in is not listed here? you can still use `DBI` and `odbc` to connect and send SQL queries.  If you would like to contribute a translation, please see the [SQL Translation](translation) page in this website.
+
+
 
 ## Quick Example
 
@@ -81,7 +85,7 @@ There are three things that we will need to get started:
 
 A **database driver** is a program that allows the workstation and the database to communicate.  In Microsoft Windows, the drivers that connect to MS SQL databases are installed by default.  We need the **name** of the driver that will be used inside our code in R.  The easiest way to do this is to open the ODBC Data Source Administrator. To find it in your, system please refer to this article: [Check the ODBC SQL Server Driver Version (Windows)]( https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows) . Once the administrator program is open,  click on the **Drivers** tab.  In my laptop, these are the drivers available.  I will use **SQL Server** for the Driver argument in my connection in R.
 
-<center><img src="/homepage/odbc.png"  height="270" width="450" align="middle"></center>
+<center><img src="/homepage/odbc.png"  height="300" width="450" align="middle"></center>
 
 ### R packages
 
