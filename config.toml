@@ -8,7 +8,6 @@ canonifyurls = true
 # Enable Google Analytics by entering your tracking id
 googleAnalytics = ""
 
-
 [blackfriday]
 	smartypants	= true
 	fractions = true
@@ -55,8 +54,6 @@ googleAnalytics = ""
 	parent = "Packages"
 	url    = "dbi/"
 
-
-
 [[menu.main]]
   weight = 30
 	name   = "Best Practices"
@@ -74,11 +71,16 @@ googleAnalytics = ""
 	url    = "run-queries-safely/"
 	parent = "Best Practices"
 
-
 [[menu.main]]
   weight = 34
 	name   = "Deploying Content"
 	url    = "deployment/"
+	parent = "Best Practices"	
+	
+[[menu.main]]
+  weight = 34
+	name   = "Securing Credentials"
+	url    = "managing-credentials/"
 	parent = "Best Practices"	
   
 
@@ -98,8 +100,6 @@ googleAnalytics = ""
 	parent = "Advanced"
 	url    = "/translation"
 	
-
-
 [social]
 	twitter = "rstudio"
 	github  = "rstudio"
