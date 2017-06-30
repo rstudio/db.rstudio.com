@@ -64,7 +64,7 @@ googleAnalytics = ""
 	
 [[menu.main]]
   weight = 31
-  name = "Finding ODBC Drivers"
+  name = "Setting up ODBC Drivers"
   url = "drivers/"
   parent = "Best Practices"
 

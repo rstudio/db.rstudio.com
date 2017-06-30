@@ -8,108 +8,93 @@ title: Setting up ODBC Drivers
 <p>After installation of the driver manager and driver, you will have to register the driver in a <a href="#dsn-configuration-files">odbcinst.ini</a> file for it to appear in <code>odbc::odbcListDrivers()</code>.</p>
 <div id="microsoft-windows" class="section level2">
 <h2>Microsoft Windows</h2>
+<div id="database-drivers" class="section level3">
+<h3>Database Drivers</h3>
 <p>Windows is bundled with ODBC libraries however drivers for each database need to be installed separately. Windows ODBC drivers typically include an installer that needs to be run and will install the driver to the proper locations.</p>
+</div>
+<div id="administration" class="section level3">
+<h3>Administration</h3>
+<p>The <a href="https://msdn.microsoft.com/en-us/library/ms714024(v=vs.85).aspx">ODBC Data Source Administrator</a> application is used to manage ODBC data sources on Windows.</p>
+</div>
 </div>
 <div id="apple-macos" class="section level2">
 <h2>Apple macOS</h2>
-<p><a href="http://brew.sh/">homebrew</a> can be used to easily install database drivers on MacOS.</p>
-<div id="unixodbc---required-for-all-databases" class="section level3">
-<h3>UnixODBC - Required for all databases</h3>
-<pre class="shell"><code># Install the unixODBC library
-brew install unixodbc</code></pre>
+<div id="installation" class="section level3">
+<h3>Installation</h3>
+<ol style="list-style-type: decimal">
+<li><p>Install <a href="http://brew.sh/">homebrew</a> can be used to easily install database drivers on MacOS.</p></li>
+<li><p>Install UnixODBC - Required for all databases</p>
+<pre class="shell"><code>  # Install the unixODBC library
+  brew install unixodbc</code></pre></li>
+<li><p>Install common DB drivers (<em>optional</em>)</p></li>
+</ol>
+<pre class="shell"><code>  # SQL Server ODBC Drivers (Free TDS)
+  brew install freetds --with-unixodbc
+  
+  # PostgreSQL ODBC ODBC Drivers
+  brew install psqlodbc
+  
+  # MySQL ODBC Drivers (and database)
+  brew install mysql
+  
+  # SQLite ODBC Drivers
+  brew install sqliteodbc</code></pre>
 </div>
-<div id="common-db-drivers" class="section level3">
-<h3>Common DB drivers</h3>
-<pre class="shell"><code># SQL Server ODBC Drivers (Free TDS)
-brew install freetds --with-unixodbc
-
-# PostgreSQL ODBC ODBC Drivers
-brew install psqlodbc
-
-# MySQL ODBC Drivers (and database)
-brew install mysql
-
-# SQLite ODBC Drivers
-brew install sqliteodbc</code></pre>
-</div>
-</div>
-<div id="linux---debian-ubuntu" class="section level2">
-<h2>Linux - Debian / Ubuntu</h2>
-<p><a href="https://wiki.debian.org/Apt">apt-get</a> can be used to easily install database drivers on Linux distributions which support it, such as Debian and Ubuntu.</p>
-<div id="unixodbc---required-for-all-databases-1" class="section level3">
-<h3>UnixODBC - Required for all databases</h3>
-<pre class="shell"><code># Install the unixODBC library
-apt-get install unixodbc unixodbc-dev</code></pre>
-</div>
-<div id="common-db-drivers-1" class="section level3">
-<h3>Common DB drivers</h3>
-<pre class="shell"><code># SQL Server ODBC Drivers (Free TDS)
-apt-get install tdsodbc
-
-# PostgreSQL ODBC ODBC Drivers
-apt-get install odbc-postgresql
-
-# MySQL ODBC Drivers
-apt-get install libmyodbc
-
-# SQLite ODBC Drivers
-apt-get install libsqliteodbc</code></pre>
+<div id="setting-up-database-connections" class="section level3">
+<h3>Setting up database connections</h3>
+<p>See the section with the same name in the <a href="/drivers/#linux-debian-ubuntu">Linux section</a></p>
 </div>
 </div>
-<div id="r" class="section level2">
-<h2>R</h2>
-<pre class="r"><code># Install the latest odbc release from CRAN:
-install.packages(&quot;odbc&quot;)
-
-# Or the the development version from GitHub:
-# install.packages(devtools)
-devtools::install_github(&quot;rstats-db/odbc&quot;)</code></pre>
+<div id="linux-debian-ubuntu" class="section level2">
+<h2>Linux Debian / Ubuntu</h2>
+<div id="installation-1" class="section level3">
+<h3>Installation</h3>
+<p>The <a href="https://wiki.debian.org/Apt">apt-get</a> command can be used to easily install database drivers on Linux distributions which support it, such as Debian and Ubuntu.</p>
+<ol style="list-style-type: decimal">
+<li>Install UnixODBC - Required for all databases</li>
+</ol>
+<pre class="shell"><code>
+  # Install the unixODBC library
+  apt-get install unixodbc unixodbc-dev
+  </code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Install common DB drivers (<em>optional</em>)</li>
+</ol>
+<pre class="shell"><code> 
+  # SQL Server ODBC Drivers (Free TDS)
+  apt-get install tdsodbc
+  
+  # PostgreSQL ODBC ODBC Drivers
+  apt-get install odbc-postgresql
+  
+  # MySQL ODBC Drivers
+  apt-get install libmyodbc
+  
+  # SQLite ODBC Drivers
+  apt-get install libsqliteodbc
+</code></pre>
 </div>
-<div id="connecting-to-a-database" class="section level2">
-<h2>Connecting to a Database</h2>
-<p>Databases can be connected by specifying a connection string directly, or with DSN configuration files.</p>
-<div id="connection-strings" class="section level3">
-<h3>Connection Strings</h3>
-<p>Specify a connection string as named arguments directly in the <code>dbConnect()</code> method.</p>
-<pre class="r"><code>library(DBI)
-con &lt;- dbConnect(odbc::odbc(),
-  driver = &quot;PostgreSQL Driver&quot;,
-  database = &quot;test_db&quot;,
-  uid = &quot;postgres&quot;,
-  pwd = &quot;password&quot;,
-  host = &quot;localhost&quot;,
-  port = 5432)</code></pre>
-</div>
-<div id="dsn-configuration-files" class="section level3">
-<h3>DSN Configuration files</h3>
-<p>ODBC configuration files are another option to specify connection parameters and allow one to use a Data Source Name (DSN) to make it easier to connect to a database.</p>
-<pre class="r"><code>con &lt;- dbConnect(odbc::odbc(), &quot;PostgreSQL&quot;)</code></pre>
-<div id="windows" class="section level4">
-<h4>Windows</h4>
-<p>The <a href="https://msdn.microsoft.com/en-us/library/ms714024(v=vs.85).aspx">ODBC Data Source Administrator</a> application is used to manage ODBC data sources on Windows.</p>
-</div>
-<div id="macos-linux" class="section level4">
-<h4>MacOS / Linux</h4>
+<div id="setting-up-database-connections-1" class="section level3">
+<h3>Setting up database connections</h3>
 <p>On MacOS and Linux there are two separate text files that need to be edited. UnixODBC includes a command line executable <code>odbcinst</code> which can be used to query and modify the DSN files. However these are plain text files you can also edit by hand if desired.</p>
 <p>There are two different files used to setup the DSN information.</p>
 <ul>
-<li><code>odbcinst.ini</code> - which defines driver options</li>
-<li><code>odbc.ini</code> - which defines connection options</li>
+<li><p><code>odbcinst.ini</code> - which defines <strong>driver</strong> options</p></li>
+<li><p><code>odbc.ini</code> - which defines <strong>connection</strong> options</p></li>
 </ul>
-<p>The DSN configuration files can be defined globally for all users of the system, often at <code>/etc/odbc.ini</code> or <code>/opt/local/etc/odbc.ini</code>, the exact location depends on what option was used when compiling unixODBC. <code>odbcinst -j</code> can be used to find the exact location. Alternatively the <code>ODBCSYSINI</code> environment variable can be used to specify the location of the configuration files. Ex. <code>ODBCSYSINI=~/ODBC</code></p>
-<p>A local DSN file can also be used with the files <code>~/.odbc.ini</code> and <code>~/.odbcinst.ini</code>.</p>
-<div id="odbcinst.ini" class="section level5">
-<h5>odbcinst.ini</h5>
-<p>Contains driver information, particularly the name of the driver library. Multiple drivers can be specified in the same file.</p>
+</div>
+<div id="odbcinst.ini" class="section level3">
+<h3>odbcinst.ini</h3>
+<p>It contains the driver information, particularly the name of the driver library. Multiple drivers can be specified in the same file.</p>
 <pre class="ini"><code>[PostgreSQL Driver]
 Driver          = /usr/local/lib/psqlodbcw.so
 
 [SQLite Driver]
 Driver          = /usr/local/lib/libsqlite3odbc.dylib</code></pre>
 </div>
-<div id="odbc.ini" class="section level5">
-<h5>odbc.ini</h5>
-<p>Contains connection information, particularly the username, password, database and host information. The Driver line corresponds to the driver defined in <code>odbcinst.ini</code>.</p>
+<div id="odbc.ini" class="section level3">
+<h3>odbc.ini</h3>
+<p>It contains the connection information, particularly the username, password, database and host information. The Driver line corresponds to the driver defined in <code>odbcinst.ini</code>.</p>
 <pre class="ini"><code>[PostgreSQL]
 Driver              = PostgreSQL Driver
 Database            = test_db
@@ -123,6 +108,43 @@ Driver          = SQLite Driver
 Database=/tmp/testing</code></pre>
 <p>See also: <a href="http://www.unixodbc.org/odbcinst.html">unixODBC without the GUI</a> for more information and examples.</p>
 </div>
+<div id="location" class="section level3">
+<h3>Location</h3>
+<p>The DSN configuration files can be defined globally for all users of the system, often at <code>/etc/odbc.ini</code> or <code>/opt/local/etc/odbc.ini</code>, the exact location depends on what option was used when compiling unixODBC. <code>odbcinst -j</code> can be used to find the exact location. Alternatively the <code>ODBCSYSINI</code> environment variable can be used to specify the location of the configuration files. Ex. <code>ODBCSYSINI=~/ODBC</code></p>
+<p>A local DSN file can also be used with the files <code>~/.odbc.ini</code> and <code>~/.odbcinst.ini</code>.</p>
 </div>
+</div>
+<div id="connecting-to-a-database-in-r" class="section level2">
+<h2>Connecting to a Database in R</h2>
+<p>Databases can be connected by specifying a connection string directly, or with DSN configuration files.</p>
+<pre class="r"><code># Install the latest odbc release from CRAN:
+install.packages(&quot;odbc&quot;)
+
+# Or the the development version from GitHub:
+# install.packages(devtools)
+devtools::install_github(&quot;rstats-db/odbc&quot;)</code></pre>
+<div id="connection-strings" class="section level3">
+<h3>Connection Strings</h3>
+<p>Specify a connection string as named arguments directly in the <code>dbConnect()</code> method.</p>
+<pre class="r"><code>
+library(DBI)
+con &lt;- dbConnect(odbc::odbc(),
+  driver = &quot;PostgreSQL Driver&quot;,
+  database = &quot;test_db&quot;,
+  uid = &quot;postgres&quot;,
+  pwd = &quot;password&quot;,
+  host = &quot;localhost&quot;,
+  port = 5432)
+</code></pre>
+</div>
+<div id="dsn-configuration-files" class="section level3">
+<h3>DSN Configuration files</h3>
+<p>ODBC configuration files are another option to specify connection parameters and allow one to use a Data Source Name (DSN) to make it easier to connect to a database.</p>
+<pre class="r"><code>  con &lt;- dbConnect(odbc::odbc(), &quot;PostgreSQL&quot;)</code></pre>
+<p>For more information about how DSN can be used, check out the following articles in this site:</p>
+<ul>
+<li><p><a href="/portable-code">Making Scripts Portable</a></p></li>
+<li><p><a href="/deployment">Securing Deployed Content</a></p></li>
+</ul>
 </div>
 </div>
