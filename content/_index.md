@@ -15,27 +15,27 @@ consistent set of functions, called verbs, that can be used in
 succession and interchangeably to gain understanding of the data
 iteratively.
 
-Another nice thing about `dplyr` is that it can **interact** with
-databases directly. It accomplishes this by translating the `dplyr`
-verbs into SQL queries. This incredibly convenient feature allows us to
-‘speak’ directly with the database from R. Other advantages of this
-approach are:
+Another nice thing about **dplyr is that it can interact with databases
+directly**. It accomplishes this by translating the dplyr verbs into SQL
+queries. This incredibly convenient feature allows us to ‘speak’
+directly with the database from R. Other advantages of this approach
+are:
 
--   **Run data exploration over all of the data** - Instead of coming up
+1.  **Run data exploration over all of the data** - Instead of coming up
     with a plan to decide what data to import, we can focus on analyzing
     the data inside the database, which in turn should yield
     faster insights.
 
--   **Use the SQL Engine to run the data transformations** - We are, in
-    effect, pushing the computation to the database because `dplyr` is
+2.  **Use the SQL Engine to run the data transformations**- We are, in
+    effect, pushing the computation to the database because dplyr is
     sending SQL queries to the database.
 
--   **Collect a targeted dataset** - After become familiar with the data
+3.  **Collect a targeted dataset** - After become familiar with the data
     and choosing the data points that will either be shared or modeled,
     a final query can then be used to bring back only that data into
     memory in R.
 
--   **All your code is in R!** - Because we are using `dplyr` to
+4.  **All your code is in R! ** - Because we are using dplyr to
     communicate with the database, there is no need to change language,
     or tools, to perform the data exploration.
 
@@ -48,15 +48,15 @@ Connection Options
 ------------------
 
 At the center of this approach is the `DBI` package. This package acts
-as 'middle-ware' between packages that allow connectivity with the
+as *‘middle-ware’* between packages that allow connectivity with the
 database and the user or other packages. It provides a consistent set of
 functions regardless of the database type we are connecting to. The
-`dplyr` package depends on the `DBI` package for communication with
+dplyr package depends on the DBI package for communication with
 databases.
 
 There are packages that enables a direct connection between the an
 open-source database and R. Currently, such packages exist for the
-following databases: MySQL, SQLite, PostgreSQL and bigquery. A
+following databases: *MySQL, SQLite, PostgreSQL and bigquery*. A
 functional architecture would look something like this:
 
 <center>
@@ -67,7 +67,7 @@ functional architecture would look something like this:
 Most commercial databases, like Oracle and Microsoft SQL Server, offer
 ODBC drivers that allow you to connect your tool to the database. Even
 though there are R packages that allow you to use ODBC drivers, the
-connection will more likely not be compatible with DBI. The new `odbc`
+connection will more likely not be compatible with DBI. The new odbc
 package solves that problem by providing a, what is called, DBI-back-end
 to any ODBC driver connection. The functional architecture for this mode
 would look like this:
@@ -87,18 +87,23 @@ A complimentary package called `dbplyr` contains the translations of the
 vendor specific SQL for `dplyr` to use. As of today, we have
 translations for the following databases:
 
--   Microsoft SQL Server
--   Oracle
--   Apache Hive
--   Apache Impala
--   PostgreSQL
--   MySQL
--   SQLite
+-   <img src="/logos/mssql.png", width = 50, height = 50> Microsoft SQL
+    Server
+-   <img src="/logos/oracle.png", width = 50, height = 50> Oracle
+-   <img src="/logos/hive.png", width = 50, height = 50> Apache Hive
+-   <img src="/logos/impala.png", width = 50, height = 50> Apache Impala
+-   <img src="/logos/postgresql.png", width = 50, height = 50>
+    PostgreSQL
 
-If the database you are interested in working with is not listed here
-yet, then you can still use `DBI` and `odbc` to connect and send SQL
-queries. If you would like to contribute a translation, please see the
-[SQL Translation](translation) page in this website.
+In the development version of `dbplyr` we also have translations for:
+
+-   <img src="/logos/redshift.png", width = 50, height = 50> Amazon
+    Redshift
+
+The database you are interested in is not listed here? you can still use
+`DBI` and `odbc` to connect and send SQL queries. If you would like to
+contribute a translation, please see the [SQL Translation](translation)
+page in this website.
 
 Quick Example
 -------------
@@ -130,7 +135,7 @@ In my laptop, these are the drivers available. I will use **SQL Server**
 for the Driver argument in my connection in R.
 
 <center>
-<img src="/homepage/odbc.png"  height="270" width="450" align="middle">
+<img src="/homepage/odbc.png"  height="300" width="450" align="middle">
 </center>
 ### R packages
 
