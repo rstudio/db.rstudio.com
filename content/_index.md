@@ -35,7 +35,7 @@ are:
     a final query can then be used to bring back only that data into
     memory in R.
 
-4.  **All your code is in R! ** - Because we are using dplyr to
+4.  **All your code is in R!** - Because we are using dplyr to
     communicate with the database, there is no need to change language,
     or tools, to perform the data exploration.
 
