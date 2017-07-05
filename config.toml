@@ -40,13 +40,12 @@ googleAnalytics = ""
   weight = 10
 	name   = "Packages"
 	url    = "/"
-
+	
 [[menu.main]]
   weight = 11
 	name   = "dplyr"
 	parent = "Packages"
 	url    = "dplyr/"
-
 
 [[menu.main]]
   weight = 12
@@ -91,7 +90,7 @@ googleAnalytics = ""
 
 [[menu.main]]
   weight = 30
-	name   = "dplyr translations"
+	name   = "dplyr integration"
 	url    = "/"
 [[menu.main]]
   weight = 31
