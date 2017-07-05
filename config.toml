@@ -91,7 +91,31 @@ googleAnalytics = ""
 	name   = "MS SQL Server"
 	url    = "microsoft-sql-server/"
 	parent = "dplyr integration"	
-
+[[menu.main]]
+  weight = 32
+	name   = "Oracle"
+	url    = "oracle/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 33
+	name   = "Hive"
+	url    = "hive/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 34
+	name   = "Impala"
+	url    = "impala/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 35
+	name   = "PostgreSQL"
+	url    = "postgresql/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 36
+	name   = "Redshift"
+	url    = "redshift/"
+	parent = "dplyr integration"		
 
 
 [[menu.main]]

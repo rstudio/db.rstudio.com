@@ -1,0 +1,44 @@
+---
+title: Apache Hive
+---
+
+There are two options for connecting to a PostgreSQL database:
+
+- Using the `odbc` package with a database driver
+- Using the `RPostgres`  package
+
+## Using `odbc`
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+Please refer to the official PostgreSQL page for instructions on how to download and setup the driver: [psqlODBC - PostgreSQL ODBC driver](https://odbc.postgresql.org/)
+
+
+### Connection Settings
+
+There are five settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](drivers) section for setup information 
+  - **Server** - A network path to the database server
+  - **Database** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - Account's password
+  - **Port** - Should be set to **5432**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver   = "[your driver's name]",
+                      Server   = "[your server's path]",
+                      Database = "[your database's name]",
+                      UID      = rstudioapi::askForPassword("Database user"),
+                      PWD      = rstudioapi::askForPassword("Database password")
+                      Port     = 5432)
+
+```
+
+## Using `RPostgres`
+
+`RPostgres` is an DBI-compliant interface to the PostgreSQL database. It's a ground-up rewrite using C++ and Rcpp.  You do not need a database driver to connect to a database using `RPostgres`. More information is available in the package's repo: [rstats-db/RPostgres](https://github.com/rstats-db/RPostgres)
+
+

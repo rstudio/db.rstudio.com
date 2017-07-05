@@ -51,7 +51,7 @@ If you are interested in creating your own package that connects `DBI` to a data
 
 A complimentary package called `dbplyr` contains the translations of the vendor specific SQL for `dplyr` to use. As of today, we have translations for the following databases:
 
-  - <img src="/logos/mssql.png", width = 50, height = 50> Microsoft SQL Server
+  - <img src="/logos/mssql.png", width = 50, height = 50> [Microsoft SQL Server](microsoft-sql-server)
   - <img src="/logos/oracle.png", width = 50, height = 50>  Oracle
   - <img src="/logos/hive.png", width = 50, height = 50> Apache Hive
   - <img src="/logos/impala.png", width = 50, height = 50> Apache Impala
@@ -82,6 +82,7 @@ There are three things that we will need to get started:
 
 A **database driver** is a program that allows the workstation and the database to communicate.  In Microsoft Windows, the drivers that connect to MS SQL databases are installed by default.  We need the **name** of the driver that will be used inside our code in R.  The easiest way to do this is to open the ODBC Data Source Administrator. To find it in your, system please refer to this article: [Check the ODBC SQL Server Driver Version (Windows)]( https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows) . Once the administrator program is open,  click on the **Drivers** tab.  In my laptop, these are the drivers available.  I will use **SQL Server** for the Driver argument in my connection in R.
 
+<br/>
 <center><img src="/homepage/odbc.png"  height="300" width="450" align="middle"></center>
 
 ### R packages

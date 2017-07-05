@@ -42,7 +42,7 @@ Title: Using databases with R
 <h2>SQL Translations for dplyr</h2>
 <p>A complimentary package called <code>dbplyr</code> contains the translations of the vendor specific SQL for <code>dplyr</code> to use. As of today, we have translations for the following databases:</p>
 <ul>
-<li><img src="/logos/mssql.png", width = 50, height = 50> Microsoft SQL Server</li>
+<li><img src="/logos/mssql.png", width = 50, height = 50> <a href="microsoft-sql-server">Microsoft SQL Server</a></li>
 <li><img src="/logos/oracle.png", width = 50, height = 50> Oracle</li>
 <li><img src="/logos/hive.png", width = 50, height = 50> Apache Hive</li>
 <li><img src="/logos/impala.png", width = 50, height = 50> Apache Impala</li>
@@ -66,6 +66,7 @@ Title: Using databases with R
 <div id="database-driver" class="section level3">
 <h3>Database Driver</h3>
 <p>A <strong>database driver</strong> is a program that allows the workstation and the database to communicate. In Microsoft Windows, the drivers that connect to MS SQL databases are installed by default. We need the <strong>name</strong> of the driver that will be used inside our code in R. The easiest way to do this is to open the ODBC Data Source Administrator. To find it in your, system please refer to this article: <a href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows">Check the ODBC SQL Server Driver Version (Windows)</a> . Once the administrator program is open, click on the <strong>Drivers</strong> tab. In my laptop, these are the drivers available. I will use <strong>SQL Server</strong> for the Driver argument in my connection in R.</p>
+<br/>
 <center>
 <img src="/homepage/odbc.png"  height="300" width="450" align="middle">
 </center>

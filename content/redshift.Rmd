@@ -1,0 +1,45 @@
+---
+title: Amazon Redshift
+---
+
+## Availability
+
+This translation is available in the development version of `dbplyr`
+
+```r
+devtools::install_github("tidyvers/dbplyr")
+```
+
+## Driver Options
+
+Please refer to the official page from Amazon AWS for instructions on how to download and setup the driver: [Configure an ODBC Connection](http://docs.aws.amazon.com/redshift/latest/mgmt/configure-odbc-connection.html)
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are five settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](drivers) section for setup information 
+  - **servername** - A network path to the database server
+  - **database** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - Account's password
+  - **Port** - Should be set to **5439**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver       = "[your driver's name]",
+                      servername   = "[your server's path]",
+                      database     = "[your database's name]",
+                      UID          = rstudioapi::askForPassword("Database user"),
+                      PWD          = rstudioapi::askForPassword("Database password")
+                      Port         = 5439)
+
+```
+
+
+
