@@ -37,70 +37,107 @@ googleAnalytics = ""
 
 
 [[menu.main]]
-  weight = 5
+  weight = 10
 	name   = "Packages"
 	url    = "/"
 
 [[menu.main]]
-  weight = 10
+  weight = 11
 	name   = "dplyr"
 	parent = "Packages"
 	url    = "dplyr/"
 
 
 [[menu.main]]
-  weight = 11
+  weight = 12
 	name   = "DBI"
 	parent = "Packages"
 	url    = "dbi/"
 
 [[menu.main]]
-  weight = 30
+  weight = 20
 	name   = "Best Practices"
 	url    = "/"
 	
 [[menu.main]]
-  weight = 31
+  weight = 21
   name = "Setting up ODBC Drivers"
   url = "drivers/"
   parent = "Best Practices"
 
 [[menu.main]]
-	weight = 31
+	weight = 22
   name   = "Run Queries Safely"
 	url    = "run-queries-safely/"
 	parent = "Best Practices"
 
 [[menu.main]]
-  weight = 34
+  weight = 23
 	name   = "Securing Deployed Content"
 	url    = "deployment/"
 	parent = "Best Practices"	
 	
 [[menu.main]]
-  weight = 34
+  weight = 24
 	name   = "Securing Credentials"
 	url    = "managing-credentials/"
 	parent = "Best Practices"	
 
 [[menu.main]]
-  weight = 34
+  weight = 25
 	name   = "Making Scripts Portable"
 	url    = "portable-code/"
 	parent = "Best Practices"	  
 
 [[menu.main]]
-  weight = 54
+  weight = 30
+	name   = "dplyr translations"
+	url    = "/"
+[[menu.main]]
+  weight = 31
+	name   = "MS SQL Server"
+	url    = "microsoft-sql-server/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 32
+	name   = "Oracle"
+	url    = "oracle/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 33
+	name   = "Hive"
+	url    = "hive/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 34
+	name   = "Impala"
+	url    = "impala/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 35
+	name   = "PostgreSQL"
+	url    = "postgresql/"
+	parent = "dplyr integration"	
+[[menu.main]]
+  weight = 36
+	name   = "Redshift"
+	url    = "redshift/"
+	parent = "dplyr integration"		
+
+
+[[menu.main]]
+  weight = 40
 	name   = "Advanced"
 	url    = "/"
 
 [[menu.main]]
+  weight = 41
 	name   = "DBI Backend"
 	parent = "Advanced"
 	url    = "/backend"
 	
 [[menu.main]]
-  weight = 56
+  weight = 42
 	name   = "SQL Translation"
 	parent = "Advanced"
 	url    = "/translation"

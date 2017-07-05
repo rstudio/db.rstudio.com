@@ -1,15 +1,13 @@
 ---
-output: md_document 
+Title: Using databases with R
 ---
-
-# Using databases with R
 
 <div>
   <img src="/homepage/header.png"   align="right">
-  <p>
-    RStudio makes it easier to access and analyze your data with R.  Many analysts have most of their data in databases. At RStudio we are actively working to make it as easy as possible to get data out of databases and into R. This website is meant to document, over time, all database best practices and tools for R, so you can find everything you need in one place.
-  </p>
 </div>
+
+
+RStudio makes it easier to access and analyze your data with R. Many analysts have most of their data in databases. At RStudio we are actively working to make it as easy as possible to get data out of databases and into R. This website is meant to document, over time, all database best practices and tools for R, so you can find everything you need in one place.
 
 ## Focus on **dplyr**
 
@@ -54,15 +52,15 @@ If you are interested in creating your own package that connects `DBI` to a data
 
 A complimentary package called `dbplyr` contains the translations of the vendor specific SQL for `dplyr` to use. As of today, we have translations for the following databases:
 
-  - <img src="/logos/mssql.png", width = 50, height = 50> Microsoft SQL Server
-  - <img src="/logos/oracle.png", width = 50, height = 50>  Oracle
-  - <img src="/logos/hive.png", width = 50, height = 50> Apache Hive
-  - <img src="/logos/impala.png", width = 50, height = 50> Apache Impala
-  - <img src="/logos/postgresql.png", width = 50, height = 50> PostgreSQL
+  - <img src="/logos/mssql.png", width = 50, height = 50> [Microsoft SQL Server](microsoft-sql-server)
+  - <img src="/logos/oracle.png", width = 50, height = 50>  [Oracle](oracle)
+  - <img src="/logos/hive.png", width = 50, height = 50> [Apache Hive](hive)
+  - <img src="/logos/impala.png", width = 50, height = 50> [Apache Impala](impala)
+  - <img src="/logos/postgresql.png", width = 50, height = 50> [PostgreSQL](postgresql)
 
 In the development version of `dbplyr` we also have translations for:
 
-  - <img src="/logos/redshift.png", width = 50, height = 50> Amazon Redshift
+  - <img src="/logos/redshift.png", width = 50, height = 50> [Amazon Redshift](redshift)
 
 
 The database you are interested in is not listed here? you can still use `DBI` and `odbc` to connect and send SQL queries.  If you would like to contribute a translation, please see the [SQL Translation](translation) page in this website.
@@ -85,6 +83,7 @@ There are three things that we will need to get started:
 
 A **database driver** is a program that allows the workstation and the database to communicate.  In Microsoft Windows, the drivers that connect to MS SQL databases are installed by default.  We need the **name** of the driver that will be used inside our code in R.  The easiest way to do this is to open the ODBC Data Source Administrator. To find it in your, system please refer to this article: [Check the ODBC SQL Server Driver Version (Windows)]( https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows) . Once the administrator program is open,  click on the **Drivers** tab.  In my laptop, these are the drivers available.  I will use **SQL Server** for the Driver argument in my connection in R.
 
+<br/>
 <center><img src="/homepage/odbc.png"  height="300" width="450" align="middle"></center>
 
 ### R packages
