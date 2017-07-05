@@ -1,0 +1,36 @@
+---
+title: Microsoft SQL Server
+  
+    
+---
+
+
+
+<div id="driver-options" class="section level2">
+<h2>Driver Options</h2>
+</div>
+<div id="package-options" class="section level2">
+<h2>Package Options</h2>
+</div>
+<div id="connection-settings" class="section level2">
+<h2>Connection Settings</h2>
+<p>There are five settings needed to make a connection:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="drivers">Drivers</a> section for more information</li>
+<li>Server - A network path to the database server</li>
+<li>Database - The name of the database</li>
+<li>UID - The user’s network ID or server local account</li>
+<li>PWD - Account’s password</li>
+<li>Port - Should be set to <strong>1433</strong></li>
+</ul>
+</div>
+<div id="known-issues" class="section level2">
+<h2>Known Issues</h2>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+                             Driver = &quot;sqlserver&quot;,
+                             Server = &quot;sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com&quot;,
+                             Database = &quot;airontime&quot;,
+                             UID = &quot;rstudioadmin&quot;,
+                             PWD = &quot;ABCd4321&quot;,
+                             Port = 1433)</code></pre>
+</div>

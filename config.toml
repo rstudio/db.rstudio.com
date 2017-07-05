@@ -38,19 +38,19 @@ googleAnalytics = ""
 
 
 [[menu.main]]
-  weight = 5
+  weight = 10
 	name   = "Packages"
 	url    = "/"
 
 [[menu.main]]
-  weight = 10
+  weight = 11
 	name   = "dplyr"
 	parent = "Packages"
 	url    = "dplyr/"
 
 
 [[menu.main]]
-  weight = 11
+  weight = 12
 	name   = "DBI"
 	parent = "Packages"
 	url    = "dbi/"
@@ -58,42 +58,55 @@ googleAnalytics = ""
 
 
 [[menu.main]]
-  weight = 30
+  weight = 20
 	name   = "Best Practices"
 	url    = "/"
 	
 [[menu.main]]
-  weight = 31
+  weight = 21
   name = "Finding ODBC Drivers"
   url = "drivers/"
   parent = "Best Practices"
 
 [[menu.main]]
-	weight = 31
+	weight = 22
   name   = "Run Queries Safely"
 	url    = "run-queries-safely/"
 	parent = "Best Practices"
 
 
 [[menu.main]]
-  weight = 34
+  weight = 23
 	name   = "Deploying Content"
 	url    = "deployment/"
 	parent = "Best Practices"	
   
 
 [[menu.main]]
-  weight = 54
+  weight = 30
+	name   = "dplyr integration"
+	url    = "/"
+[[menu.main]]
+  weight = 31
+	name   = "MS SQL Server"
+	url    = "microsoft-sql-server/"
+	parent = "dplyr integration"	
+
+
+
+[[menu.main]]
+  weight = 40
 	name   = "Advanced"
 	url    = "/"
 
 [[menu.main]]
+  weight = 41
 	name   = "DBI Backend"
 	parent = "Advanced"
 	url    = "/backend"
 	
 [[menu.main]]
-  weight = 56
+  weight = 42
 	name   = "SQL Translation"
 	parent = "Advanced"
 	url    = "/translation"

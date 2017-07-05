@@ -1,0 +1,39 @@
+---
+title: Microsoft SQL Server
+  
+    
+---
+
+## Driver Options
+
+## Package Options
+
+## Connection Settings
+
+There are five settings needed to make a connection:
+
+- **Driver** - See the [Drivers](drivers) section for more information 
+- Server - A network path to the database server
+- Database - The name of the database
+- UID - The user's network ID or server local account
+- PWD - Account's password
+- Port - Should be set to **1433**
+
+
+## Known Issues
+
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                             Driver = "sqlserver",
+                             Server = "sol-eng-sqlserv.cihykudhzbgw.us-west-2.rds.amazonaws.com",
+                             Database = "airontime",
+                             UID = "rstudioadmin",
+                             PWD = "ABCd4321",
+                             Port = 1433)
+
+```
+
+
+
