@@ -1,5 +1,5 @@
 ---
-title: Apache Hive
+title: PostgreSQL
 ---
 
 There are two options for connecting to a PostgreSQL database:

@@ -2,11 +2,12 @@
 Title: Using databases with R
 ---
 
-<div><img src="/homepage/header.png"   align="right"></div>
+<div>
+  <img src="/homepage/header.png"   align="right">
+</div>
 
-RStudio makes it easier to access and analyze your data with R.  Many analysts have most of their data in databases. At RStudio we are actively working to make it as easy as possible to get data out of databases and into R. This website is meant to document, over time, all database best practices and tools for R, so you can find everything you need in one place.
 
-
+**RStudio** makes it easier to access and analyze your data with R.  Many analysts have most of their data in databases. At RStudio we are actively working to make it as easy as possible to get data out of databases and into R. This website is meant to document, over time, all database best practices and tools for R, so you can find everything you need in one place.
 
 ## Focus on **dplyr**
 
@@ -20,7 +21,7 @@ Another nice thing about **dplyr is that it can interact with databases directly
 
  1. **Collect a targeted dataset** - After become familiar with the data and choosing the data points that will either be shared or modeled, a final query can then be used to bring back only that data into memory in R.
 
- 1. **All your code is in R! ** - Because we are using dplyr to communicate with the database, there is no need to change language, or tools, to perform the data exploration.
+ 1. **All your code is in R!** - Because we are using dplyr to communicate with the database, there is no need to change language, or tools, to perform the data exploration.
 
 
   <center><img src="/homepage/interact.png"  height="250" width="420" > </center><br/>
@@ -52,14 +53,14 @@ If you are interested in creating your own package that connects `DBI` to a data
 A complimentary package called `dbplyr` contains the translations of the vendor specific SQL for `dplyr` to use. As of today, we have translations for the following databases:
 
   - <img src="/logos/mssql.png", width = 50, height = 50> [Microsoft SQL Server](microsoft-sql-server)
-  - <img src="/logos/oracle.png", width = 50, height = 50>  Oracle
-  - <img src="/logos/hive.png", width = 50, height = 50> Apache Hive
-  - <img src="/logos/impala.png", width = 50, height = 50> Apache Impala
-  - <img src="/logos/postgresql.png", width = 50, height = 50> PostgreSQL
+  - <img src="/logos/oracle.png", width = 50, height = 50>  [Oracle](oracle)
+  - <img src="/logos/hive.png", width = 50, height = 50> [Apache Hive](hive)
+  - <img src="/logos/impala.png", width = 50, height = 50> [Apache Impala](impala)
+  - <img src="/logos/postgresql.png", width = 50, height = 50> [PostgreSQL](postgresql)
 
 In the development version of `dbplyr` we also have translations for:
 
-  - <img src="/logos/redshift.png", width = 50, height = 50> Amazon Redshift
+  - <img src="/logos/redshift.png", width = 50, height = 50> [Amazon Redshift](redshift)
 
 
 The database you are interested in is not listed here? you can still use `DBI` and `odbc` to connect and send SQL queries.  If you would like to contribute a translation, please see the [SQL Translation](translation) page in this website.
