@@ -17,7 +17,7 @@ googleAnalytics = ""
 [params]
 
 	author = "RStudio"
-	description = "test"
+	description = ""
 	copyright = ""
 	
 	provider = ""
@@ -52,6 +52,12 @@ googleAnalytics = ""
 	name   = "DBI"
 	parent = "Packages"
 	url    = "dbi/"
+	
+[[menu.main]]
+  weight = 13
+	name   = "odbc"
+	parent = "Packages"
+	url    = "odbc/"
 
 [[menu.main]]
   weight = 20
@@ -121,7 +127,17 @@ googleAnalytics = ""
   weight = 36
 	name   = "Redshift"
 	url    = "redshift/"
-	parent = "dplyr integration"		
+	parent = "dplyr integration"
+[[menu.main]]
+  weight = 37
+	name   = "MySQL"
+	url    = "my-sql/"
+	parent = "dplyr integration"
+[[menu.main]]
+  weight = 38
+	name   = "SQLite"
+	url    = "sqlite/"
+	parent = "dplyr integration"
 
 
 [[menu.main]]

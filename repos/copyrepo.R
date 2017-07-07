@@ -32,25 +32,71 @@ remove_lines <- function(location, start, end){
 
 # End of helper functions -----------------------------------------------------
 
-# Getting repos ---------------------------------------------------------------
-copy_repo("rstats-db/DBI")
+
+# dbplyr repo  ---------------------------------------------------------------
 copy_repo("tidyverse/dbplyr")
 
-# dbplyr article --------------------------------------------------------------
+# dbplyr package article --------------------------------------------------------------
 copy_article("dbplyr/vignettes/dbplyr.Rmd", "content/dplyr.Rmd")
 replace_text("content/dplyr.Rmd", "Introduction to dbplyr", "Databases using dplyr" )
 
-# translation article ---------------------------------------------------------
+# dplyr translation article ---------------------------------------------------------
 copy_article("dbplyr/vignettes/sql-translation.Rmd", "content/translation.Rmd")
 remove_lines("content/translation.Rmd", 247, 248)
 
+# DBI repo  ---------------------------------------------------------------
+copy_repo("rstats-db/DBI")
+
 # DBI article -----------------------------------------------------------------
-copy_article("DBI/README.md", "content/DBI.md")
-replace_text("content/DBI.md", "# DBI", "# Introduction to DBI" )
-remove_lines("content/DBI.md", 3, 13)
+copy_article("DBI/README.md", "content/DBI.Rmd")
+remove_lines("content/DBI.Rmd", 3, 13)
+replace_text("content/DBI.Rmd", "# DBI", "--- \nTitle: Introduction to DBI \n---" )
 
 # DBI Backend -----------------------------------------------------------------
 copy_article("DBI/vignettes/backend.Rmd", "content/backend.Rmd")
+
+# odbc repo  ---------------------------------------------------------------
+copy_repo("rstats-db/odbc")
+
+# odbc page -----------------------------------------------
+copy_article("odbc/README.md", "content/odbc.Rmd")
+remove_lines("content/odbc.Rmd", 9, 186)
+replace_text("content/odbc.Rmd", "====", "--- \nTitle: odbc \n---" )
+remove_lines("content/odbc.Rmd", 1, 3)
+remove_lines("content/odbc.Rmd", 6, 7)
+
+# RMySQL repo  ---------------------------------------------------------------
+copy_repo("rstats-db/RMySQL")
+
+# MySQL page -----------------------------------------------
+copy_article("RMySQL/README.md", "content/my-sql.Rmd")
+replace_text("content/my-sql.Rmd", "======", "--- \nTitle: Database Interface and MySQL Driver for R \n---" )
+remove_lines("content/my-sql.Rmd", 8, 14)
+### Line 1 may persist after running this script, delete manually
+
+# bigrquery repo  ---------------------------------------------------------------
+copy_repo("rstats-db/bigrquery")
+
+# bigrquery page -----------------------------------------------
+copy_article("bigrquery/README.md", "content/big-query.Rmd")
+replace_text("content/big-query.Rmd", "# bigrquery", "--- \nTitle: Google BigQuery \n---" )
+remove_lines("content/big-query.Rmd", 5, 6)
+
+# RSQLite repo  ---------------------------------------------------------------
+copy_repo("rstats-db/RSQLite")
+
+# RSQLite page -----------------------------------------------
+copy_article("RSQLite/README.md", "content/sqlite.Rmd")
+remove_lines("content/sqlite.Rmd", 6, 7)
+remove_lines("content/sqlite.Rmd", 1, 3)
+replace_text("content/sqlite.Rmd", "=======", "--- \nTitle: RSQLite \n---" )
+
+
+
+
+
+
+
 
 
 # If we want spec as the DBI article
