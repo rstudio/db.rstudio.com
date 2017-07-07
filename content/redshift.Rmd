@@ -36,7 +36,7 @@ con <- DBI::dbConnect(odbc::odbc(),
                       servername   = "[your server's path]",
                       database     = "[your database's name]",
                       UID          = rstudioapi::askForPassword("Database user"),
-                      PWD          = rstudioapi::askForPassword("Database password")
+                      PWD          = rstudioapi::askForPassword("Database password"),
                       Port         = 5439)
 
 ```

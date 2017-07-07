@@ -37,8 +37,8 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ```
 
-## Using `RPostgres`
+## Using `RPostgreSQL`
 
-`RPostgres` is an DBI-compliant interface to the PostgreSQL database. It's a ground-up rewrite using C++ and Rcpp.  You do not need a database driver to connect to a database using `RPostgres`. More information is available in the package's repo: [rstats-db/RPostgres](https://github.com/rstats-db/RPostgres)
+`RPostgreSQL` is an DBI-compliant interface to the PostgreSQL database.  More information is available here: [CRAN - RPostgreSQL](https://cran.r-project.org/web/packages/RPostgreSQL/index.html)
 
 
