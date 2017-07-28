@@ -7,7 +7,7 @@ title: Amazon Redshift
 This translation is available in the development version of `dbplyr`
 
 ```r
-devtools::install_github("tidyvers/dbplyr")
+devtools::install_github("tidyverse/dbplyr")
 ```
 
 ## Driver Options
@@ -22,7 +22,7 @@ The **`odbc`** package, in combination with a driver, provides `DBI` support and
 
 There are five settings needed to make a connection:
 
-  - **Driver** - See the [Drivers](drivers) section for setup information 
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
   - **servername** - A network path to the database server
   - **database** - The name of the schema
   - **UID** - The user's network ID or server local account
