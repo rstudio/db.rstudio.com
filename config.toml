@@ -166,6 +166,17 @@ googleAnalytics = "UA-20375833-20"
 	parent = "Advanced"
 	url    = "/translation"
 	
+[[menu.main]]
+  weight = 60
+	name   = "Other Resources"
+	url    = "/"
+
+[[menu.main]]
+  weight = 61
+	name   = "Media"
+	parent = "Other Resources"
+	url    = "/media"	
+	
 [social]
 	twitter = "rstudio"
 	github  = "rstudio"
