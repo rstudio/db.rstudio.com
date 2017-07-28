@@ -18,7 +18,7 @@ Please refer to the official PostgreSQL page for instructions on how to download
 
 There are five settings needed to make a connection:
 
-  - **Driver** - See the [Drivers](drivers) section for setup information 
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
   - **Server** - A network path to the database server
   - **Database** - The name of the schema
   - **UID** - The user's network ID or server local account

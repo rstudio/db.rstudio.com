@@ -16,7 +16,7 @@ There are several that either connect via ODBC but do not provide support for `D
 
 There are five settings needed to make a connection:
 
-  - **Driver** - See the [Drivers](drivers) section for more information 
+  - **Driver** - See the [Drivers](/drivers) section for more information 
   - **Server** - A network path to the database server
   - **Database** - The name of the database
   - **UID** - The user's network ID or server local account

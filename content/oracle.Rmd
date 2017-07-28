@@ -16,7 +16,7 @@ Another package that provides both ODBC connectivity and `DBI` support is `ROrac
 
 There are five settings needed to make a connection:
 
-  - **Driver** - See the [Drivers](drivers) section for more setup information 
+  - **Driver** - See the [Drivers](/drivers) section for more setup information 
   - **Host** - A network path to the database server
   - **SVC** - The name of the schema
   - **UID** - The user's network ID or server local account
