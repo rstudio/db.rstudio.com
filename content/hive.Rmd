@@ -4,7 +4,7 @@ title: Apache Hive
 
 ## Driver Options
 
-There are many options to obtain an ODBC driver.  It will ultimately depend on the Operating System your are connecting from and the data lake's vendor (Cloudera, Hortonworks, etc.).  
+There are many options to obtain an ODBC driver.  It will ultimately depend on the Operating System you are connecting from, and the data lake's vendor (Cloudera, Hortonworks, etc.).
 
 ## Package Options
 
@@ -18,7 +18,7 @@ There are five settings needed to make a connection:
   - **Host** - A network path to the database server
   - **Schema** - The name of the schema
   - **UID** - The user's network ID or server local account
-  - **PWD** - Account's password
+  - **PWD** - The account's password
   - **Port** - Should be set to **10000**
 
 ```{r,eval=FALSE}

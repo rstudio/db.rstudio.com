@@ -3,7 +3,7 @@
 Title: odbc 
 ---
 
-The goal of the odbc package is to provide a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
+The goal of the `odbc` package is to provide a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
 
 Usage
 -----
@@ -61,7 +61,7 @@ The *odbc* package is often much faster than the existing [RODBC](https://cran.r
 
 ### Reading
 
-Reading a table from a PostgreSQL database with the 'flights' dataset (336,776 rows, 19 columns) of the package [nytflights13](https://github.com/hadley/nycflights13).
+Reading a table from a PostgreSQL database with the 'flights' dataset (336,776 rows, 19 columns) of the package [nytflights13](https://github.com/hadley/nycflights13):
 
 ``` r
 # First using RODBC / RODBCDBI
@@ -111,7 +111,7 @@ gc(verbose = FALSE)
 
 ### Writing
 
-Writing the same dataset to the database.
+Writing the same dataset to the database:
 
 ``` r
 library(nycflights13)

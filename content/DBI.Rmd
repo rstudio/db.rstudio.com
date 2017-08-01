@@ -2,9 +2,9 @@
 Title: Introduction to DBI 
 ---
 
-DBI separates the connectivity to the DBMS into a "front-end" and a "back-end".  Applications use only the exposed "front-end" API. The facilities that communicate with specific DBMSs (SQLite, MySQL, PostgreSQL, MonetDB, etc.) are provided by "drivers" (other packages) that get invoked automatically through S4 methods. 
+`DBI` separates the connectivity to the DBMS into a "front-end" and a "back-end".  Applications use only the exposed front-end API. The back-end facilities that communicate with specific DBMSs (SQLite, MySQL, PostgreSQL, MonetDB, etc.) are provided by **drivers** (other packages) that get invoked automatically through S4 methods.
 
-The following example illustrates some of the DBI capabilities:
+The following example illustrates some of the `DBI` capabilities:
 
 ```R
 library(DBI)
@@ -34,18 +34,18 @@ dbClearResult(res)
 dbDisconnect(con)
 ```
 
-To install DBI:
+To install `DBI`:
 
 * Get the released version from CRAN: `install.packages("DBI")`
-* Get the development version from github: `devtools::install_github("rstats-db/DBI")`
+* Get the development version from GitHub: `devtools::install_github("rstats-db/DBI")`
 
-Discussions associated with DBI and related database packages take place on [R-SIG-DB](https://stat.ethz.ch/mailman/listinfo/r-sig-db).
+Discussions associated with `DBI` and related database packages take place on [R-SIG-DB](https://stat.ethz.ch/mailman/listinfo/r-sig-db).
 
 ## Class structure
 
-There are four main DBI classes. Three which are each extended by individual database backends:
+There are four main `DBI` classes, three of which are each extended by individual database backends:
 
-* `DBIObject`: a common base class for all DBI.
+* `DBIObject`: a common base class for all `DBI`.
 
 * `DBIDriver`: a base class representing overall DBMS properties. 
   Typically generator functions instantiate the driver objects like `RSQLite()`,
@@ -59,7 +59,7 @@ All classes are _virtual_: they cannot be instantiated directly and instead must
 
 ## History
 
-The following history of DBI was contributed by David James, the driving force behind the development of DBI, and many of the packages that implement it.
+*The following history of DBI was contributed by David James, the driving force behind the development of DBI, and many of the packages that implement it.*
 
 The idea/work of interfacing S (originally S3 and S4) to RDBMS goes back to the mid- and late 1990's in Bell Labs. The first toy interface I did was to implement John Chamber's early concept of "Data Management in S" (1991). The implementation followed that interface pretty closely and immediately showed some of the limitations when dealing with very large databases; if my memory serves me, the issue was the instance-based of the language back then, e.g., if you attached an RDBMS to the `search()` path and then needed to resolve a symbol "foo", you effectively had to bring all the objects in the database to check their mode/class, i.e., the instance object had the metadata in itself as attributes. The experiment showed that the S3 implementation of "data management" was not really suitable to large external RDBMS (probably it was never intended to do that anyway). (Note however, that since then, John and Duncan Temple Lang generalized the data management in S4 a lot, including Duncan's implementation in his RObjectTables package where he considered a lot of synchronization/caching issues relevant to DBI and, more generally, to most external interfaces).
 

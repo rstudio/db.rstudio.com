@@ -22,8 +22,8 @@ from data that is not directly accessible by the content audience. In these
 database on behalf of the content audience.  The previous examples assumed this
 type of model.
 
-Sometimes during local development the data scientist might be expected to use
-their own credentials. It is possible through a DSN or the config package to
+Sometimes, during local development, the data scientist might be expected to use
+their own credentials. It is possible through a DSN or the `config` package to
 specify that local connections use the data scientist's credentials and deployed
 connections use a service account. Be sure the code works for results for both
 accounts!
@@ -101,12 +101,12 @@ application has an account and access controls in the database. In other words,
 this model assumes a 1-to-1 model instead of the 1-to-many distribution model
 facilitated by a service account.
 
-In these scenarios it is most common to use Kerberos. RStudio Connect will need
+In these scenarios, it is most common to use Kerberos. RStudio Connect will need
 to be setup to run the application as the logged-in user. The [admin guide](http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current)
 contains more details.
 
 Deployment of this type of content is usually straightforward because the
-connection code does not include any credentials and is the same in the local
+connection code does not include any credentials, and is the same in the local
 and deployed context.
 
 For example:
@@ -122,7 +122,7 @@ con <- dbConnect(odbc::odbc(),
 )
 ```
 
-For more information on data access see this [article](https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases). In all cases, the
+For more information on data access, see this [article](https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases). In all cases, the
 credentials should not be stored as plain text in either the configuration file
 or the R code. See [securing credentials](keyring.html) for more details.
 
