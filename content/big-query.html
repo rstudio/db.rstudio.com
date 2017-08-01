@@ -4,23 +4,23 @@ Title: Google BigQuery
 
 
 
-<p>The bigrquery packages provides an R interface to <a href="https://developers.google.com/bigquery/">Google BigQuery</a>. It makes it easy to retrieve metadata about your projects, datasets, tables and jobs, and provides a convenient wrapper for working with bigquery from R.</p>
+<p>The <code>bigrquery</code> package provides an R interface to <a href="https://developers.google.com/bigquery/">Google BigQuery</a>. It makes it easy to retrieve metadata about your projects, datasets, tables and jobs, and provides a convenient wrapper for working with bigquery from R.</p>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
-<p>The current bigrquery release can be installed from CRAN:</p>
+<p>The current <code>bigrquery</code> release can be installed from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;bigrquery&quot;)</code></pre>
-<p>The newest development release can be installed from github:</p>
+<p>The newest development release can be installed from GitHub:</p>
 <pre class="r"><code># install.packages(&#39;devtools&#39;)
 devtools::install_github(&quot;rstats-db/bigrquery&quot;)</code></pre>
 </div>
 <div id="authentication" class="section level2">
 <h2>Authentication</h2>
-<p>The first time you use bigrquery in a session, it will ask you to <a href="https://developers.google.com/bigquery/authorization">authorize bigrquery</a> in the browser. This gives bigrquery the credentials to access data on your behalf. By default, bigrquery picks up <a href="http://github.com/hadley/httr">httr’s</a> policy of caching per-working-directory credentials in <code>.httr-oauth</code>.</p>
-<p>Note that <code>bigrquery</code> requests permission to modify your data; in general, the only data created or modified by <code>bigrquery</code> are the temporary tables created as query results, unless you explicitly modify your own data (say by calling <code>delete_table()</code> or <code>insert_upload_job()</code>).</p>
+<p>The first time you use <code>bigrquery</code> in a session, it will ask you to <a href="https://developers.google.com/bigquery/authorization">authorize <code>bigrquery</code></a> in the browser. This gives <code>bigrquery</code> the credentials to access data on your behalf. By default, <code>bigrquery</code> picks up <a href="http://github.com/hadley/httr">httr’s</a> policy of caching per-working-directory credentials in <code>.httr-oauth</code>.</p>
+<p>Note that <code>bigrquery</code> requests permission to modify your data; in general, the only data created or modified by <code>bigrquery</code> are the temporary tables created as query results, unless you explicitly modify your own data (say, by calling <code>delete_table()</code> or <code>insert_upload_job()</code>).</p>
 </div>
 <div id="sample-data-and-a-billing-project" class="section level2">
 <h2>Sample data and a billing project</h2>
-<p>If you just want to play around with the bigquery API, it’s easiest to start with the Google’s free <a href="https://developers.google.com/bigquery/docs/sample-tables">sample data</a>. To do that, you’ll also need to create your own project for billing purposes. If you’re just playing around, it’s unlikely that you’ll go over the 10,000 request/day free limit, but google still needs a project that it can bill (you don’t even need to provide a credit card).</p>
+<p>If you just want to play around with the BigQuery API, it’s easiest to start with the Google’s free <a href="https://developers.google.com/bigquery/docs/sample-tables">sample data</a>. To do that, you’ll also need to create your own project for billing purposes. If you’re just playing around, it’s unlikely that you’ll go over the 10,000 request/day free limit, but Google still needs a project that it can bill (you don’t even need to provide a credit card).</p>
 <p>To create a project:</p>
 <ol style="list-style-type: decimal">
 <li>Open <a href="https://console.cloud.google.com/" class="uri">https://console.cloud.google.com/</a></li>

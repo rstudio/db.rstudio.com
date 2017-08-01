@@ -44,12 +44,12 @@ dbDisconnect(con)</code></pre>
 <pre class="r"><code># install.packages(&quot;devtools&quot;)
 devtools::install_github(&quot;rstats-db/DBI&quot;)
 devtools::install_github(&quot;rstats-db/RMySQL&quot;)</code></pre>
-<p>Installation from source on Linux or OSX requires <a href="https://downloads.mariadb.org/connector-c/"><code>MariaDB Connector/C</code></a>. On some older platforms you can also link against Oracle’s <a href="https://packages.debian.org/testing/libmysqlclient-dev">libmysqlclient</a> driver but the mariadb implementation is much better.</p>
-<p>On recent <strong>Debian or Ubuntu</strong> install <a href="https://packages.debian.org/testing/libmariadb-client-lgpl-dev">libmariadb-client-lgpl-dev</a>. In Ubuntu 14.04 this was called <a href="http://packages.ubuntu.com/trusty/libmariadbclient-dev">libmariadbclient-dev</a>.</p>
+<p>Installation from source on Linux or OSX requires <a href="https://downloads.mariadb.org/connector-c/"><code>MariaDB Connector/C</code></a>. On some older platforms, you can also link against Oracle’s <a href="https://packages.debian.org/testing/libmysqlclient-dev">libmysqlclient</a> driver, but the mariadb implementation is much better.</p>
+<p>On recent <strong>Debian or Ubuntu</strong>, install <a href="https://packages.debian.org/testing/libmariadb-client-lgpl-dev">libmariadb-client-lgpl-dev</a>. In Ubuntu 14.04, this was called <a href="http://packages.ubuntu.com/trusty/libmariadbclient-dev">libmariadbclient-dev</a>.</p>
 <pre><code>sudo apt-get install -y libmariadb-client-lgpl-dev</code></pre>
-<p>On <strong>Fedora</strong>, <strong>CentOS or RHEL</strong> we need <a href="https://apps.fedoraproject.org/packages/mariadb-devel">mariadb-devel</a>:</p>
+<p>On <strong>Fedora</strong>, <strong>CentOS or RHEL</strong>, we need <a href="https://apps.fedoraproject.org/packages/mariadb-devel">mariadb-devel</a>:</p>
 <pre><code>sudo yum install mariadb-devel</code></pre>
-<p>On <strong>OS-X</strong> use <a href="https://github.com/Homebrew/homebrew-core/blob/master/Formula/mariadb-connector-c.rb">mariadb-connector-c</a> from Homebrew:</p>
+<p>On <strong>OS-X</strong>, use <a href="https://github.com/Homebrew/homebrew-core/blob/master/Formula/mariadb-connector-c.rb">mariadb-connector-c</a> from Homebrew:</p>
 <pre><code>brew install mariadb-connector-c</code></pre>
 </div>
 <div id="mysql-configuration-file" class="section level2">

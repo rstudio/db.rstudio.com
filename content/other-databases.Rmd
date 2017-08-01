@@ -2,7 +2,7 @@
 title: Other Databases
 ---
 
-Databases that have a `dplyr` translation are listed in this section.  If the database you are interested in is not listed yet, that does not mean that you cannot take advantage of the packages and information found in this site:  
+Databases that have a `dplyr` translation are listed in this section.  If the database you are interested in is not listed yet, you can still take advantage of the packages and information found in this site.
 
 ## odbc & DBI
 

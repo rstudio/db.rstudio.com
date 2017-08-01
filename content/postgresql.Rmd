@@ -22,7 +22,7 @@ There are five settings needed to make a connection:
   - **Server** - A network path to the database server
   - **Database** - The name of the schema
   - **UID** - The user's network ID or server local account
-  - **PWD** - Account's password
+  - **PWD** - The account's password
   - **Port** - Should be set to **5432**
 
 ```{r,eval=FALSE}

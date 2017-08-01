@@ -44,7 +44,7 @@ dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"
 
 Here `airport_code` is created in the script, in real-life it might be an input typed into a Shiny app.
 
-The problem with creating SQL strings with `paste0()` is that the careful attacker can create inputs that return more rows than you want:
+The problem with creating SQL strings with `paste0()` is that a careful attacker can create inputs that return more rows than you want:
 
 ```{r, echo = TRUE, cache = FALSE}
 airport_code <- "GPT' or faa = 'MSY"
@@ -62,15 +62,15 @@ This is called __SQL injection attack__.
 
 There are three ways to avoid this problem:
 
-* Use a parameterised query with `dbSendQuery()` and `dbBind()`.
+* Use a parameterised query with `dbSendQuery()` and `dbBind()`
 * Use the `sqlInterpolate()` function to safely combine a SQL string with data
-* Manually escape the inputs using `dbQuoteString()`.
+* Manually escape the inputs using `dbQuoteString()`
 
 These are ordered by the level of safety they provide: if you can use `dbSendQuery()` and `dbBind()`, you should.
 
 ## Parameterized queries
 
-All modern database engines provide a way to write __parameterised queries__, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit the database can often better optimise the query so it runs faster.
+All modern database engines provide a way to write __parameterised queries__, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit, the database can often optimise the query so it runs faster.
 
 Using a parameterised query with DBI requires three steps. 
 
@@ -82,7 +82,7 @@ Using a parameterised query with DBI requires three steps.
     
     ```
 
-1.  Use `dbBind()` to execute the query with specific values, then `dbFetch()`
+2.  Use `dbBind()` to execute the query with specific values, then `dbFetch()`
     to get the results:
 
     ```{r}
@@ -90,7 +90,7 @@ Using a parameterised query with DBI requires three steps.
     dbFetch(airport)
     ```
 
-1.  Once you're done using the parameterised query, clean it up by calling 
+3.  Once you're done using the parameterised query, clean it up by calling 
     `dbClearResult()`
     
     ```{r}
@@ -99,7 +99,7 @@ Using a parameterised query with DBI requires three steps.
 
 ## Interpolation by "hand"
 
-While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that `dbBind()` doesn't work with the database connector you are using you can fall back to `sqlInterpolate()` which will safely do the interpolation for you.
+While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that `dbBind()` doesn't work with the database connector you are using, you can fall back on `sqlInterpolate()`, which will safely do the interpolation for you.
 
 ```{r, echo = TRUE, cache = FALSE}
 
@@ -114,7 +114,7 @@ sql
 dbGetQuery(con, sql)
 ```
 
-The query returns no records if we try the same SQL Injection:
+The query returns no records if we try the same SQL injection attack:
 
 ```{r, echo = TRUE, cache = FALSE}
 
@@ -131,7 +131,7 @@ dbGetQuery(con, sql)
 
 ## Manual escaping
 
-Sometimes you can't create the SQL you want using either of the previous methods. If you're in this unhappy situation first make absolutely sure that you haven't missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it's better to rely on existing code that multiple people have carefully reviewed.
+Sometimes you can't create the SQL you want using either of the previous methods. If you're in this unhappy situation, first make absolutely sure that you haven't missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it's better to rely on existing code that multiple people have carefully reviewed.
 
 However, if there's no other way around it, you can use `dbQuoteString()` to add the quotes for you. This method will automatically take care of dangerous characters in the same way as `sqlInterpolate()` (*better*) and `dbBind()` (*best*).
 
@@ -146,4 +146,4 @@ dbGetQuery(con, sql)
 
 ```
 
-You may also need `dbQuoteIdentifier()` if you are creating tables or using user input to choose which column to filter on.
+You may also need `dbQuoteIdentifier()` if you are creating tables or relying on user input to choose which column to filter on.

@@ -1,7 +1,7 @@
 ---
 title: "Implementing a new backend"
 author: "Hadley Wickham"
-date: "2017-06-25"
+date: "2017-08-01"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Implementing a new backend}
@@ -11,9 +11,8 @@ vignette: >
 
 
 
-<pre><code>## Loading required package: methods</code></pre>
 <p>The goal of this document is to help you implement a new backend for DBI.</p>
-<p>If you are writing a package that connects a database to R, I highly recommend that you make it DBI compatible because it makes your life easier by spelling out exactly what you need to do. The consistent interface provided by DBI makes it easier for you to implement the package (because you have fewer arbitrary choices to make), and easier for your users (because it follows a familiar pattern). In addition, the <code>DBItest</code> package provides test cases which you can easily incorporate in your package.</p>
+<p>If you are writing a package that connects a database to R, I highly recommend that you make it DBI-compatible because it makes your life easier by spelling out exactly what you need to do. The consistent interface provided by DBI makes it easier for you to implement the package (because you have fewer arbitrary choices to make), and easier for your users (because it follows a familiar pattern). In addition, the <code>DBItest</code> package provides test cases which you can easily incorporate in your package.</p>
 <p>I’ll illustrate the process using a fictional database called Kazam.</p>
 <div id="getting-started" class="section level2">
 <h2>Getting started</h2>
@@ -28,14 +27,14 @@ Suggests:
 </div>
 <div id="testing" class="section level2">
 <h2>Testing</h2>
-<p>Why testing at this early stage? Because testing should be an integral part of the software development cycle. Test right from the start, add automated tests as you go, finish faster (because tests are automated) while maintaining superb code quality (because tests also check corner cases that you might not be aware of). Don’t worry: if some test cases are difficult or impossible to satisfy, or take too long to run, you can just turn them off.</p>
+<p>Why test at this early stage? Because testing should be an integral part of the software development cycle. Test right from the start, add automated tests as you go, and finish faster (because tests are automated) while maintaining superb code quality (because tests also check corner cases that you might not be aware of). Don’t worry: if some test cases are difficult or impossible to satisfy, or take too long to run, you can just turn them off.</p>
 <p>Take the time now to head over to the <code>DBItest</code> vignette. You will find a vast amount of ready-to-use test cases that will help you in the process of implementing your new DBI backend.</p>
 <pre class="r"><code>vignette(&quot;test&quot;, package = &quot;DBItest&quot;)</code></pre>
 <p>Add custom tests that are not covered by <code>DBItest</code> at your discretion, or enhance <code>DBItest</code> and file a pull request if the test is generic enough to be useful for many DBI backends.</p>
 </div>
 <div id="driver" class="section level2">
 <h2>Driver</h2>
-<p>Start by making a driver class which inherits from <code>DBIDriver</code>. This class doesn’t need to do anything, it’s just used to dispatch other generics to the right method. Users don’t need to know about this, so you can remove it from the default help listing with <code>@keywords internal</code>:</p>
+<p>Start by making a driver class which inherits from <code>DBIDriver</code>. This class doesn’t need to do anything; it is just used to dispatch other generics to the right method. Users don’t need to know about this, so you can remove it from the default help listing with <code>@keywords internal</code>:</p>
 <pre class="r"><code>#&#39; Driver for Kazam database.
 #&#39; 
 #&#39; @keywords internal
@@ -43,7 +42,7 @@ Suggests:
 #&#39; @import DBI
 #&#39; @import methods
 setClass(&quot;KazamDriver&quot;, contains = &quot;DBIDriver&quot;)</code></pre>
-<p>The driver class was more important in older versions of DBI, so you should also provide a dummy <code>dbUnloadDriver()</code> method.</p>
+<p>The driver class was more important in older versions of <code>DBI</code>, so you should also provide a dummy <code>dbUnloadDriver()</code> method:</p>
 <pre class="r"><code>#&#39; @export
 #&#39; @rdname Kazam-class
 setMethod(&quot;dbUnloadDriver&quot;, &quot;KazamDriver&quot;, function(drv, ...) {
@@ -51,12 +50,12 @@ setMethod(&quot;dbUnloadDriver&quot;, &quot;KazamDriver&quot;, function(drv, ...
 })
 #&gt; [1] &quot;dbUnloadDriver&quot;</code></pre>
 <p>If your package needs global setup or tear down, do this in the <code>.onLoad()</code> and <code>.onUnload()</code> functions.</p>
-<p>You might also want to add a show method so the object prints nicely:</p>
+<p>You might also want to add a <code>show()</code> method so the object prints nicely:</p>
 <pre class="r"><code>setMethod(&quot;show&quot;, &quot;KazamDriver&quot;, function(object) {
   cat(&quot;&lt;KazamDriver&gt;\n&quot;)
 })
 #&gt; [1] &quot;show&quot;</code></pre>
-<p>Next create <code>Kazam()</code> which instantiates this class.</p>
+<p>Next, create <code>Kazam()</code>, which instantiates this class:</p>
 <pre class="r"><code>#&#39; @export
 Kazam &lt;- function() {
   new(&quot;KazamDriver&quot;)
@@ -67,7 +66,7 @@ Kazam()
 </div>
 <div id="connection" class="section level2">
 <h2>Connection</h2>
-<p>Next create a connection class that inherits from <code>DBIConnection</code>. This should store all the information needed to connect to the database. If you’re talking to a C api, this will include a slot that holds an external pointer.</p>
+<p>Next, create a connection class that inherits from <code>DBIConnection</code>. This should store all the information needed to connect to the database. If you’re talking to a C API, this will include a slot that holds an external pointer.</p>
 <pre class="r"><code>#&#39; Kazam connection class.
 #&#39; 
 #&#39; @export
@@ -81,7 +80,7 @@ setClass(&quot;KazamConnection&quot;,
     ptr = &quot;externalptr&quot;
   )
 )</code></pre>
-<p>Now you have some of the boilerplate out of the way, you can start work on the connection. The most important method here is <code>dbConnect()</code> which allows you to connect to a specified instance of the database. Note the use of <code>@rdname Kazam</code>. This ensures that <code>Kazam()</code> and the connect method are documented together.</p>
+<p>Now that you have some of the boilerplate out of the way, you can start work on the connection. The most important method here is <code>dbConnect()</code>, which allows you to connect to a specified instance of the database. Note the use of <code>@rdname Kazam</code>. This ensures that <code>Kazam()</code> and the connect method are documented together.</p>
 <pre class="r"><code>#&#39; @param drv An object created by \code{Kazam()} 
 #&#39; @rdname Kazam
 #&#39; @export
@@ -99,7 +98,7 @@ setMethod(&quot;dbConnect&quot;, &quot;KazamDriver&quot;, function(drv, ...) {
 #&gt; [1] &quot;dbConnect&quot;</code></pre>
 <ul>
 <li><p>Replace <code>...</code> with the arguments needed to connect to your database. You’ll always need to include <code>...</code> in the arguments, even if you don’t use it, for compatibility with the generic.</p></li>
-<li><p>This is likely to be where people first come for help, so the examples should show how to connect to the database, and how to query it. (Obviously these examples won’t work yet.) Ideally, include examples that can be run right away (perhaps relying on a publicly hosted database), but failing that surround in <code>\dontrun{}</code> so people can at least see the code.</p></li>
+<li><p>This is likely to be where people first come for help, so the examples should show how to connect to the database, and how to query it. (Obviously these examples won’t work yet.) Ideally, include examples that can be run right away (perhaps relying on a publicly hosted database), but failing that, surround it in <code>\dontrun{}</code> so people can at least see the code.</p></li>
 </ul>
 <p>Next, implement <code>show()</code> and <code>dbDisconnect()</code> methods.</p>
 </div>
@@ -132,7 +131,7 @@ setMethod(&quot;dbClearResult&quot;, &quot;KazamResult&quot;, function(res, ...)
   TRUE
 })
 #&gt; [1] &quot;dbClearResult&quot;</code></pre>
-<p>The hardest part of every DBI package is writing the <code>dbFetch()</code> method. This needs to take a result set and (optionally) number of records to return, and create a dataframe. Mapping R’s data types to those of your database may require a custom implementation of the <code>dbDataType()</code> method for your connection class:</p>
+<p>The hardest part of every DBI package is writing the <code>dbFetch()</code> method. This needs to take a result set and (optionally) the number of records to return, and create a dataframe. Mapping R’s data types to those of your database may require a custom implementation of the <code>dbDataType()</code> method for your connection class:</p>
 <pre class="r"><code>#&#39; Retrieve records from Kazam query
 #&#39; @export
 setMethod(&quot;dbFetch&quot;, &quot;KazamResult&quot;, function(res, n = -1, ...) {
@@ -148,30 +147,30 @@ setMethod(&quot;dbDataType&quot;, &quot;KazamConnection&quot;, function(dbObj, o
   ...
 })
 #&gt; [1] &quot;dbDataType&quot;</code></pre>
-<p>Next, implement <code>dbHasCompleted()</code> which should return a <code>logical</code> indicating if there are any rows remaining to be fetched.</p>
+<p>Next, implement <code>dbHasCompleted()</code>, which should return a <code>logical</code> indicating if there are any rows remaining to be fetched.</p>
 <pre class="r"><code>#&#39; @export
 setMethod(&quot;dbHasCompleted&quot;, &quot;KazamResult&quot;, function(res, ...) { 
   
 })
 #&gt; [1] &quot;dbHasCompleted&quot;</code></pre>
-<p>With these four methods in place, you can now use the default <code>dbGetQuery()</code> to send a query to the database, retrieve results if available and then clean up. Spend some time now making sure this works with an existing database, or relax and let the <code>DBItest</code> package do the work for you.</p>
+<p>With these four methods in place, you can now use the default <code>dbGetQuery()</code> to send a query to the database, retrieve results if available, and then clean up. Spend some time now making sure this works with an existing database, or relax and let the <code>DBItest</code> package do the work for you.</p>
 </div>
 <div id="sql-methods" class="section level2">
 <h2>SQL methods</h2>
-<p>You’re now on the home stretch, and can make your wrapper substantially more useful by implementing methods that wrap around variations in SQL across databases:</p>
+<p>You’re now in the home stretch, and can make your wrapper substantially more useful by implementing methods that wrap around variations in SQL across databases:</p>
 <ul>
 <li><p><code>dbQuoteString()</code> and <code>dbQuoteIdentifer()</code> are used to safely quote strings and identifiers to avoid SQL injection attacks. Note that the former must be vectorized, but not the latter.</p></li>
-<li><p><code>dbWriteTable()</code> creates a database table given an R dataframe. I’d recommend using the functions prefixed with <code>sql</code> in this package to generate the SQL. These functions are still a work in progress so please let me know if you have problems.</p></li>
-<li><p><code>dbReadTable()</code>: a simple wrapper around <code>SELECT * FROM table</code>. Use <code>dbQuoteIdentifer()</code> to safely quote the table name and prevent mismatches between the names allowed by R and the database.</p></li>
-<li><p><code>dbListTables()</code> and <code>dbExistsTable()</code> let you determine what tables are available. If not provided by your database’s API, you may need to generate sql that inspects the system tables.</p></li>
+<li><p><code>dbWriteTable()</code> creates a database table given an R dataframe. I’d recommend using the functions prefixed with <code>sql</code> in this package to generate the SQL. These functions are still a work-in-progress, so please let me know if you have problems.</p></li>
+<li><p><code>dbReadTable()</code> is a simple wrapper around <code>SELECT * FROM table</code>. Use <code>dbQuoteIdentifer()</code> to safely quote the table name and prevent mismatches between the names allowed by R and the database.</p></li>
+<li><p><code>dbListTables()</code> and <code>dbExistsTable()</code> let you determine what tables are available. If not provided by your database’s API, you may need to generate SQL that inspects the system tables.</p></li>
 <li><p><code>dbListFields()</code> shows which fields are available in a given table.</p></li>
 <li><p><code>dbRemoveTable()</code> wraps around <code>DROP TABLE</code>. Start with <code>SQL::sqlTableDrop()</code>.</p></li>
-<li><p><code>dbBegin()</code>, <code>dbCommit()</code> and <code>dbRollback()</code>: implement these three functions to provide basic transaction support. This functionality is currently not tested in the <code>DBItest</code> package.</p></li>
+<li><p>Implement <code>dbBegin()</code>, <code>dbCommit()</code> and <code>dbRollback()</code> to provide basic transaction support. This functionality is currently not tested in the <code>DBItest</code> package.</p></li>
 </ul>
 </div>
 <div id="metadata-methods" class="section level2">
 <h2>Metadata methods</h2>
-<p>There are a lot of extra metadata methods for result sets (and one for the connection) that you might want to implement. They are described in the following.</p>
+<p>There are a lot of extra metadata methods for result sets (and one for the connection) that you might want to implement, as well. They are described in the following.</p>
 <ul>
 <li><p><code>dbIsValid()</code> returns if a connection or a result set is open (<code>TRUE</code>) or closed (<code>FALSE</code>). All further methods in this section are valid for result sets only.</p></li>
 <li><p><code>dbGetStatement()</code> returns the issued query as a character value.</p></li>

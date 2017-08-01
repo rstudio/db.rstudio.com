@@ -12,22 +12,22 @@ register the driver in a [odbcinst.ini](#dsn-configuration-files) file for it to
 
 ### Database Drivers 
  
- Windows is bundled with ODBC libraries however drivers for each database
+ Windows is bundled with ODBC libraries; however, drivers for each database
 need to be installed separately. Windows ODBC drivers typically include an
-installer that needs to be run and will install the driver to the proper
+installer that needs to be run to install the drivers in the proper
 locations.
 
 ### Administration 
 The [ODBC Data Source Administrator](https://msdn.microsoft.com/en-us/library/ms714024(v=vs.85).aspx)
 application is used to manage ODBC data sources on Windows.
 
-## Apple macOS 
+## Apple MacOS 
 
 ### Installation
 
- 1. Install [homebrew](http://brew.sh/) can be used to easily install database drivers on MacOS.
+ 1. Install [homebrew](http://brew.sh/) to easily install database drivers on MacOS
 
- 2. Install UnixODBC - Required for all databases
+ 2. Install UnixODBC, which is required for all databases
 ```shell
   # Install the unixODBC library
   brew install unixodbc
@@ -58,9 +58,9 @@ See the section with the same name in the [Linux section](/drivers/#linux-debian
 ### Installation
 
 The [apt-get](https://wiki.debian.org/Apt) command can be used to easily install database
-drivers on Linux distributions which support it, such as Debian and Ubuntu.
+drivers on Linux distributions that support it, such as Debian and Ubuntu.
 
- 1. Install UnixODBC - Required for all databases
+ 1. Install UnixODBC, which is required for all databases
 
 ```shell
 
@@ -89,20 +89,20 @@ drivers on Linux distributions which support it, such as Debian and Ubuntu.
 
 ### Setting up database connections
 
-On MacOS and Linux there are two separate text files that need to be edited.
+On MacOS and Linux, there are two separate text files that need to be edited.
 UnixODBC includes a command line executable `odbcinst` which can be used to
-query and modify the DSN files. However these are plain text files you
+query and modify the DSN files. However, these are plain text files you
 can also edit by hand if desired.
 
-There are two different files used to setup the DSN information.
+There are two different files used to setup the DSN information:
 
-- `odbcinst.ini` - which defines **driver** options
+- `odbcinst.ini` defines **driver** options
 
-- `odbc.ini` - which defines **connection** options
+- `odbc.ini` defines **connection** options
 
 ### odbcinst.ini
 
-It contains the driver information, particularly the name of the driver library.
+This file contains the driver information, particularly the name of the driver library.
 Multiple drivers can be specified in the same file.
 
 ```ini
@@ -115,7 +115,7 @@ Driver          = /usr/local/lib/libsqlite3odbc.dylib
 
 ### odbc.ini
 
-It contains the connection information, particularly the username, password, database
+This file contains the connection information, particularly the username, password, database
 and host information. The Driver line corresponds to the driver defined in
 `odbcinst.ini`.
 ```ini
@@ -138,9 +138,9 @@ See also: [unixODBC without the GUI](http://www.unixodbc.org/odbcinst.html) for 
 
 The DSN configuration files can be defined globally for all users of the
 system, often at
-`/etc/odbc.ini` or `/opt/local/etc/odbc.ini`, the exact location depends on
-what option was used when compiling unixODBC. `odbcinst -j` can be used to find
-the exact location. Alternatively the `ODBCSYSINI` environment variable can be
+`/etc/odbc.ini` or `/opt/local/etc/odbc.ini`. The file location depends on
+what option was used when compiling unixODBC; `odbcinst -j` can be used to find
+the exact location. Alternatively, the `ODBCSYSINI` environment variable can be
 used to specify the location of the configuration files. Ex. `ODBCSYSINI=~/ODBC`
 
 A local DSN file can also be used with the files `~/.odbc.ini` and `~/.odbcinst.ini`.
@@ -178,8 +178,8 @@ con <- dbConnect(odbc::odbc(),
 
 ### DSN Configuration files
 
-ODBC configuration files are another option to specify connection parameters
-and allow one to use a Data Source Name (DSN) to make it easier to connect to a database.
+ODBC configuration files are another option to specify connection parameters; they
+allow one to use a Data Source Name (DSN) to make it easier to connect to a database.
 
 ```r
   con <- dbConnect(odbc::odbc(), "PostgreSQL")

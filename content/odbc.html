@@ -4,7 +4,7 @@ Title: odbc
 
 
 
-<p>The goal of the odbc package is to provide a DBI-compliant interface to <a href="https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx">Open Database Connectivity</a> (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including <a href="https://www.microsoft.com/en-us/sql-server/">SQL Server</a>, <a href="https://www.oracle.com/database">Oracle</a>, <a href="https://www.mysql.com/">MySQL</a>, <a href="https://www.postgresql.org/">PostgreSQL</a>, <a href="https://sqlite.org/">SQLite</a> and others. The implementation builds on the <a href="http://nanodbc.lexicalunit.com/">nanodbc</a> C++ library.</p>
+<p>The goal of the <code>odbc</code> package is to provide a DBI-compliant interface to <a href="https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx">Open Database Connectivity</a> (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including <a href="https://www.microsoft.com/en-us/sql-server/">SQL Server</a>, <a href="https://www.oracle.com/database">Oracle</a>, <a href="https://www.mysql.com/">MySQL</a>, <a href="https://www.postgresql.org/">PostgreSQL</a>, <a href="https://sqlite.org/">SQLite</a> and others. The implementation builds on the <a href="http://nanodbc.lexicalunit.com/">nanodbc</a> C++ library.</p>
 <div id="usage" class="section level2">
 <h2>Usage</h2>
 <p>All of the following examples assume you have already created a connection <code>con</code>. See <a href="#connecting-to-a-database">Connecting to a database</a> for more information on establishing a connection.</p>
@@ -46,7 +46,7 @@ rest &lt;- dbFetch(result)</code></pre>
 <p>The <em>odbc</em> package is often much faster than the existing <a href="https://cran.r-project.org/package=RODBC">RODBC</a> and DBI compatible <a href="https://cran.r-project.org/package=RODBCDBI">RODBCDBI</a> packages.</p>
 <div id="reading-1" class="section level3">
 <h3>Reading</h3>
-<p>Reading a table from a PostgreSQL database with the ‘flights’ dataset (336,776 rows, 19 columns) of the package <a href="https://github.com/hadley/nycflights13">nytflights13</a>.</p>
+<p>Reading a table from a PostgreSQL database with the ‘flights’ dataset (336,776 rows, 19 columns) of the package <a href="https://github.com/hadley/nycflights13">nytflights13</a>:</p>
 <pre class="r"><code># First using RODBC / RODBCDBI
 library(DBI)
 library(RODBCDBI)
@@ -93,7 +93,7 @@ gc(verbose = FALSE)
 </div>
 <div id="writing-1" class="section level3">
 <h3>Writing</h3>
-<p>Writing the same dataset to the database.</p>
+<p>Writing the same dataset to the database:</p>
 <pre class="r"><code>library(nycflights13)
 # rodbc does not support writing timestamps natively.
 rodbc &lt;- dbConnect(RODBCDBI::ODBC(), dsn = &quot;PostgreSQL&quot;)
