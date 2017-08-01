@@ -28,17 +28,17 @@ con <- DBI::dbConnect(odbc::odbc(),
   <img src="/histogram.png"   align="right">
 </div>
 
-Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, `geom_histogram()` calculates the bin sizes, the count per bin, and then it renders the plot.  Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database.  The best approach is to move the data transformation to the database, and then use a graphing function to render the results. 
+Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, `geom_histogram()` calculates the bin sizes and the count per bin, and then it renders the plot.  Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database.  The best approach is to move the data transformation to the database, and then use a graphing function to render the results.
 
 This article has two goals:
 
-- Demonstrate a practical implementation of the "Transform in Database, plot in R" concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram and two continuous variables using a Raster plot, all using data in a database.
+- Demonstrate a practical implementation of the "Transform in database, plot in R" concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram, and two continuous variables using a Raster plot, all using data in a database
 
 - Introduce a technique that simplifies the use of complex formulas that are required to move the calculations of the plot to the database
 
 ## Bar plot
 
-A Bar plot is intended to measure and compare categorical data. Passing the category to `geom_bar()` as `x`, will automatically calculate the height of the bars based on the row count per category. Here is the code of a typical bar plot using `ggplot2`:
+A Bar plot is intended to measure and compare categorical data. Passing the category to `geom_bar()` as `x` will automatically calculate the height of the bars based on the row count per category. Here is the code of a typical bar plot using `ggplot2`:
 
 ```{r, eval = FALSE}
 ggplot(data = flights) +
@@ -70,7 +70,7 @@ ggplot(data = df) +
 
 ### Transform and plot
 
-The plot can be created using a single piped code. This is particularly useful when performing exploratory data analysis because it is easy to add or remove filters and to change the variable that is being analyzed.
+The plot can be created using a single piped line of code. This is particularly useful when performing exploratory data analysis because it is easy to add or remove filters, or to change the variable that is being analyzed.
 
 
 ```{r, fig.width = 4, fig.height = 3.5}
@@ -86,11 +86,11 @@ tbl(con, "flights") %>%
 ## Histogram
 
 
-The histogram is intended to visualize how the values of a continuous variable are distributed.  It does this by grouping the values into bins with the same range of values. In essence, a histogram converts a continuous variable to a discrete variable by splitting and placing the variable's values into multiple bins.
+The histogram is intended to visualize the distribution of the values of a continuous variable.  It does this by grouping the values into bins with the same range of values. In essence, a histogram converts a continuous variable to a discrete variable by splitting and placing the variable's values into multiple bins.
 
 ### Calculations
 
-The following breakdown of the calculation needed to create a histogram is intended to highlight the complexity of moving its processing to the database:
+The following breakdown of the calculation needed to create a histogram is intended to highlight the complexity of moving its processing to the database.
 
 For example, if a histogram with 20 bins is needed, and the variable has a minimum value of 1 and a maximum value of 101, then each bin needs to be 5. 
 
@@ -101,20 +101,20 @@ The first bin will have a range of 1 to 6, the second 7 to 12, etc.
 
 After that, the count of values that are inside each range needs to be determined. In this example, there may be two rows that have a value between 1 and 6 and five rows with values between 7 and 12.  
 
-Any formula used to create a Histogram will need to calculate the bins, place the values inside the bins, and needs to only call math functions supported by the database in use.
+Any formula used to create a Histogram will need to calculate the bins, place the values inside the bins, and only call math functions supported by the database in use.
 
 ### Using a helper function
 
 An advantage of using `dplyr` to convert the continuous variable into a discrete variable is that one solution can be applied to multiple database types.  This is possible if the resulting formula is made of basic functions that most SQL databases support and is expressed in R, so that `dplyr` can translate it into the proper SQL syntax.
 
-Unfortunately, the formula is rather long and mistakes can be made if used in multiple locations because any corrections to the formula may not be propagated to all of the instances.  To solve this, a helper function can be used.  
+Unfortunately, the formula is rather long and mistakes can be made if used in multiple locations, because any corrections to the formula may not be propagated to all of the instances.  To solve this, a helper function can be used.
 
 In the following helper function, the `var` input is used to build the formula in an **unevaluated** R code format. When used inside `dplyr`, it will return the assembled formula which will then be **evaluated** as inside the verb command.  Feel free to copy this function into your script or R Notebook.
 
 The function has two other arguments:
 
-- `bins` - It allows the number of bins to be customized. It defaults to 30
-- `binwidth` - It is used to specify the size of the bin.  It overrides any value passed to the `bins` argument.
+- `bins` - this allows the number of bins to be customized. It defaults to 30
+- `binwidth` - this is used to specify the size of the bin.  It overrides any value passed to the `bins` argument.
 
 ```{r}
 library(rlang)
@@ -141,7 +141,7 @@ db_bin <- function(var, bins = 30, binwidth = NULL) {
 
 ```
 
-Notice that the function returns a **quosure** containing the **unevaluated** R code that calculates the bins. To read more about how this kind of approach works, please refer to this article [Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html)
+Notice that the function returns a **quosure** containing the **unevaluated** R code that calculates the bins. To read more about how this kind of approach works, please refer to this article: [Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html).
 
 It is important to note that the database in use needs to support the functions called in the formula, such as `min()` and `max()`.
 
@@ -177,7 +177,7 @@ head(df)
 
 ### Plotting results in R
 
-Because the bins have been pre-processed on and collected from the database, the results are easily plotted using `geom_col()`, the resulting bin values are `x` and the count per bin is `y`:
+Because the bins have been pre-processed on and collected from the database, the results are easily plotted using `geom_col()`. The resulting bin values are `x` and the count per bin is `y`:
 
 ```{r}
 ggplot(data = df) +
@@ -186,7 +186,7 @@ ggplot(data = df) +
 
 ### Transform and plot
 
-Just like with the Bar plot, the entire process can be piped. Here is an example of using the `binwidth` argument instead of `bins`, additionally the bin size is widened to 300 minute intervals:
+Just like with the Bar plot, the entire process can be piped. Here is an example of using the `binwidth` argument instead of `bins`; additionally, the bin size is widened to 300-minute intervals:
 
 ```{r}
 tbl(con, "flights") %>%
@@ -234,9 +234,9 @@ ggplot(data = df) +
 
 There are two considerations when using a Raster plot with a database. Both considerations are related to the size of the results downloaded from the database:
 
-- The number of `bins` requested - The higher the `bins` value is, the more data is downloaded from the database.
+- The number of `bins` requested: The higher the `bins` value is, the more data is downloaded from the database.
 
-- How concentrated the data is - This refers to how many intersections return a value.  The more intersections without a value, the less data is downloaded from the database. 
+- How concentrated the data is: This refers to how many intersections return a value.  The more intersections without a value, the less data is downloaded from the database.
 
 In the previous example, there is a maximum of 2,500 rows (50 x 50).  Because the data is highly concentrated, only 353 records are returned. This means that the data will be transmitted over the network quickly, but the trade-off is that the picture definition may not be ideal to gain insights about the data.
 
