@@ -10,7 +10,7 @@ title: Oracle
 </div>
 <div id="package-options" class="section level2">
 <h2>Package Options</h2>
-<p>There are packages that either connect via ODBC but do not provide support for <code>DBI</code>, and other packages that offer <code>DBI</code> support but connect via JDBC. The <strong><code>odbc</code></strong> package, in combination with a driver, satisfies both requirements.</p>
+<p>There are packages that either connect via ODBC but do not provide support for <code>DBI</code>, or offer <code>DBI</code> support but connect via JDBC. The <strong><code>odbc</code></strong> package, in combination with a driver, satisfies both requirements.</p>
 <p>Another package that provides both ODBC connectivity and <code>DBI</code> support is <code>ROracle</code>. The current version of <code>dbplyr</code> in CRAN does not yet fully support a connection coming from <code>ROracle</code>, but we are working on it.</p>
 </div>
 <div id="connection-settings" class="section level2">
@@ -21,7 +21,7 @@ title: Oracle
 <li><strong>Host</strong> - A network path to the database server</li>
 <li><strong>SVC</strong> - The name of the schema</li>
 <li><strong>UID</strong> - The user’s network ID or server local account</li>
-<li><strong>PWD</strong> - Account’s password</li>
+<li><strong>PWD</strong> - The account’s password</li>
 <li><strong>Port</strong> - Should be set to <strong>1521</strong></li>
 </ul>
 <pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
@@ -34,10 +34,10 @@ title: Oracle
 </div>
 <div id="known-issues" class="section level2">
 <h2>Known Issues</h2>
-<p>This section will be updated as new issues are found, and when fixes are applied in the development version of the <a href="https://github.com/tidyverse/dplyr">dbplyr</a> package. The issue will be fully removed when the fix is part of of the package’s version in CRAN:</p>
+<p>This section will be updated as new issues are found, and when fixes are applied in the development version of the <a href="https://github.com/tidyverse/dplyr">dbplyr</a> package. The issue will be fully removed when the fix is part of of the package’s version in CRAN.</p>
 <ul>
-<li><p>Retrieving the top records, in instances when <code>head()</code> is used or when tibble prints a preview of the dataset, only works with version 12c (<a href="https://github.com/tidyverse/dplyr/issues/2928">Issue 2928</a>)</p></li>
-<li><p><strong>RJBC</strong> support - Even though it is not considered an issue, we have found a workaround. The approach is to point the current JDBC connection to the Oracle translation inside <code>dbplyr</code>:</p>
+<li><p>Retrieving the top records, in instances when <code>head()</code> is used or when a tibble prints a preview of the dataset, only works with version 12c (<a href="https://github.com/tidyverse/dplyr/issues/2928">Issue 2928</a>)</p></li>
+<li><p><strong>RJDBC</strong> support - Even though it is not considered an issue, we have found a workaround. The approach is to point the current JDBC connection to the Oracle translation inside <code>dbplyr</code>:</p>
 <pre><code>  sql_translate_env.JDBCConnection &lt;- dbplyr:::sql_translate_env.Oracle
   sql_select.JDBCConnection &lt;- dbplyr:::sql_select.Oracle
   sql_subquery.JDBCConnection &lt;- dbplyr:::sql_subquery.Oracle</code></pre></li>

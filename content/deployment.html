@@ -18,7 +18,7 @@ weight: 9
 <div id="service-account" class="section level2">
 <h2>Service Account</h2>
 <p>It is typical for shiny applications and R Markdown reports to provide insight from data that is not directly accessible by the content audience. In these 1-to-many cases, it is common to define service accounts that access the database on behalf of the content audience. The previous examples assumed this type of model.</p>
-<p>Sometimes during local development the data scientist might be expected to use their own credentials. It is possible through a DSN or the config package to specify that local connections use the data scientist’s credentials and deployed connections use a service account. Be sure the code works for results for both accounts!</p>
+<p>Sometimes, during local development, the data scientist might be expected to use their own credentials. It is possible through a DSN or the <code>config</code> package to specify that local connections use the data scientist’s credentials and deployed connections use a service account. Be sure the code works for results for both accounts!</p>
 </div>
 <div id="query-by-user-shiny" class="section level2">
 <h2>Query by User (Shiny)</h2>
@@ -77,8 +77,8 @@ server &lt;- function(input, output, session) {
 <h2>Run As the Logged-in User (Kerberos)</h2>
 <p>In rare cases, it may be necessary for the data to be accessed by the application or report on behalf of the specific logged-in user without prompting the user for their credentials.</p>
 <p>This scenario is rare because it implies that each end user of the report or application has an account and access controls in the database. In other words, this model assumes a 1-to-1 model instead of the 1-to-many distribution model facilitated by a service account.</p>
-<p>In these scenarios it is most common to use Kerberos. RStudio Connect will need to be setup to run the application as the logged-in user. The <a href="http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current">admin guide</a> contains more details.</p>
-<p>Deployment of this type of content is usually straightforward because the connection code does not include any credentials and is the same in the local and deployed context.</p>
+<p>In these scenarios, it is most common to use Kerberos. RStudio Connect will need to be setup to run the application as the logged-in user. The <a href="http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current">admin guide</a> contains more details.</p>
+<p>Deployment of this type of content is usually straightforward because the connection code does not include any credentials, and is the same in the local and deployed context.</p>
 <p>For example:</p>
 <pre class="r"><code>library(DBI)
 library(odbc)
@@ -88,5 +88,5 @@ con &lt;- dbConnect(odbc::odbc(),
   Database  = &quot;Datawarehouse&quot;,
   trusted_connection = &quot;True&quot;
 )</code></pre>
-<p>For more information on data access see this <a href="https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases">article</a>. In all cases, the credentials should not be stored as plain text in either the configuration file or the R code. See <a href="keyring.html">securing credentials</a> for more details.</p>
+<p>For more information on data access, see this <a href="https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases">article</a>. In all cases, the credentials should not be stored as plain text in either the configuration file or the R code. See <a href="keyring.html">securing credentials</a> for more details.</p>
 </div>

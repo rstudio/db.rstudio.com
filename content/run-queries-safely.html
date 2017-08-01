@@ -28,7 +28,7 @@ dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, air
 <pre><code>##   faa            name      lat       lon alt tz dst
 ## 1 GPT Gulfport-Biloxi 30.40728 -89.07011  28 -6   A</code></pre>
 <p>Here <code>airport_code</code> is created in the script, in real-life it might be an input typed into a Shiny app.</p>
-<p>The problem with creating SQL strings with <code>paste0()</code> is that the careful attacker can create inputs that return more rows than you want:</p>
+<p>The problem with creating SQL strings with <code>paste0()</code> is that a careful attacker can create inputs that return more rows than you want:</p>
 <pre class="r"><code>airport_code &lt;- &quot;GPT&#39; or faa = &#39;MSY&quot;
 dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, airport_code ,&quot;&#39;&quot;))</code></pre>
 <pre><code>##   faa                             name      lat       lon alt tz dst
@@ -40,15 +40,15 @@ dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, air
 <p>This is called <strong>SQL injection attack</strong>.</p>
 <p>There are three ways to avoid this problem:</p>
 <ul>
-<li>Use a parameterised query with <code>dbSendQuery()</code> and <code>dbBind()</code>.</li>
+<li>Use a parameterised query with <code>dbSendQuery()</code> and <code>dbBind()</code></li>
 <li>Use the <code>sqlInterpolate()</code> function to safely combine a SQL string with data</li>
-<li>Manually escape the inputs using <code>dbQuoteString()</code>.</li>
+<li>Manually escape the inputs using <code>dbQuoteString()</code></li>
 </ul>
 <p>These are ordered by the level of safety they provide: if you can use <code>dbSendQuery()</code> and <code>dbBind()</code>, you should.</p>
 </div>
 <div id="parameterized-queries" class="section level2">
 <h2>Parameterized queries</h2>
-<p>All modern database engines provide a way to write <strong>parameterised queries</strong>, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit the database can often better optimise the query so it runs faster.</p>
+<p>All modern database engines provide a way to write <strong>parameterised queries</strong>, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit, the database can often optimise the query so it runs faster.</p>
 <p>Using a parameterised query with DBI requires three steps.</p>
 <ol style="list-style-type: decimal">
 <li><p>You create a query containing a <code>?</code> placeholder and send it to the database with <code>dbSendQuery()</code>:</p>
@@ -64,7 +64,7 @@ dbFetch(airport)</code></pre>
 </div>
 <div id="interpolation-by-hand" class="section level2">
 <h2>Interpolation by “hand”</h2>
-<p>While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that <code>dbBind()</code> doesn’t work with the database connector you are using you can fall back to <code>sqlInterpolate()</code> which will safely do the interpolation for you.</p>
+<p>While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that <code>dbBind()</code> doesn’t work with the database connector you are using, you can fall back on <code>sqlInterpolate()</code>, which will safely do the interpolation for you.</p>
 <pre class="r"><code>airport_code &lt;- &quot;GPT&quot;
 
 sql &lt;- sqlInterpolate(con, 
@@ -76,7 +76,7 @@ sql</code></pre>
 <pre class="r"><code>dbGetQuery(con, sql)</code></pre>
 <pre><code>##   faa            name      lat       lon alt tz dst
 ## 1 GPT Gulfport-Biloxi 30.40728 -89.07011  28 -6   A</code></pre>
-<p>The query returns no records if we try the same SQL Injection:</p>
+<p>The query returns no records if we try the same SQL injection attack:</p>
 <pre class="r"><code>airport_code &lt;- &quot;GPT&#39; or faa = &#39;MSY&quot;
 
 sql &lt;- sqlInterpolate(con, 
@@ -91,7 +91,7 @@ sql</code></pre>
 </div>
 <div id="manual-escaping" class="section level2">
 <h2>Manual escaping</h2>
-<p>Sometimes you can’t create the SQL you want using either of the previous methods. If you’re in this unhappy situation first make absolutely sure that you haven’t missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it’s better to rely on existing code that multiple people have carefully reviewed.</p>
+<p>Sometimes you can’t create the SQL you want using either of the previous methods. If you’re in this unhappy situation, first make absolutely sure that you haven’t missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it’s better to rely on existing code that multiple people have carefully reviewed.</p>
 <p>However, if there’s no other way around it, you can use <code>dbQuoteString()</code> to add the quotes for you. This method will automatically take care of dangerous characters in the same way as <code>sqlInterpolate()</code> (<em>better</em>) and <code>dbBind()</code> (<em>best</em>).</p>
 <pre class="r"><code>airport_code &lt;- &quot;GPT&#39; or faa = &#39;MSY&quot;
 
@@ -102,5 +102,5 @@ sql</code></pre>
 <pre class="r"><code>dbGetQuery(con, sql)</code></pre>
 <pre><code>## [1] faa  name lat  lon  alt  tz   dst 
 ## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
-<p>You may also need <code>dbQuoteIdentifier()</code> if you are creating tables or using user input to choose which column to filter on.</p>
+<p>You may also need <code>dbQuoteIdentifier()</code> if you are creating tables or relying on user input to choose which column to filter on.</p>
 </div>

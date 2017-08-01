@@ -7,15 +7,15 @@ title: "Creating Visualizations"
 <div>
 <p><img src="/histogram.png"   align="right"></p>
 </div>
-<p>Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, <code>geom_histogram()</code> calculates the bin sizes, the count per bin, and then it renders the plot. Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database. The best approach is to move the data transformation to the database, and then use a graphing function to render the results.</p>
+<p>Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, <code>geom_histogram()</code> calculates the bin sizes and the count per bin, and then it renders the plot. Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database. The best approach is to move the data transformation to the database, and then use a graphing function to render the results.</p>
 <p>This article has two goals:</p>
 <ul>
-<li><p>Demonstrate a practical implementation of the “Transform in Database, plot in R” concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram and two continuous variables using a Raster plot, all using data in a database.</p></li>
+<li><p>Demonstrate a practical implementation of the “Transform in database, plot in R” concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram, and two continuous variables using a Raster plot, all using data in a database</p></li>
 <li><p>Introduce a technique that simplifies the use of complex formulas that are required to move the calculations of the plot to the database</p></li>
 </ul>
 <div id="bar-plot" class="section level2">
 <h2>Bar plot</h2>
-<p>A Bar plot is intended to measure and compare categorical data. Passing the category to <code>geom_bar()</code> as <code>x</code>, will automatically calculate the height of the bars based on the row count per category. Here is the code of a typical bar plot using <code>ggplot2</code>:</p>
+<p>A Bar plot is intended to measure and compare categorical data. Passing the category to <code>geom_bar()</code> as <code>x</code> will automatically calculate the height of the bars based on the row count per category. Here is the code of a typical bar plot using <code>ggplot2</code>:</p>
 <pre class="r"><code>ggplot(data = flights) +
   geom_bar(aes(x = origin), stat = &quot;count&quot;)</code></pre>
 <div id="data-transformation" class="section level3">
@@ -39,26 +39,26 @@ df</code></pre>
 <p>The results of the Data Transformation step can now be used in <code>ggplot2</code> to render the plot. This time, <code>geom_col()</code> is used instead of <code>geom_bar()</code> because the height of the bars have been pre-calculated by <code>dplyr</code>:</p>
 <pre class="r"><code>ggplot(data = df) +
   geom_col(aes(x = origin, y = n)) </code></pre>
-<p><img src="content/visualization_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="visualization_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 <div id="transform-and-plot" class="section level3">
 <h3>Transform and plot</h3>
-<p>The plot can be created using a single piped code. This is particularly useful when performing exploratory data analysis because it is easy to add or remove filters and to change the variable that is being analyzed.</p>
+<p>The plot can be created using a single piped line of code. This is particularly useful when performing exploratory data analysis because it is easy to add or remove filters, or to change the variable that is being analyzed.</p>
 <pre class="r"><code>tbl(con, &quot;flights&quot;) %&gt;%
   group_by(origin) %&gt;%
   tally %&gt;%
   collect %&gt;%
   ggplot() +
     geom_col(aes(x = origin, y = n)) </code></pre>
-<p><img src="content/visualization_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="visualization_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="histogram" class="section level2">
 <h2>Histogram</h2>
-<p>The histogram is intended to visualize how the values of a continuous variable are distributed. It does this by grouping the values into bins with the same range of values. In essence, a histogram converts a continuous variable to a discrete variable by splitting and placing the variable’s values into multiple bins.</p>
+<p>The histogram is intended to visualize the distribution of the values of a continuous variable. It does this by grouping the values into bins with the same range of values. In essence, a histogram converts a continuous variable to a discrete variable by splitting and placing the variable’s values into multiple bins.</p>
 <div id="calculations" class="section level3">
 <h3>Calculations</h3>
-<p>The following breakdown of the calculation needed to create a histogram is intended to highlight the complexity of moving its processing to the database:</p>
+<p>The following breakdown of the calculation needed to create a histogram is intended to highlight the complexity of moving its processing to the database.</p>
 <p>For example, if a histogram with 20 bins is needed, and the variable has a minimum value of 1 and a maximum value of 101, then each bin needs to be 5.</p>
 <ul>
 <li>101 (Max value) - 1 (Min value) = 100</li>
@@ -66,17 +66,17 @@ df</code></pre>
 </ul>
 <p>The first bin will have a range of 1 to 6, the second 7 to 12, etc.</p>
 <p>After that, the count of values that are inside each range needs to be determined. In this example, there may be two rows that have a value between 1 and 6 and five rows with values between 7 and 12.</p>
-<p>Any formula used to create a Histogram will need to calculate the bins, place the values inside the bins, and needs to only call math functions supported by the database in use.</p>
+<p>Any formula used to create a Histogram will need to calculate the bins, place the values inside the bins, and only call math functions supported by the database in use.</p>
 </div>
 <div id="using-a-helper-function" class="section level3">
 <h3>Using a helper function</h3>
 <p>An advantage of using <code>dplyr</code> to convert the continuous variable into a discrete variable is that one solution can be applied to multiple database types. This is possible if the resulting formula is made of basic functions that most SQL databases support and is expressed in R, so that <code>dplyr</code> can translate it into the proper SQL syntax.</p>
-<p>Unfortunately, the formula is rather long and mistakes can be made if used in multiple locations because any corrections to the formula may not be propagated to all of the instances. To solve this, a helper function can be used.</p>
+<p>Unfortunately, the formula is rather long and mistakes can be made if used in multiple locations, because any corrections to the formula may not be propagated to all of the instances. To solve this, a helper function can be used.</p>
 <p>In the following helper function, the <code>var</code> input is used to build the formula in an <strong>unevaluated</strong> R code format. When used inside <code>dplyr</code>, it will return the assembled formula which will then be <strong>evaluated</strong> as inside the verb command. Feel free to copy this function into your script or R Notebook.</p>
 <p>The function has two other arguments:</p>
 <ul>
-<li><code>bins</code> - It allows the number of bins to be customized. It defaults to 30</li>
-<li><code>binwidth</code> - It is used to specify the size of the bin. It overrides any value passed to the <code>bins</code> argument.</li>
+<li><code>bins</code> - this allows the number of bins to be customized. It defaults to 30</li>
+<li><code>binwidth</code> - this is used to specify the size of the bin. It overrides any value passed to the <code>bins</code> argument.</li>
 </ul>
 <pre class="r"><code>library(rlang)
 db_bin &lt;- function(var, bins = 30, binwidth = NULL) {
@@ -99,7 +99,7 @@ db_bin &lt;- function(var, bins = 30, binwidth = NULL) {
          ifelse((!!bin_number) == (!!bins), (!!bin_number) - 1, (!!bin_number))) + min(!!var))
 
 }</code></pre>
-<p>Notice that the function returns a <strong>quosure</strong> containing the <strong>unevaluated</strong> R code that calculates the bins. To read more about how this kind of approach works, please refer to this article <a href="http://dplyr.tidyverse.org/articles/programming.html">Programming with dplyr</a></p>
+<p>Notice that the function returns a <strong>quosure</strong> containing the <strong>unevaluated</strong> R code that calculates the bins. To read more about how this kind of approach works, please refer to this article: <a href="http://dplyr.tidyverse.org/articles/programming.html">Programming with dplyr</a>.</p>
 <p>It is important to note that the database in use needs to support the functions called in the formula, such as <code>min()</code> and <code>max()</code>.</p>
 <p>Here is an example of the function’s output. Notice that a fictitious field called <code>any_field</code> is used, and no “missing field” error is generated. That is because the formula has not yet been evaluated.</p>
 <pre class="r"><code>db_bin(any_field)</code></pre>
@@ -141,21 +141,21 @@ head(df)</code></pre>
 </div>
 <div id="plotting-results-in-r-1" class="section level3">
 <h3>Plotting results in R</h3>
-<p>Because the bins have been pre-processed on and collected from the database, the results are easily plotted using <code>geom_col()</code>, the resulting bin values are <code>x</code> and the count per bin is <code>y</code>:</p>
+<p>Because the bins have been pre-processed on and collected from the database, the results are easily plotted using <code>geom_col()</code>. The resulting bin values are <code>x</code> and the count per bin is <code>y</code>:</p>
 <pre class="r"><code>ggplot(data = df) +
   geom_col(aes(x = x, y = n))</code></pre>
-<p><img src="content/visualization_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="visualization_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="transform-and-plot-1" class="section level3">
 <h3>Transform and plot</h3>
-<p>Just like with the Bar plot, the entire process can be piped. Here is an example of using the <code>binwidth</code> argument instead of <code>bins</code>, additionally the bin size is widened to 300 minute intervals:</p>
+<p>Just like with the Bar plot, the entire process can be piped. Here is an example of using the <code>binwidth</code> argument instead of <code>bins</code>; additionally, the bin size is widened to 300-minute intervals:</p>
 <pre class="r"><code>tbl(con, &quot;flights&quot;) %&gt;%
   group_by(x = !! db_bin(sched_dep_time, binwidth = 300)) %&gt;%
   tally %&gt;%
   collect %&gt;%
   ggplot() +
     geom_col(aes(x = x, y = n))</code></pre>
-<p><img src="content/visualization_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="visualization_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="raster-plot" class="section level2">
@@ -190,14 +190,14 @@ head(df)</code></pre>
 <p>The plot can now be built using <code>geom_raster()</code>. Assigning <code>x</code> and <code>y</code> to each of the continuous variables will depend on what makes more sense for a given visualization. The result of each intersection is passed as the color of the square using <code>fill</code>.</p>
 <pre class="r"><code>ggplot(data = df) +
   geom_raster(aes(x = sc_dep_time, y = sc_arr_time, fill = avg_distance))</code></pre>
-<p><img src="content/visualization_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="visualization_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="considerations" class="section level3">
 <h3>Considerations</h3>
 <p>There are two considerations when using a Raster plot with a database. Both considerations are related to the size of the results downloaded from the database:</p>
 <ul>
-<li><p>The number of <code>bins</code> requested - The higher the <code>bins</code> value is, the more data is downloaded from the database.</p></li>
-<li><p>How concentrated the data is - This refers to how many intersections return a value. The more intersections without a value, the less data is downloaded from the database.</p></li>
+<li><p>The number of <code>bins</code> requested: The higher the <code>bins</code> value is, the more data is downloaded from the database.</p></li>
+<li><p>How concentrated the data is: This refers to how many intersections return a value. The more intersections without a value, the less data is downloaded from the database.</p></li>
 </ul>
 <p>In the previous example, there is a maximum of 2,500 rows (50 x 50). Because the data is highly concentrated, only 353 records are returned. This means that the data will be transmitted over the network quickly, but the trade-off is that the picture definition may not be ideal to gain insights about the data.</p>
 <p>In the following example, the “definition” is set at 100 x 100. This improves the resolution but it quadruples the number of records that could potentially be downloaded.</p>
@@ -210,6 +210,6 @@ head(df)</code></pre>
   collect %&gt;%
   ggplot() +
    geom_raster(aes(x = sc_dep_time, y = sc_arr_time, fill = avg_distance))</code></pre>
-<p><img src="content/visualization_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="visualization_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
