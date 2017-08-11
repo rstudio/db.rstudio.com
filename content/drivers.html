@@ -125,17 +125,16 @@ install.packages(&quot;odbc&quot;)
 devtools::install_github(&quot;rstats-db/odbc&quot;)</code></pre>
 <div id="connection-strings" class="section level3">
 <h3>Connection Strings</h3>
-<p>Specify a connection string as named arguments directly in the <code>dbConnect()</code> method.</p>
-<pre class="r"><code>
-library(DBI)
-con &lt;- dbConnect(odbc::odbc(),
+<p>Pass the connection parameters as arguments to the <code>dbConnect()</code> function.</p>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
   driver = &quot;PostgreSQL Driver&quot;,
   database = &quot;test_db&quot;,
-  uid = &quot;postgres&quot;,
-  pwd = &quot;password&quot;,
+  UID    = rstudioapi::askForPassword(&quot;Database user&quot;),
+  PWD    = rstudioapi::askForPassword(&quot;Database password&quot;),
   host = &quot;localhost&quot;,
   port = 5432)
 </code></pre>
+<p>For database specific settings see go to the <strong>Databases</strong> section in the menu and look for the page that matches the desired database type.</p>
 </div>
 <div id="dsn-configuration-files" class="section level3">
 <h3>DSN Configuration files</h3>
@@ -143,6 +142,7 @@ con &lt;- dbConnect(odbc::odbc(),
 <pre class="r"><code>  con &lt;- dbConnect(odbc::odbc(), &quot;PostgreSQL&quot;)</code></pre>
 <p>For more information about how DSN can be used, check out the following articles in this site:</p>
 <ul>
+<li><p><a href="/managing-credentials">Securing Credentials</a></p></li>
 <li><p><a href="/portable-code">Making Scripts Portable</a></p></li>
 <li><p><a href="/deployment">Securing Deployed Content</a></p></li>
 </ul>

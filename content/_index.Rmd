@@ -6,9 +6,9 @@ At **RStudio**, we are working to make it as easy as possible to work with datab
 
 - **Actively developed, best-in-class packages**. These packages include: `dplyr`, `odbc`, `DBI`, `keyring`, `pool` and others.
 
-- **Integration with RStudio.**  Starting with version 1.1, it is now possible to perform tasks like navigate database objects inside the RStudio interface.
+- **Integration with RStudio.**  RStudio 1.1 helps you write the R code you need to connect to a database, remembers connections you've made, and allows you to explore the objects and data in your database.
 
-- **Education is key.**  The goal of this website is to gather Best Practice, How-to and other helpful articles in one location.  RStudio is also working on other channels, like upcoming webinars and in-person training at **[rstudio::conf 2018](https://www.rstudio.com/conference/)** 
+- **Education is key.** This website is the main way we provide support in this area. It gathers Best Practices, How-to articles and other helpful resources in one location.  RStudio is also working through other delivery channels, like upcoming webinars and in-person training at **[rstudio::conf 2018](https://www.rstudio.com/conference/)** 
 
 ## **Explore databases inside RStudio v1.1**
 
@@ -16,11 +16,11 @@ At **RStudio**, we are working to make it as easy as possible to work with datab
   <img src="/ide/tags.png"   align="left">
 </div>
 
-The RStudio **Connections Pane** makes it possible to easily connect to a variety of data sources, and explore the objects and data inside the connection. It extends, and is designed to work with, a variety of other tools for working with databases in R. Also, preview the first 1,000 records in a database by simply clicking on the table icon.
+The new RStudio **Connections Pane** makes it possible to easily connect to a variety of data sources, and explore the objects and data inside the connection. 
 
 The Connections Pane is currently available only in the [preview release of RStudio 1.1](https://www.rstudio.com/products/rstudio/download/preview/). Make sure to use the latest version of the [odbc](/odbc) package.
 
-Read more about this feature here: [Using RStudio Connections](https://support.rstudio.com/hc/en-us/articles/115010915687)
+Read more about this feature here: [RStudio Connections Pane](/connections)
 
 ##**dplyr** as a database interface
 

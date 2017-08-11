@@ -162,19 +162,20 @@ devtools::install_github("rstats-db/odbc")
 
 ### Connection Strings
 
-Specify a connection string as named arguments directly in the `dbConnect()` method.
-```r
+Pass the connection parameters as arguments to the `dbConnect()` function.
 
-library(DBI)
-con <- dbConnect(odbc::odbc(),
+```r
+con <- DBI::dbConnect(odbc::odbc(),
   driver = "PostgreSQL Driver",
   database = "test_db",
-  uid = "postgres",
-  pwd = "password",
+  UID    = rstudioapi::askForPassword("Database user"),
+  PWD    = rstudioapi::askForPassword("Database password"),
   host = "localhost",
   port = 5432)
 
 ```
+
+For database specific settings see go to the **Databases** section in the menu and look for the page that matches the desired database type.
 
 ### DSN Configuration files
 
@@ -186,6 +187,8 @@ allow one to use a Data Source Name (DSN) to make it easier to connect to a data
 ```
 
 For more information about how DSN can be used, check out the following articles in this site:
+
+- [Securing Credentials](/managing-credentials)
 
 - [Making Scripts Portable](/portable-code)
 

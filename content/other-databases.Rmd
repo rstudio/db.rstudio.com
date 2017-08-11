@@ -14,4 +14,4 @@ The **Best Practices** section offers advice that, in most cases, is independent
 
 ## Contribute
 
-If you would like to take it a step further, consider contributing a translation to the `dbplyr` package. For more information, please see the [SQL Translation](translation) page in this website.
+If you would like to take it a step further, consider contributing a translation to the `dbplyr` package. For more information, please see the [SQL Translation](/translation) page in this website.
