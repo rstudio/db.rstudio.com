@@ -60,6 +60,17 @@ googleAnalytics = "UA-20375833-20"
 	url    = "odbc/"
 
 [[menu.main]]
+  weight = 15
+	name   = "RStudio"
+	url    = "/"
+	
+[[menu.main]]
+  weight = 13
+	name   = "Connections Pane"
+	parent = "RStudio"
+	url    = "connections/"	
+
+[[menu.main]]
   weight = 20
 	name   = "Best Practices"
 	url    = "/"
