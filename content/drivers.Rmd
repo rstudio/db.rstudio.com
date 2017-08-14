@@ -2,7 +2,7 @@
 title: Setting up ODBC Drivers 
 ---
 
-For Unix and MacOS ODBC drivers should be compiled against
+For Unix and MacOS, ODBC drivers should be compiled against
 [unixODBC](http://www.unixodbc.org/). Drivers compiled against [iODBC](http://www.iodbc.org/) _may_ also work, but are not fully supported.
 
 After installation of the driver manager and driver, you will have to
@@ -12,9 +12,9 @@ register the driver in a [odbcinst.ini](#dsn-configuration-files) file for it to
 
 ### Database Drivers 
  
- Windows is bundled with ODBC libraries; however, drivers for each database
+Windows is bundled with ODBC libraries; however, drivers for each database
 need to be installed separately. Windows ODBC drivers typically include an
-installer that needs to be run to install the drivers in the proper
+installer that must be run to install the drivers in the proper
 locations.
 
 ### Administration 
@@ -25,7 +25,7 @@ application is used to manage ODBC data sources on Windows.
 
 ### Installation
 
- 1. Install [homebrew](http://brew.sh/) to easily install database drivers on MacOS
+ 1. Install [homebrew](http://brew.sh/) to install database drivers easily on MacOS
 
  2. Install UnixODBC, which is required for all databases
 ```shell
@@ -51,28 +51,25 @@ application is used to manage ODBC data sources on Windows.
 
 ### Setting up database connections
 
-See the section with the same name in the [Linux section](/drivers/#linux-debian-ubuntu)
+See the section with the same name in the [Linux section](/drivers/#linux-debian-ubuntu).
 
 ## Linux Debian / Ubuntu
 
 ### Installation
 
-The [apt-get](https://wiki.debian.org/Apt) command can be used to easily install database
-drivers on Linux distributions that support it, such as Debian and Ubuntu.
+The [apt-get](https://wiki.debian.org/Apt) command can be used to install database
+drivers easily on Linux distributions that support it, such as Debian and Ubuntu.
 
  1. Install UnixODBC, which is required for all databases
 
 ```shell
-
   # Install the unixODBC library
   apt-get install unixodbc unixodbc-dev
-  
 ```
 
  2. Install common DB drivers (*optional*)
  
 ```shell
- 
   # SQL Server ODBC Drivers (Free TDS)
   apt-get install tdsodbc
   
@@ -84,17 +81,16 @@ drivers on Linux distributions that support it, such as Debian and Ubuntu.
   
   # SQLite ODBC Drivers
   apt-get install libsqliteodbc
-
 ```
 
 ### Setting up database connections
 
 On MacOS and Linux, there are two separate text files that need to be edited.
-UnixODBC includes a command line executable `odbcinst` which can be used to
+UnixODBC includes a command-line executable called `odbcinst`, which can be used to
 query and modify the DSN files. However, these are plain text files you
 can also edit by hand if desired.
 
-There are two different files used to setup the DSN information:
+There are two different files used to set up the DSN information:
 
 - `odbcinst.ini` defines **driver** options
 
@@ -175,12 +171,12 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ```
 
-For database specific settings see go to the **Databases** section in the menu and look for the page that matches the desired database type.
+For database-specific settings, go to the **Databases** section in the menu and look for the page that matches the desired database type.
 
 ### DSN Configuration files
 
 ODBC configuration files are another option to specify connection parameters; they
-allow one to use a Data Source Name (DSN) to make it easier to connect to a database.
+allow you to use a Data Source Name (DSN) to make it easier to connect to a database.
 
 ```r
   con <- dbConnect(odbc::odbc(), "PostgreSQL")

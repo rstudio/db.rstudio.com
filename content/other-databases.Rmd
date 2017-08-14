@@ -10,7 +10,7 @@ Using an ODBC driver, you can still take advantage of the `odbc` and `DBI` packa
 
 ## Best Practices
 
-The **Best Practices** section offers advice that, in most cases, is independent from being on a `dplyr` integrated database. 
+The **Best Practices** section offers advice that, in most cases, is independent from being on a `dplyr`-integrated database.
 
 ## Contribute
 
