@@ -7,9 +7,9 @@
 <h1>Databases with <strong>RStudio</strong></h1>
 <p>At <strong>RStudio</strong>, we are working to make it as easy as possible to work with databases in R. This work focuses on three key areas:</p>
 <ul>
-<li><p><strong>Developing best-in-class packages</strong>. These packages include: <code>dplyr</code>, <code>odbc</code>, <code>keyring</code>, <code>pool</code> and others.</p></li>
-<li><p><strong>Integrating with RStudio.</strong> Starting with version 1.1, RStudio helps you write the R code you need to connect to a database, remembers connections you’ve made, and allows you to explore the objects and data in your database.</p></li>
-<li><p><strong>Promoting best practices.</strong> This website is the main way we provide support in this area. RStudio is also working through other delivery channels, like upcoming webinars and in-person training at <strong><a href="https://www.rstudio.com/conference/">rstudio::conf 2018</a></strong></p></li>
+<li><p><strong>Developing best-in-class packages</strong> These packages include: <code>dplyr</code>, <code>odbc</code>, <code>keyring</code>, <code>pool</code> and others.</p></li>
+<li><p><strong>Integrating with RStudio</strong> Starting with version 1.1, RStudio helps you write the R code you need to connect to a database, remembers connections you’ve made, and allows you to explore the objects and data in your database.</p></li>
+<li><p><strong>Promoting best practices</strong> This website is the main way we provide support in this area. RStudio is also working through other delivery channels, like upcoming webinars and in-person training at <strong><a href="https://www.rstudio.com/conference/">rstudio::conf 2018</a></strong></p></li>
 </ul>
 <div id="explore-databases-inside-rstudio-v1.1" class="section level2">
 <h2><strong>Explore databases inside RStudio v1.1</strong></h2>
@@ -17,7 +17,7 @@
 <p><img src="/ide/tags.png"   align="left"></p>
 </div>
 <p>The new RStudio <strong>Connections Pane</strong> makes it possible to easily connect to a variety of data sources, and explore the objects and data inside the connection.</p>
-<p>The Connections Pane is currently available only in the <a href="https://www.rstudio.com/products/rstudio/download/preview/">preview release of RStudio 1.1</a>. Make sure to use the latest version of the <a href="/odbc">odbc</a> package.</p>
+<p>The Connections Pane is currently available only in the <a href="https://www.rstudio.com/products/rstudio/download/preview/">preview release of RStudio 1.1</a>. Be sure to use the latest version of the <a href="/odbc">odbc</a> package.</p>
 <p>Read more about this feature here: <a href="/connections">RStudio Connections Pane</a></p>
 </div>
 <div id="dplyr-as-a-database-interface" class="section level2">
@@ -29,9 +29,9 @@
 </div>
 <ol style="list-style-type: decimal">
 <li><p><strong>Run data exploration routines over all of the data</strong>, instead of importing part of the data into R.</p></li>
-<li><p><strong>Use the SQL Engine to run the data transformations</strong> - In effect, computation is being pushed to the database.</p></li>
-<li><p><strong>Collect into R only a targeted dataset</strong></p></li>
-<li><p><strong>All your code is in R</strong> - Because<code>dplyr</code> is used to communicate with the database, there is no need to alternate between languages, or tools, to perform the data exploration.</p></li>
+<li><p><strong>Use the SQL Engine to run the data transformations.</strong> In effect, computation is being pushed to the database.</p></li>
+<li><p><strong>Collect into R only a targeted dataset.</strong></p></li>
+<li><p><strong>All of your code is in R.</strong> Because<code>dplyr</code> is used to communicate with the database, there is no need to alternate between languages or tools to perform the data exploration.</p></li>
 </ol>
 </div>
 <div id="connect-to-a-database" class="section level2">
@@ -39,7 +39,7 @@
 <div>
 <p><img src="/homepage/open-source.png" height="200" width="400" align="left"></p>
 </div>
-<p><strong>At the center of this approach is the <code>DBI</code> package.</strong> This package acts as <em>‘middle-ware’</em> between packages to allow connectivity with the database and the user or other packages. It provides a consistent set of functions regardless of the database type we are accessing. The <code>dplyr</code> package depends on the <code>DBI</code> package for communication with databases.</p>
+<p><strong>At the center of this approach is the <code>DBI</code> package.</strong> This package acts as <em>‘middle-ware’</em> between packages to allow connectivity with the database from the user or other packages. It provides a consistent set of functions regardless of the database type being accessed. The <code>dplyr</code> package depends on the <code>DBI</code> package for communication with databases.</p>
 <p>There are packages that enables a direct connection between the an open-source database and R. Currently, such packages exist for the following databases: <em>MySQL, SQLite, PostgreSQL, and bigquery</em>.</p>
 <div>
 <p><img src="/homepage/commercial.png" height="200" width="400" align="right"></p>

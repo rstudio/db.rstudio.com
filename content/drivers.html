@@ -4,13 +4,13 @@ title: Setting up ODBC Drivers
 
 
 
-<p>For Unix and MacOS ODBC drivers should be compiled against <a href="http://www.unixodbc.org/">unixODBC</a>. Drivers compiled against <a href="http://www.iodbc.org/">iODBC</a> <em>may</em> also work, but are not fully supported.</p>
+<p>For Unix and MacOS, ODBC drivers should be compiled against <a href="http://www.unixodbc.org/">unixODBC</a>. Drivers compiled against <a href="http://www.iodbc.org/">iODBC</a> <em>may</em> also work, but are not fully supported.</p>
 <p>After installation of the driver manager and driver, you will have to register the driver in a <a href="#dsn-configuration-files">odbcinst.ini</a> file for it to appear in <code>odbc::odbcListDrivers()</code>.</p>
 <div id="microsoft-windows" class="section level2">
 <h2>Microsoft Windows</h2>
 <div id="database-drivers" class="section level3">
 <h3>Database Drivers</h3>
-<p>Windows is bundled with ODBC libraries; however, drivers for each database need to be installed separately. Windows ODBC drivers typically include an installer that needs to be run to install the drivers in the proper locations.</p>
+<p>Windows is bundled with ODBC libraries; however, drivers for each database need to be installed separately. Windows ODBC drivers typically include an installer that must be run to install the drivers in the proper locations.</p>
 </div>
 <div id="administration" class="section level3">
 <h3>Administration</h3>
@@ -22,7 +22,7 @@ title: Setting up ODBC Drivers
 <div id="installation" class="section level3">
 <h3>Installation</h3>
 <ol style="list-style-type: decimal">
-<li><p>Install <a href="http://brew.sh/">homebrew</a> to easily install database drivers on MacOS</p></li>
+<li><p>Install <a href="http://brew.sh/">homebrew</a> to install database drivers easily on MacOS</p></li>
 <li><p>Install UnixODBC, which is required for all databases</p>
 <pre class="shell"><code>  # Install the unixODBC library
   brew install unixodbc</code></pre></li>
@@ -42,26 +42,23 @@ title: Setting up ODBC Drivers
 </div>
 <div id="setting-up-database-connections" class="section level3">
 <h3>Setting up database connections</h3>
-<p>See the section with the same name in the <a href="/drivers/#linux-debian-ubuntu">Linux section</a></p>
+<p>See the section with the same name in the <a href="/drivers/#linux-debian-ubuntu">Linux section</a>.</p>
 </div>
 </div>
 <div id="linux-debian-ubuntu" class="section level2">
 <h2>Linux Debian / Ubuntu</h2>
 <div id="installation-1" class="section level3">
 <h3>Installation</h3>
-<p>The <a href="https://wiki.debian.org/Apt">apt-get</a> command can be used to easily install database drivers on Linux distributions that support it, such as Debian and Ubuntu.</p>
+<p>The <a href="https://wiki.debian.org/Apt">apt-get</a> command can be used to install database drivers easily on Linux distributions that support it, such as Debian and Ubuntu.</p>
 <ol style="list-style-type: decimal">
 <li>Install UnixODBC, which is required for all databases</li>
 </ol>
-<pre class="shell"><code>
-  # Install the unixODBC library
-  apt-get install unixodbc unixodbc-dev
-  </code></pre>
+<pre class="shell"><code>  # Install the unixODBC library
+  apt-get install unixodbc unixodbc-dev</code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>Install common DB drivers (<em>optional</em>)</li>
 </ol>
-<pre class="shell"><code> 
-  # SQL Server ODBC Drivers (Free TDS)
+<pre class="shell"><code>  # SQL Server ODBC Drivers (Free TDS)
   apt-get install tdsodbc
   
   # PostgreSQL ODBC ODBC Drivers
@@ -71,13 +68,12 @@ title: Setting up ODBC Drivers
   apt-get install libmyodbc
   
   # SQLite ODBC Drivers
-  apt-get install libsqliteodbc
-</code></pre>
+  apt-get install libsqliteodbc</code></pre>
 </div>
 <div id="setting-up-database-connections-1" class="section level3">
 <h3>Setting up database connections</h3>
-<p>On MacOS and Linux, there are two separate text files that need to be edited. UnixODBC includes a command line executable <code>odbcinst</code> which can be used to query and modify the DSN files. However, these are plain text files you can also edit by hand if desired.</p>
-<p>There are two different files used to setup the DSN information:</p>
+<p>On MacOS and Linux, there are two separate text files that need to be edited. UnixODBC includes a command-line executable called <code>odbcinst</code>, which can be used to query and modify the DSN files. However, these are plain text files you can also edit by hand if desired.</p>
+<p>There are two different files used to set up the DSN information:</p>
 <ul>
 <li><p><code>odbcinst.ini</code> defines <strong>driver</strong> options</p></li>
 <li><p><code>odbc.ini</code> defines <strong>connection</strong> options</p></li>
@@ -134,11 +130,11 @@ devtools::install_github(&quot;rstats-db/odbc&quot;)</code></pre>
   host = &quot;localhost&quot;,
   port = 5432)
 </code></pre>
-<p>For database specific settings see go to the <strong>Databases</strong> section in the menu and look for the page that matches the desired database type.</p>
+<p>For database-specific settings, go to the <strong>Databases</strong> section in the menu and look for the page that matches the desired database type.</p>
 </div>
 <div id="dsn-configuration-files" class="section level3">
 <h3>DSN Configuration files</h3>
-<p>ODBC configuration files are another option to specify connection parameters; they allow one to use a Data Source Name (DSN) to make it easier to connect to a database.</p>
+<p>ODBC configuration files are another option to specify connection parameters; they allow you to use a Data Source Name (DSN) to make it easier to connect to a database.</p>
 <pre class="r"><code>  con &lt;- dbConnect(odbc::odbc(), &quot;PostgreSQL&quot;)</code></pre>
 <p>For more information about how DSN can be used, check out the following articles in this site:</p>
 <ul>
