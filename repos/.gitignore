@@ -1,2 +1,6 @@
 /DBI
 /dbplyr
+/bigquery
+/odbc
+/RMySQL
+/RSQLite
