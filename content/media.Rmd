@@ -33,4 +33,11 @@ title: Media
   <iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/implyr-A-dplyr-Backend-for-a-Apache-Impala/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
 </div>
 
+## Improving DBI
+### by Kirill Müller
 
+*Event: useR!2017*
+
+<div>
+<iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Improving-DBI/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>
