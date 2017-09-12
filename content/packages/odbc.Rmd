@@ -1,0 +1,157 @@
+---
+title: odbc
+aliases:
+  - /odbc
+---
+
+The goal of the `odbc` package is to provide a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
+
+Usage
+-----
+
+All of the following examples assume you have already created a connection `con`. See [Connecting to a database](#connecting-to-a-database) for more information on establishing a connection.
+
+### Table and Field information
+
+`dbListTables()` is used for listing all existing tables in a database.
+
+``` r
+dbListTables(con)
+
+# List tables beginning with f
+dbListTables(con, table_name = "f%")
+
+# List all fields in the 'flights' database
+dbListFields(con, "flights")
+```
+
+### Reading
+
+`dbReadTable()` will read a full table into an R `data.frame()`.
+
+``` r
+data <- dbReadTable(con, "flights")
+```
+
+### Writing
+
+`dbWriteTable()` will write an R `data.frame()` to an SQL table.
+
+``` r
+data <- dbWriteTable(con, "iris", iris)
+```
+
+### Querying
+
+`dbGetQuery()` will submit a query and fetch the results. It is also possible to submit the query and fetch separately with `dbSendQuery()` and `dbFetch()`. The `n=` argument to `dbFetch()` can be used to fetch only the part of a query result (the next *n* rows).
+
+``` r
+result <- dbSendQuery(con, "SELECT flight, tailnum, origin FROM flights ORDER BY origin")
+
+# Retrieve the first 100 results
+first_100 <- dbFetch(result, n = 100)
+
+# Retrieve the rest of the results
+rest <- dbFetch(result)
+```
+
+Benchmarks
+----------
+
+The *odbc* package is often much faster than the existing [RODBC](https://cran.r-project.org/package=RODBC) and DBI compatible [RODBCDBI](https://cran.r-project.org/package=RODBCDBI) packages.
+
+### Reading
+
+Reading a table from a PostgreSQL database with the 'flights' dataset (336,776 rows, 19 columns) of the package [nytflights13](https://github.com/hadley/nycflights13):
+
+``` r
+# First using RODBC / RODBCDBI
+library(DBI)
+library(RODBCDBI)
+rodbc <- dbConnect(RODBCDBI::ODBC(), dsn = "PostgreSQL")
+system.time(rodbc_result <- dbReadTable(rodbc, "flights"))
+#> Warning: closing unused RODBC handle 2
+#>    user  system elapsed 
+#>  19.203   1.356  21.724
+
+# Now using odbc
+odbc <- dbConnect(odbc::odbc(), dsn = "PostgreSQL")
+system.time(odbc_result <- dbReadTable(odbc, "flights"))
+#>    user  system elapsed 
+#>   5.119   0.290   6.771
+
+library(tibble)
+as_tibble(odbc_result)
+#> # A tibble: 336,776 × 20
+#>    row.names  year month   day dep_time sched_dep_time dep_delay arr_time
+#>        <chr> <int> <int> <int>    <int>          <int>     <dbl>    <int>
+#> 1          1  2013     1     1      517            515         2      830
+#> 2          2  2013     1     1      533            529         4      850
+#> 3          3  2013     1     1      542            540         2      923
+#> 4          4  2013     1     1      544            545        -1     1004
+#> 5          5  2013     1     1      554            600        -6      812
+#> 6          6  2013     1     1      554            558        -4      740
+#> 7          7  2013     1     1      555            600        -5      913
+#> 8          8  2013     1     1      557            600        -3      709
+#> 9          9  2013     1     1      557            600        -3      838
+#> 10        10  2013     1     1      558            600        -2      753
+#> # ... with 336,766 more rows, and 12 more variables: sched_arr_time <int>,
+#> #   arr_delay <dbl>, carrier <chr>, flight <int>, tailnum <chr>,
+#> #   origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>, hour <dbl>,
+#> #   minute <dbl>, time_hour <dttm>
+
+identical(dim(rodbc_result), dim(odbc_result))
+#> [1] TRUE
+rm(rodbc_result, odbc_result, odbc, rodbc)
+gc(verbose = FALSE)
+#> Warning: closing unused RODBC handle 3
+#>           used (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells  712236 38.1    1770749  94.6  1770749  94.6
+#> Vcells 8991012 68.6   27225095 207.8 33776265 257.7
+```
+
+### Writing
+
+Writing the same dataset to the database:
+
+``` r
+library(nycflights13)
+# rodbc does not support writing timestamps natively.
+rodbc <- dbConnect(RODBCDBI::ODBC(), dsn = "PostgreSQL")
+system.time(dbWriteTable(rodbc, "flights2", as.data.frame(flights[, names(flights) != "time_hour"])))
+#>    user  system elapsed 
+#>   6.693   3.786  48.423
+
+# Now using odbc
+odbc <- dbConnect(odbc::odbc(), dsn = "PostgreSQL")
+system.time(dbWriteTable(odbc, "flights3", as.data.frame(flights)))
+#>    user  system elapsed 
+#>   7.802   3.703  26.016
+```
+
+### SQL Server
+
+``` r
+packageVersion("RSQLServer")
+#> [1] ‘0.3.0’
+
+# Writing
+rsqlserver <- dbConnect(RSQLServer::SQLServer(), server = "SQLServer")
+system.time(dbWriteTable(rsqlserver, "flights2", as.data.frame(flights)))
+#>    user  system elapsed
+#> 645.219  12.287 820.806
+
+odbc <- dbConnect(odbc::odbc(), dsn = "PostgreSQL")
+system.time(dbWriteTable(odbc, "flights3", as.data.frame(flights)))
+#>    user  system elapsed
+#>  12.336   0.412  21.802
+
+# Reading
+system.time(dbReadTable(rsqlserver, "flights", as.data.frame(flights)))
+#>    user  system elapsed
+#>   5.101   1.289   3.584
+
+system.time(dbReadTable(odbc, "flights", as.data.frame(flights)))
+#>   user  system elapsed
+#>  2.187   0.108   2.298
+```

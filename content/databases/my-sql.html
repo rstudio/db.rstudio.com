@@ -1,0 +1,73 @@
+---
+title: MySQL
+logo: "/logos/mysqllarge.png"
+aliases:
+  - /my-sql
+---
+
+
+
+<p>NOTE: this package is being phased out in favor of the new <a href="https://github.com/rstats-db/RMariaDB">RMariaDB</a> package.</p>
+<p>RMySQL is a database interface and MySQL driver for R. This version complies with the database interface definition as implemented in the package DBI 0.2-2.</p>
+<div id="hello-world" class="section level2">
+<h2>Hello World</h2>
+<pre class="r"><code>library(DBI)
+# Connect to my-db as defined in ~/.my.cnf
+con &lt;- dbConnect(RMySQL::MySQL(), group = &quot;my-db&quot;)
+
+dbListTables(con)
+dbWriteTable(con, &quot;mtcars&quot;, mtcars)
+dbListTables(con)
+
+dbListFields(con, &quot;mtcars&quot;)
+dbReadTable(con, &quot;mtcars&quot;)
+
+# You can fetch all results:
+res &lt;- dbSendQuery(con, &quot;SELECT * FROM mtcars WHERE cyl = 4&quot;)
+dbFetch(res)
+dbClearResult(res)
+
+# Or a chunk at a time
+res &lt;- dbSendQuery(con, &quot;SELECT * FROM mtcars WHERE cyl = 4&quot;)
+while(!dbHasCompleted(res)){
+  chunk &lt;- dbFetch(res, n = 5)
+  print(nrow(chunk))
+}
+# Clear the result
+dbClearResult(res)
+
+# Disconnect from the database
+dbDisconnect(con)</code></pre>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>Binary packages for <strong>OS-X</strong> or <strong>Windows</strong> can be installed directly from CRAN:</p>
+<pre class="r"><code>install.packages(&quot;RMySQL&quot;)</code></pre>
+<p>The development version from github:</p>
+<pre class="r"><code># install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;rstats-db/DBI&quot;)
+devtools::install_github(&quot;rstats-db/RMySQL&quot;)</code></pre>
+<p>Installation from source on Linux or OSX requires <a href="https://downloads.mariadb.org/connector-c/"><code>MariaDB Connector/C</code></a>. On some older platforms, you can also link against Oracle’s <a href="https://packages.debian.org/testing/libmysqlclient-dev">libmysqlclient</a> driver, but the mariadb implementation is much better.</p>
+<p>On recent <strong>Debian or Ubuntu</strong>, install <a href="https://packages.debian.org/testing/libmariadb-client-lgpl-dev">libmariadb-client-lgpl-dev</a>. In Ubuntu 14.04, this was called <a href="http://packages.ubuntu.com/trusty/libmariadbclient-dev">libmariadbclient-dev</a>.</p>
+<pre><code>sudo apt-get install -y libmariadb-client-lgpl-dev</code></pre>
+<p>On <strong>Fedora</strong>, <strong>CentOS or RHEL</strong>, we need <a href="https://apps.fedoraproject.org/packages/mariadb-devel">mariadb-devel</a>:</p>
+<pre><code>sudo yum install mariadb-devel</code></pre>
+<p>On <strong>OS-X</strong>, use <a href="https://github.com/Homebrew/homebrew-core/blob/master/Formula/mariadb-connector-c.rb">mariadb-connector-c</a> from Homebrew:</p>
+<pre><code>brew install mariadb-connector-c</code></pre>
+</div>
+<div id="mysql-configuration-file" class="section level2">
+<h2>MySQL configuration file</h2>
+<p>Instead of specifying a username and password in calls to <code>dbConnect()</code>, it’s better to set up a MySQL configuration file that names the databases that you connect to most commonly. This file should live in <code>~/.my.cnf</code> and look like:</p>
+<pre><code>[database_name]
+option1=value1
+option2=value2</code></pre>
+<p>If you want to run the examples, you’ll need to set the proper options in the <code>[rs-dbi]</code> group of any MySQL option file, such as /etc/my.cnf or the .my.cnf file in your home directory. For a default single user install of MySQL, the following code should work:</p>
+<pre><code>[rs-dbi]
+database=test
+user=root
+password=</code></pre>
+</div>
+<div id="acknowledgements" class="section level2">
+<h2>Acknowledgements</h2>
+<p>Many thanks to Christoph M. Friedrich, John Heuer, Kurt Hornik, Torsten Hothorn, Saikat Debroy, Matthew Kelly, Brian D. Ripley, Mikhail Kondrin, Jake Luciani, Jens Nieschulze, Deepayan Sarkar, Louis Springer, Duncan Temple Lang, Luis Torgo, Arend P. van der Veen, Felix Weninger, J. T. Lindgren, Crespin Miller, and Michal Okonlewski, Seth Falcon and Paul Gilbert for comments, suggestions, bug reports, and patches.</p>
+</div>

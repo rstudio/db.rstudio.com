@@ -1,0 +1,137 @@
+---
+title: odbc
+aliases:
+  - /odbc
+---
+
+
+
+<p>The goal of the <code>odbc</code> package is to provide a DBI-compliant interface to <a href="https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx">Open Database Connectivity</a> (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including <a href="https://www.microsoft.com/en-us/sql-server/">SQL Server</a>, <a href="https://www.oracle.com/database">Oracle</a>, <a href="https://www.mysql.com/">MySQL</a>, <a href="https://www.postgresql.org/">PostgreSQL</a>, <a href="https://sqlite.org/">SQLite</a> and others. The implementation builds on the <a href="http://nanodbc.lexicalunit.com/">nanodbc</a> C++ library.</p>
+<div id="usage" class="section level2">
+<h2>Usage</h2>
+<p>All of the following examples assume you have already created a connection <code>con</code>. See <a href="#connecting-to-a-database">Connecting to a database</a> for more information on establishing a connection.</p>
+<div id="table-and-field-information" class="section level3">
+<h3>Table and Field information</h3>
+<p><code>dbListTables()</code> is used for listing all existing tables in a database.</p>
+<pre class="r"><code>dbListTables(con)
+
+# List tables beginning with f
+dbListTables(con, table_name = &quot;f%&quot;)
+
+# List all fields in the &#39;flights&#39; database
+dbListFields(con, &quot;flights&quot;)</code></pre>
+</div>
+<div id="reading" class="section level3">
+<h3>Reading</h3>
+<p><code>dbReadTable()</code> will read a full table into an R <code>data.frame()</code>.</p>
+<pre class="r"><code>data &lt;- dbReadTable(con, &quot;flights&quot;)</code></pre>
+</div>
+<div id="writing" class="section level3">
+<h3>Writing</h3>
+<p><code>dbWriteTable()</code> will write an R <code>data.frame()</code> to an SQL table.</p>
+<pre class="r"><code>data &lt;- dbWriteTable(con, &quot;iris&quot;, iris)</code></pre>
+</div>
+<div id="querying" class="section level3">
+<h3>Querying</h3>
+<p><code>dbGetQuery()</code> will submit a query and fetch the results. It is also possible to submit the query and fetch separately with <code>dbSendQuery()</code> and <code>dbFetch()</code>. The <code>n=</code> argument to <code>dbFetch()</code> can be used to fetch only the part of a query result (the next <em>n</em> rows).</p>
+<pre class="r"><code>result &lt;- dbSendQuery(con, &quot;SELECT flight, tailnum, origin FROM flights ORDER BY origin&quot;)
+
+# Retrieve the first 100 results
+first_100 &lt;- dbFetch(result, n = 100)
+
+# Retrieve the rest of the results
+rest &lt;- dbFetch(result)</code></pre>
+</div>
+</div>
+<div id="benchmarks" class="section level2">
+<h2>Benchmarks</h2>
+<p>The <em>odbc</em> package is often much faster than the existing <a href="https://cran.r-project.org/package=RODBC">RODBC</a> and DBI compatible <a href="https://cran.r-project.org/package=RODBCDBI">RODBCDBI</a> packages.</p>
+<div id="reading-1" class="section level3">
+<h3>Reading</h3>
+<p>Reading a table from a PostgreSQL database with the ‘flights’ dataset (336,776 rows, 19 columns) of the package <a href="https://github.com/hadley/nycflights13">nytflights13</a>:</p>
+<pre class="r"><code># First using RODBC / RODBCDBI
+library(DBI)
+library(RODBCDBI)
+rodbc &lt;- dbConnect(RODBCDBI::ODBC(), dsn = &quot;PostgreSQL&quot;)
+system.time(rodbc_result &lt;- dbReadTable(rodbc, &quot;flights&quot;))
+#&gt; Warning: closing unused RODBC handle 2
+#&gt;    user  system elapsed 
+#&gt;  19.203   1.356  21.724
+
+# Now using odbc
+odbc &lt;- dbConnect(odbc::odbc(), dsn = &quot;PostgreSQL&quot;)
+system.time(odbc_result &lt;- dbReadTable(odbc, &quot;flights&quot;))
+#&gt;    user  system elapsed 
+#&gt;   5.119   0.290   6.771
+
+library(tibble)
+as_tibble(odbc_result)
+#&gt; # A tibble: 336,776 × 20
+#&gt;    row.names  year month   day dep_time sched_dep_time dep_delay arr_time
+#&gt;        &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+#&gt; 1          1  2013     1     1      517            515         2      830
+#&gt; 2          2  2013     1     1      533            529         4      850
+#&gt; 3          3  2013     1     1      542            540         2      923
+#&gt; 4          4  2013     1     1      544            545        -1     1004
+#&gt; 5          5  2013     1     1      554            600        -6      812
+#&gt; 6          6  2013     1     1      554            558        -4      740
+#&gt; 7          7  2013     1     1      555            600        -5      913
+#&gt; 8          8  2013     1     1      557            600        -3      709
+#&gt; 9          9  2013     1     1      557            600        -3      838
+#&gt; 10        10  2013     1     1      558            600        -2      753
+#&gt; # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+
+identical(dim(rodbc_result), dim(odbc_result))
+#&gt; [1] TRUE
+rm(rodbc_result, odbc_result, odbc, rodbc)
+gc(verbose = FALSE)
+#&gt; Warning: closing unused RODBC handle 3
+#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)
+#&gt; Ncells  712236 38.1    1770749  94.6  1770749  94.6
+#&gt; Vcells 8991012 68.6   27225095 207.8 33776265 257.7</code></pre>
+</div>
+<div id="writing-1" class="section level3">
+<h3>Writing</h3>
+<p>Writing the same dataset to the database:</p>
+<pre class="r"><code>library(nycflights13)
+# rodbc does not support writing timestamps natively.
+rodbc &lt;- dbConnect(RODBCDBI::ODBC(), dsn = &quot;PostgreSQL&quot;)
+system.time(dbWriteTable(rodbc, &quot;flights2&quot;, as.data.frame(flights[, names(flights) != &quot;time_hour&quot;])))
+#&gt;    user  system elapsed 
+#&gt;   6.693   3.786  48.423
+
+# Now using odbc
+odbc &lt;- dbConnect(odbc::odbc(), dsn = &quot;PostgreSQL&quot;)
+system.time(dbWriteTable(odbc, &quot;flights3&quot;, as.data.frame(flights)))
+#&gt;    user  system elapsed 
+#&gt;   7.802   3.703  26.016</code></pre>
+</div>
+<div id="sql-server" class="section level3">
+<h3>SQL Server</h3>
+<pre class="r"><code>packageVersion(&quot;RSQLServer&quot;)
+#&gt; [1] ‘0.3.0’
+
+# Writing
+rsqlserver &lt;- dbConnect(RSQLServer::SQLServer(), server = &quot;SQLServer&quot;)
+system.time(dbWriteTable(rsqlserver, &quot;flights2&quot;, as.data.frame(flights)))
+#&gt;    user  system elapsed
+#&gt; 645.219  12.287 820.806
+
+odbc &lt;- dbConnect(odbc::odbc(), dsn = &quot;PostgreSQL&quot;)
+system.time(dbWriteTable(odbc, &quot;flights3&quot;, as.data.frame(flights)))
+#&gt;    user  system elapsed
+#&gt;  12.336   0.412  21.802
+
+# Reading
+system.time(dbReadTable(rsqlserver, &quot;flights&quot;, as.data.frame(flights)))
+#&gt;    user  system elapsed
+#&gt;   5.101   1.289   3.584
+
+system.time(dbReadTable(odbc, &quot;flights&quot;, as.data.frame(flights)))
+#&gt;   user  system elapsed
+#&gt;  2.187   0.108   2.298</code></pre>
+</div>
+</div>
