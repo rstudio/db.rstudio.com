@@ -165,19 +165,19 @@ googleAnalytics = "UA-20375833-20"
 [[menu.main]]
   weight = 50
 	name   = "Advanced"
-	url    = "/databases/advanced"
+	url    = "/advanced"
 
 [[menu.main]]
   weight = 51
 	name   = "DBI Backend"
 	parent = "Advanced"
-	url    = "/databases/backend"
+	url    = "/advanced/backend"
 	
 [[menu.main]]
   weight = 52
 	name   = "SQL Translation"
 	parent = "Advanced"
-	url    = "/databases/translation"
+	url    = "/advanced/translation"
 	
 [[menu.main]]
   weight = 60
