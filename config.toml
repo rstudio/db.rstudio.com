@@ -34,19 +34,18 @@ googleAnalytics = "UA-20375833-20"
 [[menu.main]]
   weight = 10
 	name   = "Packages"
-	url    = "/packages"
 	
 [[menu.main]]
   weight = 11
 	name   = "dplyr"
 	parent = "Packages"
-	url    = "/packages/dplyr"
+	url    = "/dplyr"
 
 [[menu.main]]
   weight = 12
 	name   = "DBI"
 	parent = "Packages"
-	url    = "/packages/dbi"
+	url    = "/dbi"
 	
 [[menu.main]]
   weight = 13
