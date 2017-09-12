@@ -1,5 +1,7 @@
---- 
-Title: Introduction to DBI 
+---
+title: Introduction to DBI
+aliases:
+  - /dbi
 ---
 
 `DBI` separates the connectivity to the DBMS into a "front-end" and a "back-end".  Applications use only the exposed front-end API. The back-end facilities that communicate with specific DBMSs (SQLite, MySQL, PostgreSQL, MonetDB, etc.) are provided by **drivers** (other packages) that get invoked automatically through S4 methods.

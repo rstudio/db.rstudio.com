@@ -1,0 +1,40 @@
+---
+title: Apache Impala
+logo: "/logos/impalalarge.png"
+aliases:
+  - /impala
+---
+
+## Driver Options
+
+Please refer to the official page from Cloudera for instructions on how to download and setup the driver: [Impala ODBC Connector](https://www.cloudera.com/downloads/connectors/impala/odbc/2-5-39.html)
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are five settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Host** - A network path to the database server
+  - **Schema** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **Port** - Should be set to **21050**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = "[your driver's name]",
+                      Host   = "[your server's path]",
+                      Schema = "[your schema's name]",
+                      UID    = rstudioapi::askForPassword("Database user"),
+                      PWD    = rstudioapi::askForPassword("Database password"),
+                      Port   = 21050)
+
+```
+
+
+

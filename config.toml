@@ -1,18 +1,13 @@
 baseurl = "/"
-relativeurls = true
 languageCode = "en-us"
-title = "Using Databases in R"
-theme = "hugo-material-docs"
+title = "Databases using R"
+theme = "rstudio-docs-theme"
 metadataformat = "yaml"
+pluralizeListTitles =   "false"
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 canonifyurls = true
 # Enable Google Analytics by entering your tracking id
 googleAnalytics = "UA-20375833-20"
-
-[blackfriday]
-	smartypants	= true
-	fractions = true
-	smartDashes = true
-	plainIDAnchors = true
 
 [params]
 
@@ -39,160 +34,163 @@ googleAnalytics = "UA-20375833-20"
 [[menu.main]]
   weight = 10
 	name   = "Packages"
-	url    = "/"
 	
 [[menu.main]]
   weight = 11
 	name   = "dplyr"
 	parent = "Packages"
-	url    = "dplyr/"
+	url    = "/dplyr"
 
 [[menu.main]]
   weight = 12
 	name   = "DBI"
 	parent = "Packages"
-	url    = "dbi/"
+	url    = "/dbi"
 	
 [[menu.main]]
   weight = 13
 	name   = "odbc"
 	parent = "Packages"
-	url    = "odbc/"
+	url    = "/packages/odbc"
 
 [[menu.main]]
   weight = 15
 	name   = "RStudio"
-	url    = "/"
+	url    = "/rstudio/connections"
 	
 [[menu.main]]
   weight = 13
 	name   = "Connections Pane"
 	parent = "RStudio"
-	url    = "connections/"	
+	url    = "/rstudio/connections"	
 
 [[menu.main]]
   weight = 20
 	name   = "Best Practices"
-	url    = "/"
+	url    = "/best-practices"
 	
 [[menu.main]]
   weight = 21
   name = "Setting up ODBC Drivers"
-  url = "drivers/"
+  url    = "/best-practices/drivers"
   parent = "Best Practices"
 
 [[menu.main]]
 	weight = 22
   name   = "Run Queries Safely"
-	url    = "run-queries-safely/"
+	url    = "/best-practices/run-queries-safely"
 	parent = "Best Practices"
 
 [[menu.main]]
   weight = 23
 	name   = "Securing Deployed Content"
-	url    = "deployment/"
+	url    = "/best-practices/deployment"
 	parent = "Best Practices"	
 	
 [[menu.main]]
   weight = 24
 	name   = "Securing Credentials"
-	url    = "managing-credentials/"
+	url    = "/best-practices/managing-credentials"
 	parent = "Best Practices"	
 
 [[menu.main]]
   weight = 25
 	name   = "Making Scripts Portable"
-	url    = "portable-code/"
+	url    = "/best-practices/portable-code"
 	parent = "Best Practices"	  
 
 [[menu.main]]
   weight = 26
 	name   = "Creating Visualizations"
-	url    = "visualization/"
+	url    = "/best-practices/visualization"
 	parent = "Best Practices"	  
 
 [[menu.main]]
   weight = 30
 	name   = "Databases"
-	url    = "/"
+	url    = "/databases"
+	
 [[menu.main]]
   weight = 31
 	name   = "MS SQL Server"
-	url    = "microsoft-sql-server/"
+	url    = "/databases/microsoft-sql-server"
 	parent = "Databases"	
 [[menu.main]]
   weight = 32
 	name   = "Oracle"
-	url    = "oracle/"
+	url    = "/databases/oracle"
 	parent = "Databases"	
 [[menu.main]]
   weight = 33
 	name   = "Hive"
-	url    = "hive/"
+	url    = "/databases/hive"
 	parent = "Databases"	
 [[menu.main]]
   weight = 34
 	name   = "Impala"
-	url    = "impala/"
+	url    = "/databases/impala"
 	parent = "Databases"	
 [[menu.main]]
   weight = 35
 	name   = "PostgreSQL"
-	url    = "postgresql/"
+	url    = "/databases/postgresql"
 	parent = "Databases"	
 [[menu.main]]
   weight = 36
 	name   = "Redshift"
-	url    = "redshift/"
+	url    = "/databases/redshift"
 	parent = "Databases"
 [[menu.main]]
   weight = 37
 	name   = "MySQL"
-	url    = "my-sql/"
+	url    = "/databases/my-sql"
 	parent = "Databases"
 [[menu.main]]
   weight = 38
 	name   = "SQLite"
-	url    = "sqlite/"
+	url    = "/databases/sqlite"
 	parent = "Databases"
 	[[menu.main]]
   weight = 39
 	name   = "Big Query"
-	url    = "big-query/"
+	url    = "/databases/big-query"
 	parent = "Databases"
 [[menu.main]]
   weight = 40
 	name   = "Other Databases"
-	url    = "other-databases/"
+	url    = "/databases/other-databases"
 	parent = "Databases"
 
 [[menu.main]]
   weight = 50
 	name   = "Advanced"
-	url    = "/"
+	url    = "/advanced"
 
 [[menu.main]]
   weight = 51
 	name   = "DBI Backend"
 	parent = "Advanced"
-	url    = "/backend"
+	url    = "/advanced/backend"
 	
 [[menu.main]]
   weight = 52
 	name   = "SQL Translation"
 	parent = "Advanced"
-	url    = "/translation"
+	url    = "/advanced/translation"
 	
 [[menu.main]]
   weight = 60
 	name   = "Other Resources"
-	url    = "/"
-
+	url    = "/other_resources/media"
+	
 [[menu.main]]
   weight = 61
 	name   = "Media"
-	parent = "Other Resources"
-	url    = "/media"	
+	parent   = "Other Resources"
+	url    = "/other_resources/media"
+
+
+
 	
 [social]
 	twitter = "rstudio"

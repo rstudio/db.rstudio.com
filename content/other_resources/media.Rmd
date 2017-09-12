@@ -1,0 +1,45 @@
+---
+title: Media
+aliases:
+  - /media
+---
+
+## odbc - A modern database interface
+### by Jim Hester - RStudio
+
+*Event: useR!2017*
+
+
+<div>
+<iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/odbc-A-modern-database-interface/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe></iframe>
+</div>
+
+
+## Interacting with databases from Shiny 
+### by Barbara Borges Ribeiro - RStudio
+
+*Event: useR!2017*
+
+
+<div>
+  <iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Interacting-with-databases-from-Shiny/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>
+
+## implyr: A dplyr backend for Apache Impala
+### by Ian Cook - Cloudera
+
+*Event: useR!2017*
+
+
+<div>
+  <iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/implyr-A-dplyr-Backend-for-a-Apache-Impala/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>
+
+## Improving DBI
+### by Kirill Müller
+
+*Event: useR!2017*
+
+<div>
+<iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Improving-DBI/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>

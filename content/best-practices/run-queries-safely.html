@@ -1,0 +1,107 @@
+---
+title: "Run Queries Safely"
+aliases:
+  - /run-queries-safely
+---
+
+
+
+<p>We will review three options to run SQL commands safely using the <a href="/dbi/">DBI</a> package. These are:</p>
+<ul>
+<li>Parameterised queries</li>
+<li>Interpolation by “hand”</li>
+<li>Manual escaping</li>
+</ul>
+<div id="sql-injection-attack" class="section level2">
+<h2>SQL Injection Attack</h2>
+<p>The <code>dbGetQuery()</code> command allows us to write queries and retrieve the results. The query has to be written using the SQL syntax that matches to the database type.</p>
+<p>For example, here is a database that contains the <em>airports</em> data from NYC Flights data:</p>
+<pre class="r"><code>dbGetQuery(con, &quot;SELECT * FROM airports LIMIT 5&quot;)</code></pre>
+<pre><code>##   faa                          name      lat       lon  alt tz dst
+## 1 04G             Lansdowne Airport 41.13047 -80.61958 1044 -5   A
+## 2 06A Moton Field Municipal Airport 32.46057 -85.68003  264 -6   A
+## 3 06C           Schaumburg Regional 41.98934 -88.10124  801 -6   A
+## 4 06N               Randall Airport 41.43191 -74.39156  523 -5   A
+## 5 09J         Jekyll Island Airport 31.07447 -81.42778   11 -5   A</code></pre>
+<p>Often you need to write queries that depend on user input. For example, you might want to allow the user to pick an airport to focus their analysis on. To do this, it’s tempting to create the SQL string yourself by pasting strings together:</p>
+<pre class="r"><code>airport_code &lt;- &quot;GPT&quot;
+dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, airport_code ,&quot;&#39;&quot;))</code></pre>
+<pre><code>##   faa            name      lat       lon alt tz dst
+## 1 GPT Gulfport-Biloxi 30.40728 -89.07011  28 -6   A</code></pre>
+<p>Here <code>airport_code</code> is created in the script, in real-life it might be an input typed into a Shiny app.</p>
+<p>The problem with creating SQL strings with <code>paste0()</code> is that a careful attacker can create inputs that return more rows than you want:</p>
+<pre class="r"><code>airport_code &lt;- &quot;GPT&#39; or faa = &#39;MSY&quot;
+dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, airport_code ,&quot;&#39;&quot;))</code></pre>
+<pre><code>##   faa                             name      lat       lon alt tz dst
+## 1 GPT                  Gulfport-Biloxi 30.40728 -89.07011  28 -6   A
+## 2 MSY Louis Armstrong New Orleans Intl 29.99339 -90.25803   4 -6   A</code></pre>
+<p>Or take <strong>destructive actions on your database</strong>:</p>
+<pre class="r"><code>airport_code &lt;- &quot;GPT&#39;; DROP TABLE &#39;airports&quot;
+dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, airport_code ,&quot;&#39;&quot;))</code></pre>
+<p>This is called <strong>SQL injection attack</strong>.</p>
+<p>There are three ways to avoid this problem:</p>
+<ul>
+<li>Use a parameterised query with <code>dbSendQuery()</code> and <code>dbBind()</code></li>
+<li>Use the <code>sqlInterpolate()</code> function to safely combine a SQL string with data</li>
+<li>Manually escape the inputs using <code>dbQuoteString()</code></li>
+</ul>
+<p>These are ordered by the level of safety they provide: if you can use <code>dbSendQuery()</code> and <code>dbBind()</code>, you should.</p>
+</div>
+<div id="parameterized-queries" class="section level2">
+<h2>Parameterized queries</h2>
+<p>All modern database engines provide a way to write <strong>parameterised queries</strong>, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit, the database can often optimise the query so it runs faster.</p>
+<p>Using a parameterised query with DBI requires three steps.</p>
+<ol style="list-style-type: decimal">
+<li><p>You create a query containing a <code>?</code> placeholder and send it to the database with <code>dbSendQuery()</code>:</p>
+<pre class="r"><code>airport &lt;- dbSendQuery(con, &quot;SELECT * FROM airports WHERE faa = ?&quot;)</code></pre></li>
+<li><p>Use <code>dbBind()</code> to execute the query with specific values, then <code>dbFetch()</code> to get the results:</p>
+<pre class="r"><code>dbBind(airport, list(&quot;GPT&quot;))
+dbFetch(airport)</code></pre>
+<pre><code>##   faa            name      lat       lon alt tz dst
+## 1 GPT Gulfport-Biloxi 30.40728 -89.07011  28 -6   A</code></pre></li>
+<li><p>Once you’re done using the parameterised query, clean it up by calling <code>dbClearResult()</code></p>
+<pre class="r"><code>dbClearResult(airport)</code></pre></li>
+</ol>
+</div>
+<div id="interpolation-by-hand" class="section level2">
+<h2>Interpolation by “hand”</h2>
+<p>While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that <code>dbBind()</code> doesn’t work with the database connector you are using, you can fall back on <code>sqlInterpolate()</code>, which will safely do the interpolation for you.</p>
+<pre class="r"><code>airport_code &lt;- &quot;GPT&quot;
+
+sql &lt;- sqlInterpolate(con, 
+  &quot;SELECT * FROM airports  where faa = ?code&quot;, 
+  code = airport_code
+)
+sql</code></pre>
+<pre><code>## &lt;SQL&gt; SELECT * FROM airports  where faa = &#39;GPT&#39;</code></pre>
+<pre class="r"><code>dbGetQuery(con, sql)</code></pre>
+<pre><code>##   faa            name      lat       lon alt tz dst
+## 1 GPT Gulfport-Biloxi 30.40728 -89.07011  28 -6   A</code></pre>
+<p>The query returns no records if we try the same SQL injection attack:</p>
+<pre class="r"><code>airport_code &lt;- &quot;GPT&#39; or faa = &#39;MSY&quot;
+
+sql &lt;- sqlInterpolate(con, 
+  &quot;SELECT * FROM airports  where faa = ?code&quot;, 
+  code = airport_code
+)
+sql</code></pre>
+<pre><code>## &lt;SQL&gt; SELECT * FROM airports  where faa = &#39;GPT&#39;&#39; or faa = &#39;&#39;MSY&#39;</code></pre>
+<pre class="r"><code>dbGetQuery(con, sql)</code></pre>
+<pre><code>## [1] faa  name lat  lon  alt  tz   dst 
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+</div>
+<div id="manual-escaping" class="section level2">
+<h2>Manual escaping</h2>
+<p>Sometimes you can’t create the SQL you want using either of the previous methods. If you’re in this unhappy situation, first make absolutely sure that you haven’t missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it’s better to rely on existing code that multiple people have carefully reviewed.</p>
+<p>However, if there’s no other way around it, you can use <code>dbQuoteString()</code> to add the quotes for you. This method will automatically take care of dangerous characters in the same way as <code>sqlInterpolate()</code> (<em>better</em>) and <code>dbBind()</code> (<em>best</em>).</p>
+<pre class="r"><code>airport_code &lt;- &quot;GPT&#39; or faa = &#39;MSY&quot;
+
+sql &lt;- paste0(&quot;SELECT * FROM airports WHERE faa = &quot;, dbQuoteString(con, airport_code))
+
+sql</code></pre>
+<pre><code>## [1] &quot;SELECT * FROM airports WHERE faa = &#39;GPT&#39;&#39; or faa = &#39;&#39;MSY&#39;&quot;</code></pre>
+<pre class="r"><code>dbGetQuery(con, sql)</code></pre>
+<pre><code>## [1] faa  name lat  lon  alt  tz   dst 
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<p>You may also need <code>dbQuoteIdentifier()</code> if you are creating tables or relying on user input to choose which column to filter on.</p>
+</div>

@@ -31,6 +31,11 @@ remove_lines <- function(location, start, end){
 
 
 # End of helper functions -----------------------------------------------------
+copy_repo("rstudio/tensorflow.rstudio.com.v2")
+
+file.copy("repos/tensorflow.rstudio.com.v2/themes/rstudio-docs-theme/",
+          "themes",
+          recursive = TRUE)
 
 
 # dbplyr repo  ---------------------------------------------------------------
