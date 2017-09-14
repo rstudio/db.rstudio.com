@@ -1,0 +1,138 @@
+---
+title: "Connections Contract"
+aliases:
+  - /contract
+  - /connection-contract
+  - /advanced/connection-contract
+---
+
+
+
+<p>The RStudio Connections Pane can display database-like connections from any R package which implements a connections contract.</p>
+<p>The Connections Pane acts like an observer; the R package notifies the observer when an event related to the connection occurs. In RStudio builds which support the Connections Pane, the <code>connectionObserver</code> option is populated with a list of three functions: <code>connectionOpened()</code>, <code>connectionUpdated()</code>, and <code>connectionClosed()</code>.</p>
+<div id="connection-opened" class="section level2">
+<h2>Connection Opened</h2>
+<p>When a new connection is opened, your R package should inform the Connections Pane by calling <code>connectionOpened()</code>. For example:</p>
+<pre class="r"><code>observer &lt;- getOption(&quot;connectionObserver&quot;)
+if (!is.null(observer))
+  observer$connectionOpened(...)</code></pre>
+<div id="arguments" class="section level3">
+<h3>Arguments</h3>
+<p>The arguments to the <code>connectionOpened()</code> function are as follows:</p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>type</code></td>
+<td>Free-form text; the type of data connection (e.g. “SQL”).</td>
+</tr>
+<tr class="even">
+<td><code>displayName</code></td>
+<td>Free-form text; the name shown to the user in the Connections Pane.</td>
+</tr>
+<tr class="odd">
+<td><code>host</code></td>
+<td>The name of the server/host being connected to; optional.</td>
+</tr>
+<tr class="even">
+<td><code>icon</code></td>
+<td>The full path to a small, square PNG icon representing the connection; optional.</td>
+</tr>
+<tr class="odd">
+<td><code>connectCode</code></td>
+<td>A snippet of R code which can be used to open the connection again.</td>
+</tr>
+<tr class="even">
+<td><code>disconnect</code></td>
+<td>A function which can be used to close the connection.</td>
+</tr>
+<tr class="odd">
+<td><code>listObjectTypes</code></td>
+<td>A function which returns the hierarchy of object types returned by the connection, as a nested list; see Specifying Objects below for details.</td>
+</tr>
+<tr class="even">
+<td><code>listObjects</code></td>
+<td>A function which lists top-level objects in the database when called without arguments, or the objects inside some other object when invoked with an object specifier. The return value is a data frame with <code>name</code> and <code>type</code> columns.</td>
+</tr>
+<tr class="odd">
+<td><code>listColumns</code></td>
+<td>A function which lists the columns of a data object. The return value is a data frame with <code>name</code> and <code>type</code> columns.</td>
+</tr>
+<tr class="even">
+<td><code>previewObject</code></td>
+<td>A function accepting a row limit and an object specifier; it returns the given number of rows from the data object as a data frame.</td>
+</tr>
+<tr class="odd">
+<td><code>actions</code></td>
+<td>A named list of actions which can be performed on the connection. Each list entry should be a list with <code>icon</code> (path to an small, square PNG representing the action) and <code>callback</code> (function to perform when the action is invoked)</td>
+</tr>
+<tr class="even">
+<td><code>connectionObject</code></td>
+<td>The raw connection object.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="specifying-objects" class="section level3">
+<h3>Specifying Objects</h3>
+<div id="hierarchy" class="section level4">
+<h4>Hierarchy</h4>
+<p>The <code>listObjectTypes()</code> function is invoked by RStudio to discover the hierarchy of objects supported by the connection. The return value should be a nested list, where each entry has a <code>contains</code> member that indicates what the object type contains, and optionally an <code>icon</code> member indicating the path to a small, square PNG representing the object type.</p>
+<p>The <code>contains</code> member is either a list of object types that the object contains, or the special value <code>&quot;data&quot;</code> if the object contains data.</p>
+<p>For example, if your database has schemas, and schemas can have tables and views, you might return a list like the following:</p>
+<pre class="r"><code>list(
+  schema = list(
+    icon = &quot;path/to/schema.png&quot;,
+    contains = list(
+      table = list(
+        contains = &quot;data&quot;),
+      view = list(
+        contains = &quot;data&quot;))))</code></pre>
+</div>
+<div id="arguments-1" class="section level4">
+<h4>Arguments</h4>
+<p>The <code>listObjects()</code>, <code>listColumns()</code>, and <code>previewObject()</code> functions are invoked by RStudio as the user explores the objects and data in the connection. They are all invoked with an <em>object specifier</em>, which is a set of named arguments corresponding to the object types returned by <code>listObjectTypes()</code>.</p>
+<p>For instance, suppose the user opens a connection, expands the schema “foo”, and then previews the table “bar” inside that schema. RStudio will invoke the functions as follows:</p>
+<pre class="r"><code>listObjects()                  # returns all schema
+listObjects(schema = &quot;foo&quot;)    # returns tables and views in &quot;foo&quot;
+previewObject(schema = &quot;foo&quot;,  # returns data in foo.bar
+              table  = &quot;bar&quot;)</code></pre>
+</div>
+</div>
+<div id="persistence" class="section level3">
+<h3>Persistence</h3>
+<p>When your R package informs RStudio that a connection has been opened via <code>connectionOpened()</code>, RStudio saves some of the connection’s metadata. Even after the connection is closed, RStudio shows users the connection along with the code (which is supplied in the <code>connectCode</code> argument to <code>connectionOpened</code> as described above) to re-open it. It’s therefore important to supply a <code>connectCode</code> string which will work with few prerequisites.</p>
+</div>
+</div>
+<div id="connection-updated" class="section level2">
+<h2>Connection Updated</h2>
+<p>If the list of objects in your data source changes while the connection is open, your R package can tell RStudio to refresh the Connections Pane to show the new information. This is done by invoking the <code>connectionUpdated()</code> method as follows:</p>
+<pre class="r"><code>observer &lt;- getOption(&quot;connectionObserver&quot;)
+if (!is.null(observer))
+  observer$connectionUpdated(type, host)</code></pre>
+<p>where <code>type</code> and <code>host</code> match the type and host parameters given when the connection was opened.</p>
+</div>
+<div id="connection-closed" class="section level2">
+<h2>Connection Closed</h2>
+<p>When the user closes the connection, your R package should tell RStudio to update the pane. This done by invoking the <code>connectionClosed()</code> method, which works identically to <code>connectionUpdated()</code>:</p>
+<pre class="r"><code>observer &lt;- getOption(&quot;connectionObserver&quot;)
+if (!is.null(observer))
+  observer$connectionClosed(type, host)</code></pre>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>There are currently two packages which implement the connections contract. You may use these as examples:</p>
+<ul>
+<li><a href="https://github.com/rstats-db/odbc/blob/5acc55350e0664002d6281f4659c089911fbd7c3/R/Viewer.R">odbc</a></li>
+<li><a href="https://github.com/rstudio/sparklyr/blob/4b7098628fcd14c1cc562a38940b2e67bf2fb63a/R/connection_viewer.R">sparklyr</a></li>
+</ul>
+</div>

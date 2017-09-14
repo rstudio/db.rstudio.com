@@ -1,0 +1,66 @@
+---
+title: RStudio Snippets
+aliases:
+  - /snippets
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Code snippets are text macros that are used for quickly inserting common snippets of code. For example, the <code>fun</code> snippet inserts an R function definition:</p>
+<div class="figure">
+<img src="snippet-completion.png" alt="Snippet Completion" />
+<p class="caption">Snippet Completion</p>
+</div>
+<p>If you select the snippet from the completion list, it will be inserted along with several text placeholders which you can fill in by typing and then pressing <strong>Tab</strong> to advance to the next placeholder:</p>
+<div class="figure">
+<img src="snippet-insertion.png" alt="Snippet Insertion" />
+<p class="caption">Snippet Insertion</p>
+</div>
+<p>Other useful snippets include:</p>
+<ul>
+<li><p><code>lib</code>, <code>req</code>, and <code>source</code> for the <code>library()</code>, <code>require()</code>, and <code>source()</code> functions,</p></li>
+<li><p><code>df</code> and <code>mat</code> for defining data frames and matrices,</p></li>
+<li><p><code>if</code>, <code>el</code>, and <code>ei</code> for conditional expressions,</p></li>
+<li><p><code>apply</code>, <code>lapply</code>, <code>sapply</code>, etc. for the apply family of functions,</p></li>
+<li><p><code>sc</code>, <code>sm</code>, and <code>sg</code> for defining S4 classes/methods.</p></li>
+</ul>
+<p>Snippets are a great way to automate the insertion of commonly used code, and are available for R, C/C++, JavaScript, and several other languages.</p>
+</div>
+<div id="inserting-snippets" class="section level2">
+<h2>Inserting Snippets</h2>
+<p>As illustrated above, code snippets show up alongside other code completion results and can be inserted by picking them from the completion list. By default, the completion list will show up automatically when you pause typing for 250 milliseconds and can also be manually activated via the <strong>Tab</strong> key. In addition, if you have typed the character sequence for a snippet and want to insert it immediately (without going through the completion list), you can press <strong>Shift+Tab</strong>.</p>
+<p>Note that for Markdown snippets within R Markdown documents, you always need to use the <strong>Shift+Tab</strong> sequence as there is no standard tab completion available within the Markdown editing mode.</p>
+</div>
+<div id="customizing-snippets" class="section level2">
+<h2>Customizing Snippets</h2>
+<p>You can edit the built-in snippet definitions and even add snippets of your own via the <strong>Edit Snippets</strong> button in <strong>Global Options -&gt; Code</strong>:</p>
+<div class="figure">
+<img src="snippet-editing.png" alt="Snippet Editing" />
+<p class="caption">Snippet Editing</p>
+</div>
+<p>Custom snippets are defined using the <code>snippet</code> keyword. The contents of the snippet should be indented below using the <strong>Tab</strong> key (rather than with spaces). Variables can be defined using the form <code>{1:varname}</code>. For example, here’s the definition of the <code>setMethod()</code> snippet:</p>
+<pre><code>snippet sm
+    setMethod(&quot;${1:gen}&quot;, ${2:&quot;class&quot;}, function(${3:obj}, ...) {
+        ${0}
+    })</code></pre>
+<p>Because <code>$</code> is used as a special character to denote where the cursor should jump after completing each section of a snippet, in order to insert a literal <code>$</code> it must be escaped as <code>\$</code>.</p>
+</div>
+<div id="executing-r-code" class="section level2">
+<h2>Executing R Code</h2>
+<p>You can also run R code in your snippet. You can use `r expr` anywhere in your snippet; your R code will be executed when the snippet is expanded, and the result inserted into the document. For example, the following snippet can be used to insert a timestamp based on the output of the R <code>date()</code> function:</p>
+<pre><code>snippet ts
+  `r paste(&quot;#&quot;, date(), &quot;------------------------------</code></pre>
+<p>You can also, as of RStudio v0.99.706, pass the text following the cursor into a snippet, using <code>$$</code>. For example, the following snippet could be used to evaluate an expression following an <code>!</code> (note that this is not part of the default set of RStudio snippets):</p>
+<pre><code>snippet !
+  `r eval(parse(text = &quot;$$&quot;))`</code></pre>
+<p>If you type <code>!rnorm(5)&lt;Shift-Tab&gt;</code>, you should see the output of running <code>rnorm(5)</code> inserted into the editor. Be careful not to run code that could hang or freeze your R session!</p>
+</div>
+<div id="saving-and-sharing-snippets" class="section level2">
+<h2>Saving and Sharing Snippets</h2>
+<p>Once you’ve customized snippets for a given language, they are written into the <code>~/.R/snippets</code> directory. For example, the customized versions of R and C/C++ snippets are written to:</p>
+<pre><code>~/.R/snippets/r.snippets
+~/.R/snippets/c_cpp.snippets</code></pre>
+<p>You can edit these files directly to customize snippet definitions or you can use the <code>Edit Snippets</code> dialog as described above. If you need to move custom snippet definitions to another system, then simply place them in <code>~/.R/snippets</code> and they’ll be used in preference to the built-in snippet definitions.</p>
+</div>
