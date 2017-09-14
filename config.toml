@@ -51,7 +51,7 @@ googleAnalytics = "UA-20375833-20"
   weight = 13
 	name   = "odbc"
 	parent = "Packages"
-	url    = "/packages/odbc"
+	url    = "/odbc"
 
 [[menu.main]]
   weight = 15
@@ -177,6 +177,19 @@ googleAnalytics = "UA-20375833-20"
 	name   = "SQL Translation"
 	parent = "Advanced"
 	url    = "/advanced/translation"
+
+[[menu.main]]
+  weight = 52
+	name   = "Connection Contract"
+	parent = "Advanced"
+	url    = "/advanced/contract"
+
+[[menu.main]]
+  weight = 52
+	name   = "Connection Snippet"
+	parent = "Advanced"
+	url    = "/advanced/snippets"
+
 	
 [[menu.main]]
   weight = 60
