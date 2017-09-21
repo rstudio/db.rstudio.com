@@ -186,9 +186,9 @@ allow you to use a Data Source Name (DSN) to make it easier to connect to a data
 
 For more information about how DSN can be used, check out the following articles in this site:
 
-- [Securing Credentials](/managing-credentials)
+- [Securing Credentials](/best-practices/managing-credentials)
 
-- [Making Scripts Portable](/portable-code)
+- [Making Scripts Portable](/best-practices/portable-code)
 
-- [Securing Deployed Content](/deployment)
+- [Securing Deployed Content](/best-practices/deployment)
 
