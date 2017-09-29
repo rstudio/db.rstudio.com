@@ -53,6 +53,13 @@ googleAnalytics = "UA-20375833-20"
 	parent = "Packages"
 	url    = "/odbc"
 
+
+[[menu.main]]
+  weight = 14
+	name   = "pool"
+	parent = "Packages"
+	url    = "/pool"
+
 [[menu.main]]
   weight = 15
 	name   = "RStudio"
