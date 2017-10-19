@@ -7,7 +7,9 @@ aliases:
 
 ## Driver Options
 
-There are many options to obtain an ODBC driver.  It will ultimately depend on the Operating System you are connecting from, and the data lake's vendor (Cloudera, Hortonworks, etc.).
+- **Hadoop vendor** - Download and install the driver made available by the Hadoop cluster provider (Cloudera, Hortonworks, etc.).  To locate the driver please consult the vendor's website. 
+
+- **RStudio Professional Drivers** - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Hive.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
 
 ## Package Options
 
@@ -15,7 +17,7 @@ The **`odbc`** package, in combination with a driver, provides `DBI` support and
 
 ## Connection Settings
 
-There are five settings needed to make a connection:
+There are six settings needed to make a connection:
 
   - **Driver** - See the [Drivers](/drivers) section for setup information 
   - **Host** - A network path to the database server

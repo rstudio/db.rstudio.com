@@ -9,17 +9,16 @@
     {{ $currentNode := .}}
     
   
-
     {{  range .Site.Menus.main.ByWeight  }}
-    
-        <div class="side-menu__item__link">
+
+        <a href="{{.URL}}" class="side-menu__item__link">
           <img class="side-menu__item__link__icon" src="/images/icons/block-retina.png" alt="">
           <p class="side-menu__item__link__text">{{ .Name }}</p>
-        </div>
+        </a>
 
         <ul class="side-menu__sub">
           {{ range .Children }}
-            <li class="side-menu__sub__item{{if $currentNode.IsMenuCurrent "main" . }} active{{end}}">
+            <li class="side-menu__sub__item {{ if eq .URL $currentNode.Permalink }} active {{ end }}">
               <a id="menu-link-{{.URL}}" class="side-menu__sub__item__text" href="{{.URL}}" data-url="{{.URL}}">{{ .Name }}</a>
             </li>
           {{ end }}
@@ -27,7 +26,6 @@
           
 
     {{ end }}
-    
     
     </div>
     <div class="content">

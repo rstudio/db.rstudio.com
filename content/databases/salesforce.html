@@ -1,0 +1,51 @@
+---
+title: Salesforce
+logo: "/logos/salesforcelarge.png"
+---
+
+
+
+<div id="driver-options" class="section level2">
+<h2>Driver Options</h2>
+<ul>
+<li><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Salesforce. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</li>
+</ul>
+</div>
+<div id="package-options" class="section level2">
+<h2>Package Options</h2>
+<p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
+</div>
+<div id="connection-settings" class="section level2">
+<h2>Connection Settings</h2>
+<p>There are four settings needed to make a connection:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
+<li><strong>UID</strong> - The user’s network ID or server local account</li>
+<li><strong>PWD</strong> - The account’s password</li>
+<li><strong>SecurityToken</strong> - The account’s password</li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+                    Driver        = &quot;[your driver&#39;s name]&quot;,
+                    UID           = rstudioapi::askForPassword(&quot;Database user&quot;),
+                    PWD           = rstudioapi::askForPassword(&quot;Database password&quot;),
+                    SecurityToken = rstudioapi::askForPassword(&quot;Security token&quot;))</code></pre>
+<p>A preferred method is to use the <code>config</code> package cache the credentials:</p>
+<pre class="r"><code>username &lt;- config::get(&quot;sf_user&quot;)
+password &lt;- config::get(&quot;sf_password&quot;)
+token    &lt;- config::get(&quot;sf_token&quot;)
+
+con &lt;- DBI::dbConnect(odbc::odbc(), 
+                      Driver=&quot;Salesforce&quot;, 
+                      UID = username, 
+                      PWD = password, 
+                      SecurityToken = token)</code></pre>
+<p>The <code>config.yml</code> file for the connection above would be something like this:</p>
+<pre><code>default:
+  sf_user: &quot;[User name]&quot;
+  sf_password: &quot;[Password]&quot;
+  sf_token: &quot;[User&#39;s token]&quot;</code></pre>
+</div>
+<div id="dplyr-translation" class="section level2">
+<h2><code>dplyr</code> translation</h2>
+<p><code>dplyr</code> currently does not support the translation of Salesforce queries.</p>
+</div>
