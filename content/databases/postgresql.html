@@ -12,13 +12,19 @@ aliases:
 <li>Using the <code>odbc</code> package with a database driver</li>
 <li>Using the <code>RPostgres</code> package</li>
 </ul>
-<div id="using-odbc" class="section level2">
-<h2>Using <code>odbc</code></h2>
+<div id="using-the-odbcpacakge" class="section level2">
+<h2>Using the <code>odbc</code>pacakge</h2>
 <p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
-<p>Please refer to the official PostgreSQL page for instructions on how to download and setup the driver: <a href="https://odbc.postgresql.org/">psqlODBC - PostgreSQL ODBC driver</a></p>
+<div id="driver-options" class="section level3">
+<h3>Driver options</h3>
+<ul>
+<li><p><strong>PostgreSQL</strong> - The official PostgreSQL website provides instructions on how to download and setup their driver: <a href="https://odbc.postgresql.org/">psqlODBC - PostgreSQL ODBC driver</a></p></li>
+<li><p><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for PostgreSQL databases. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</p></li>
+</ul>
+</div>
 <div id="connection-settings" class="section level3">
 <h3>Connection Settings</h3>
-<p>There are five settings needed to make a connection:</p>
+<p>There are six settings needed to make a connection:</p>
 <ul>
 <li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
 <li><strong>Server</strong> - A network path to the database server</li>
@@ -38,5 +44,6 @@ aliases:
 </div>
 <div id="using-rpostgresql" class="section level2">
 <h2>Using <code>RPostgreSQL</code></h2>
-<p><code>RPostgreSQL</code> is an DBI-compliant interface to the PostgreSQL database. More information is available here: <a href="https://cran.r-project.org/web/packages/RPostgreSQL/index.html">CRAN - RPostgreSQL</a></p>
+<p><code>RPostgreSQL</code> is an DBI-compliant interface to the PostgreSQL database. The package acts as both the database driver and the DBI interface.</p>
+<p>The code, and additional information, are also accessible via the <a href="https://code.google.com/archive/p/rpostgresql/">Google Code project page</a>. The official CRAN page is here: <a href="https://cran.r-project.org/web/packages/RPostgreSQL/">RPostgreSQL: R Interface to the ‘PostgreSQL’ Database System</a></p>
 </div>

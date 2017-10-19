@@ -45,12 +45,10 @@
       <div class="doc-page-body">  
           <table cellpadding="0">
             <col width="250">
-            {{ range .Paginator.Pages }}
+            {{ range (.Paginator 20).Pages }}
               <tr>
-                
-        
                 <td>
-                <a id="menu-link-{{.URL}}"  class="side-menu__sub__item__text" href = "{{ .URL }}">{{ .Title }} 
+                  <a id="menu-link-{{.URL}}"  class="side-menu__sub__item__text" href = "{{ .URL }}">{{ .Title }} 
                 </td>
                 <td>
                   {{if .Params.logo }}<img src =  "{{ .Params.logo }}" height = 50 width = 50>{{ end }}
