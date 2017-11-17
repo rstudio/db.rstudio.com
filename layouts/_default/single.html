@@ -4,6 +4,8 @@
   {{ partial "nav" . }}
 </div>
 
+{{ template "_internal/google_analytics.html" . }}
+
 <div class="page documentation">
     <div class="side-menu" id="side-menu">
     {{ $currentNode := .}}
