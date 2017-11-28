@@ -8,7 +8,7 @@ aliases:
 There are two options for connecting to a PostgreSQL database:
 
 - Using the `odbc` package with a database driver
-- Using the `RPostgres`  package
+- Using the `RPostgreSQL`  package
 
 ## Using the `odbc`pacakge
 
