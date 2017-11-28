@@ -131,46 +131,51 @@ googleAnalytics = "UA-20375833-20"
 	parent = "Databases"	
 [[menu.main]]
   weight = 33
+	name   = "Teradata"
+	url    = "/databases/teradata/"
+	parent = "Databases"		
+[[menu.main]]
+  weight = 34
 	name   = "Hive"
 	url    = "/databases/hive/"
 	parent = "Databases"	
 [[menu.main]]
-  weight = 34
+  weight = 35
 	name   = "Impala"
 	url    = "/databases/impala/"
 	parent = "Databases"	
 [[menu.main]]
-  weight = 35
+  weight = 36
 	name   = "PostgreSQL"
 	url    = "/databases/postgresql/"
 	parent = "Databases"	
 [[menu.main]]
-  weight = 36
+  weight = 37
 	name   = "Redshift"
 	url    = "/databases/redshift/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 37
+  weight = 38
 	name   = "Salesforce"
 	url    = "/databases/salesforce/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 38
+  weight = 39
 	name   = "MySQL"
 	url    = "/databases/my-sql/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 39
+  weight = 40
 	name   = "SQLite"
 	url    = "/databases/sqlite/"
 	parent = "Databases"
 	[[menu.main]]
-  weight = 40
+  weight = 41
 	name   = "Big Query"
 	url    = "/databases/big-query/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 41
+  weight = 42
 	name   = "Other Databases"
 	url    = "/databases/other-databases/"
 	parent = "Databases"
