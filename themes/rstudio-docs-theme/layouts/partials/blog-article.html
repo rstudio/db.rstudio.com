@@ -1,7 +1,7 @@
 
 <section class="article-list">
 <div class="markdowned">
-  <h2>{{ .Title }}</h2>
+  <a href="{{ .URL }}" ><h2>{{ .Title }}</h2></a>
   <p class="post-date">
     {{ .Date.Format "2006-01-02" }}
     {{ with .Params.author }}{{ . }}{{ end }}
