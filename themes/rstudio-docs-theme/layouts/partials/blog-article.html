@@ -1,10 +1,7 @@
-<div class = "markdowned">
-  <h2>{{ .Title }}</h2>
-</div>
-    {{ with .Params.thumbnail }}<a href="{{ $.Permalink }}" class="thumb" title="{{ $.Title }}" style="background-image: url({{ $.Site.BaseURL }}{{ . }});"></a>{{ end }}
 
 <section class="article-list">
 <div class="markdowned">
+  <h2>{{ .Title }}</h2>
   <p class="post-date">
     {{ .Date.Format "2006-01-02" }}
     {{ with .Params.author }}{{ . }}{{ end }}
@@ -20,11 +17,7 @@
 </div>
 <div class="summary markdowned">
 
-
       <div class="summary">
-        
-  
-        
 
     {{ if and (isset .Params "summary") (not (eq .Params.summary "")) }}
       {{ printf "%s" .Params.summary | markdownify }}
