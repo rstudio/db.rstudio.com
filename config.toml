@@ -68,10 +68,17 @@ googleAnalytics = "UA-20375833-20"
 	url    = "/rstudio/connections/"
 	
 [[menu.main]]
-  weight = 13
+  weight = 16
 	name   = "Connections Pane"
 	parent = "RStudio"
 	url    = "/rstudio/connections/"	
+
+[[menu.main]]
+  weight = 17
+	name   = "Professional Drivers"
+	parent = "RStudio"
+	url    = "/rstudio/pro-drivers/"	
+
 
 [[menu.main]]
   weight = 20
