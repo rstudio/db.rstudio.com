@@ -10,7 +10,7 @@ At **RStudio**, we are working to make it as easy as possible to work with datab
 ### 1. RStudio products
 
 - The new RStudio [Connections Pane](/connections) makes it possible to easily connect to a variety of data sources, and **explore the objects and data** inside the connection 
-- To RStudio commercial customers, we offer RStudio Professional Drivers are ODBC data connectors that help you connect to some of the most popular databases.
+- To RStudio commercial customers, we offer [RStudio Professional ODBC Drivers](/rstudio/pro-drivers), these are data connectors that help you connect to some of the most popular databases.
 
 ### 2. Use best-in-class packages
 
