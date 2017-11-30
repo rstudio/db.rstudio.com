@@ -2283,6 +2283,31 @@ h4:hover .anchor-hover {
   
 }
 
+article .thumb {
+  display: block;
+  background-position: center;
+  background-size: cover;
+}
+
+article.single .thumb {
+  height: 8rem;
+}
+
+@media (max-width:  768px)  {
+article.single .thumb {
+  height: 12rem;
+}
+}
+
+
+article.li .thumb {
+  float: right;
+  width: 12rem;
+  height: 7.5rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+}
+
 .article-list { margin-top: 2em; }
 .article-list a, .footer a {
   text-decoration: none;

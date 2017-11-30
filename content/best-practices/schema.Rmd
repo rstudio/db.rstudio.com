@@ -1,0 +1,33 @@
+---
+title: Schema selection
+---
+
+
+```{r, eval = FALSE}
+library(dplyr)
+library(dbplyr)
+library(DBI)
+
+library(odbc)
+con <- dbConnect(odbc(), Driver = "SQL Server", Server = "localhost\\SQLEXPRESS", 
+    Database = "datawarehouse", Trusted_Connection = "True")
+
+tbl(con, in_schema("dbo", "airports"))
+
+dbGetQuery(con, "CREATE SCHEMA Production")
+dbWriteTable(con, "mtcars", mtcars, schema_name = "Production")
+
+copy_to(con, mtcars, in_schema("user1", "mtcars1"), temporary = FALSE)
+
+
+#dbListTables(con, schema_name = "dbo")
+```
+
+
+```{r, eval = FALSE}
+dbGetQuery(con, "ALTER SCHEMA Production TRANSFER dbo.vwFlights")
+dbListTables(con, schema_name = "dbo")
+dbRemoveTable(con, "user1.mtcars1")
+
+tbl(con, in_schema("Production", "mtcars"))
+```

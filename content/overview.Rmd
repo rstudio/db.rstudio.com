@@ -2,25 +2,6 @@
 Title: Databases using R
 ---
 
-At **RStudio**, we are working to make it as easy as possible to work with databases in R. This work focuses on three key areas:
-
-- **Developing best-in-class packages**  These packages include: `dplyr`, `odbc`, `keyring`, `pool` and others.
-
-- **Integrating with RStudio**  Starting with version 1.1, RStudio helps you write the R code you need to connect to a database, remembers connections you've made, and allows you to explore the objects and data in your database.
-
-- **Promoting best practices**  This website is the main way we provide support in this area.  RStudio is also working through other delivery channels, like upcoming webinars and in-person training at **[rstudio::conf 2018](https://www.rstudio.com/conference/)** 
-
-## **Explore databases inside RStudio v1.1**
-
-<div>
-  <img src="/ide/tags.png"   align="left">
-</div>
-
-The new RStudio **Connections Pane** makes it possible to easily connect to a variety of data sources, and explore the objects and data inside the connection. 
-
-The Connections Pane is currently available only in the [preview release of RStudio 1.1](https://www.rstudio.com/products/rstudio/download/preview/). Be sure to use the latest version of the [odbc](/odbc) package.
-
-Read more about this feature here: [RStudio Connections Pane](/connections)
 
 ##**dplyr** as a database interface
 

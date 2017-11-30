@@ -1,0 +1,28 @@
+---
+title: Schema selection
+---
+
+
+
+<pre class="r"><code>library(dplyr)
+library(dbplyr)
+library(DBI)
+
+library(odbc)
+con &lt;- dbConnect(odbc(), Driver = &quot;SQL Server&quot;, Server = &quot;localhost\\SQLEXPRESS&quot;, 
+    Database = &quot;datawarehouse&quot;, Trusted_Connection = &quot;True&quot;)
+
+tbl(con, in_schema(&quot;dbo&quot;, &quot;airports&quot;))
+
+dbGetQuery(con, &quot;CREATE SCHEMA Production&quot;)
+dbWriteTable(con, &quot;mtcars&quot;, mtcars, schema_name = &quot;Production&quot;)
+
+copy_to(con, mtcars, in_schema(&quot;user1&quot;, &quot;mtcars1&quot;), temporary = FALSE)
+
+
+#dbListTables(con, schema_name = &quot;dbo&quot;)</code></pre>
+<pre class="r"><code>dbGetQuery(con, &quot;ALTER SCHEMA Production TRANSFER dbo.vwFlights&quot;)
+dbListTables(con, schema_name = &quot;dbo&quot;)
+dbRemoveTable(con, &quot;user1.mtcars1&quot;)
+
+tbl(con, in_schema(&quot;Production&quot;, &quot;mtcars&quot;))</code></pre>
