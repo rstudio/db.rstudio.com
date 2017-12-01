@@ -1,6 +1,8 @@
 ---
 title: Apache Impala
 logo: "/logos/impalalarge.png"
+dplyr: "Yes"
+driver: "Yes"
 aliases:
   - /impala
 ---

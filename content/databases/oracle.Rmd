@@ -1,6 +1,8 @@
 ---
 title: Oracle
 logo: "/logos/oraclelarge.png"
+dplyr: "Yes"
+driver: "Yes"
 aliases:
   - /oracle
 ---

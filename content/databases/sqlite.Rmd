@@ -1,6 +1,9 @@
 ---
 title: SQLite
 logo: "/logos/sqlitelarge.png"
+dplyr: "Yes"
+driver: "No"
+package: RSQLite
 aliases:
   - /sqlite
 ---

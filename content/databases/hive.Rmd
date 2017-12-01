@@ -1,6 +1,8 @@
 ---
 title: Apache Hive
 logo: "/logos/hivelarge.png"
+dplyr: "Yes"
+driver: "Yes"
 aliases:
   - /hive
 ---

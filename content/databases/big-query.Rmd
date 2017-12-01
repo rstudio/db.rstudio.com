@@ -1,6 +1,9 @@
 ---
 title: Google BigQuery
 logo: "/logos/bigquerylarge.png"
+dplyr: "Yes"
+driver: "No"
+package: bigrquery
 aliases:
   - /big-query
 ---

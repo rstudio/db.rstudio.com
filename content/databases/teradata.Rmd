@@ -1,6 +1,8 @@
 ---
 title: Teradata
 logo: "/logos/teradatalarge.png"
+dplyr: "Yes (dbplyr dev)"
+driver: "Yes"
 ---
 
 ## Driver Options
