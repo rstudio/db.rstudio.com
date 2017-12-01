@@ -8,6 +8,7 @@ aliases:
 library(dplyr)
 library(DBI)
 library(dbplyr)
+library(glue)
 
 con <- DBI::dbConnect(RSQLite::SQLite(), path = ":memory:")
 
@@ -20,11 +21,12 @@ copy_to(con,  db_airports, "airports",
 
 ```
 
-We will review three options to run SQL commands safely using the [DBI](/dbi/) package. These are:
+We will review four options to run SQL commands safely using the [DBI](/dbi/) package:
 
-- Parameterised queries
-- Interpolation by "hand"
-- Manual escaping
+- [Parameterised queries](#parameterized-queries)
+- [Using `glue_sql`](#using-glue_sql)
+- [Interpolation by "hand"](#interpolation-by-hand)
+- [Manual escaping](#manual-escaping)
 
 ## SQL Injection Attack
 
@@ -97,6 +99,37 @@ Using a parameterised query with DBI requires three steps.
     ```{r}
     dbClearResult(airport)
     ```
+
+## Using `glue_sql()`
+
+Parameterized queries are generally the safest and most efficient way to pass user defined values in a query, however not every database driver supports them. The function `glue_sql()`, part of the the `glue` package, is able to handle the SQL quoting and variable placement.
+
+```{r}
+library(glue)
+
+airport_sql <- glue_sql("SELECT * FROM airports WHERE faa = ?")
+airport <- dbSendQuery(con, airport_sql)
+
+dbBind(airport, list("GPT"))
+dbFetch(airport)
+dbClearResult(airport)
+
+```
+
+If you place an astersk `*` at the end of a glue expression the values will be collapsed with commas. This is useful for the SQL IN Operator for instance.
+
+```{r}
+airport_sql <- glue_sql("SELECT * FROM airports WHERE faa IN ({airports*})", 
+                        airports = c("GPT", "MSY"),
+                        .con = con
+                        )
+
+airport <- dbSendQuery(con, airport_sql)
+
+dbFetch(airport)
+dbClearResult(airport)
+
+```
 
 ## Interpolation by "hand"
 
