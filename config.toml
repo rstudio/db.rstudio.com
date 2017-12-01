@@ -120,6 +120,12 @@ googleAnalytics = "UA-20375833-20"
 	name   = "Creating Visualizations"
 	url    = "/best-practices/visualization/"
 	parent = "Best Practices"	  
+	
+[[menu.main]]
+  weight = 27
+	name   = "Selecting a database interface"
+	url    = "/best-practices/select-interface/"
+	parent = "Best Practices"	  
 
 [[menu.main]]
   weight = 30

@@ -1,0 +1,35 @@
+---
+title: Selecting a database interface
+---
+
+
+
+<div id="dbi-support-is-key" class="section level2">
+<h2><code>DBI</code> support is key</h2>
+<p>Connecting to a database with a method that supports the <a href="/dbi">DBI</a> package provides the following advantages:</p>
+<ul>
+<li>A consistent set of functions that work across all connections</li>
+<li>Makes using <a href="/dplyr">dplyr</a> as a front-end possible</li>
+</ul>
+<p>Mostly based on how difficult is to setup, the order of preference of connection methods is:</p>
+<ol style="list-style-type: decimal">
+<li>Native database driver implemented in <strong>database package</strong> (e.g. <a href="/databases/postgresql">RPostgresSQL</a>). To see the list of known database packages check out the <a href="/databases">Databases</a> page.</li>
+<li><strong>ODBC</strong> as implemented in <a href="/odbc">odbc</a> package</li>
+<li><strong>JDBC</strong> as implemented in <a href="http://www.rforge.net/RJDBC/">RJDBC</a> package</li>
+</ol>
+<p>If there is a need to connect to several databases in one or several R projects, then it would be preferable to use <strong>ODBC</strong> for all connections because it increases consistency.</p>
+<p>Additionally, using the <a href="/odbc">odbc</a> package inside the RStudio IDE will enable the use of the <a href="/rstudio/connections/">Connections Pane</a></p>
+</div>
+<div id="faq" class="section level2">
+<h2>FAQ</h2>
+<div id="do-i-need-to-replace-all-of-my-existing-jdbc-connections-in-favor-of-odbc-connections" class="section level3">
+<h3>Do I need to replace all of my existing JDBC connections, in favor of ODBC connections?</h3>
+<p>Not necessarily, if there are existing R jobs that successfully run on a regular basis then there’s no need to introduce risk, in other words <em>if it ain’t broke, don’t fix it</em>.</p>
+<p>For new projects, if using ODBC is still not a viable option, then using an R package that implements a <code>DBI</code> back-end for the JDBC connection will be advisable, like <code>RJDBC</code>. There are other packages that implement both a DBI back-end for a JDBC connection and a <code>dplyr</code> translation, such as <a href="https://github.com/ianmcook/implyr">implyr</a> for Impala connections.</p>
+</div>
+<div id="currently-i-use-rodbc-should-i-consider-switching-to-odbc" class="section level3">
+<h3>Currently, I use <code>RODBC</code>, should I consider switching to <code>odbc</code>?</h3>
+<p>For new projects, yes. Switching will enable <code>dplyr</code> interactivity, and the Connections Pane inside the RStudio IDE (see the previous section for more info).</p>
+<p>Existing projects may need to be individually vetted to see if the possible increase in performance that the <code>odbc</code> package may provide is worth making coding changes.</p>
+</div>
+</div>
