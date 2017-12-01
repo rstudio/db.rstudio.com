@@ -11,24 +11,17 @@ library(nycflights13)
 library(dplyr)
 library(dbplyr)
 library(ggplot2)
+library(DBI)
+library(odbc)
 
-dw <- config::get("mssql")
-
-con <- DBI::dbConnect(odbc::odbc(),
-   Driver = dw$Driver,
-   Server = dw$Server,
-   UID    = dw$UID,
-   PWD    = dw$PWD,
-   Port   = dw$Port,
-   Database = dw$Database
-)
-
+con <- dbConnect(odbc(), 
+                Driver = "SQL Server", 
+                Server = "localhost\\SQLEXPRESS", 
+                Database = "master", 
+                Trusted_Connection = "True")
 
 ```
 
-<div>
-  <img src="/histogram.png"   align="right">
-</div>
 
 Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, `geom_histogram()` calculates the bin sizes and the count per bin, and then it renders the plot.  Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database.  The best approach is to move the data transformation to the database, and then use a graphing function to render the results.
 
@@ -55,8 +48,8 @@ Because `dplyr` is being used to compute the count per category inside the datab
 
 df <- tbl(con, "flights") %>%
   group_by(origin) %>%
-  tally %>%
-  collect
+  tally() %>%
+  collect()
 
 df
 ```
@@ -78,8 +71,8 @@ The plot can be created using a single piped line of code. This is particularly 
 ```{r, fig.width = 4, fig.height = 3.5}
 tbl(con, "flights") %>%
   group_by(origin) %>%
-  tally %>%
-  collect %>%
+  tally() %>%
+  collect() %>%
   ggplot() +
     geom_col(aes(x = origin, y = n)) 
   
@@ -171,8 +164,8 @@ The data processing is very simple when using the helper function. The `db_bin` 
 ```{r}
 df <- tbl(con, "flights") %>%
   group_by(x = !! db_bin(sched_dep_time, bins = 10)) %>%
-  tally %>%
-  collect
+  tally() %>%
+  collect()
 
 head(df)
 ```
@@ -193,8 +186,8 @@ Just like with the Bar plot, the entire process can be piped. Here is an example
 ```{r}
 tbl(con, "flights") %>%
   group_by(x = !! db_bin(sched_dep_time, binwidth = 300)) %>%
-  tally %>%
-  collect %>%
+  tally() %>%
+  collect() %>%
   ggplot() +
     geom_col(aes(x = x, y = n))
   
@@ -217,7 +210,7 @@ df <- tbl(con, "flights") %>%
     sc_arr_time = !! db_bin(sched_arr_time, bins = 50)
   ) %>%
   summarise(avg_distance = mean(distance)) %>%
-  collect
+  collect()
 
 head(df)
 
@@ -251,7 +244,7 @@ tbl(con, "flights") %>%
     sc_arr_time = !! db_bin(sched_arr_time, bins = 100)
   ) %>%
   summarise(avg_distance = mean(distance)) %>%
-  collect %>%
+  collect() %>%
   ggplot() +
    geom_raster(aes(x = sc_dep_time, y = sc_arr_time, fill = avg_distance))
 

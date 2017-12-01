@@ -6,9 +6,6 @@ aliases:
 
 
 
-<div>
-<p><img src="/histogram.png"   align="right"></p>
-</div>
 <p>Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, <code>geom_histogram()</code> calculates the bin sizes and the count per bin, and then it renders the plot. Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database. The best approach is to move the data transformation to the database, and then use a graphing function to render the results.</p>
 <p>This article has two goals:</p>
 <ul>
@@ -25,8 +22,8 @@ aliases:
 <p>Because <code>dplyr</code> is being used to compute the count per category inside the database, the discrete values are separated using <code>group_by()</code>, followed by <code>tally()</code> to obtain the row count per category. Lastly, <code>collect()</code> downloads the results into R:</p>
 <pre class="r"><code>df &lt;- tbl(con, &quot;flights&quot;) %&gt;%
   group_by(origin) %&gt;%
-  tally %&gt;%
-  collect
+  tally() %&gt;%
+  collect()
 
 df</code></pre>
 <pre><code>## # A tibble: 3 x 2
@@ -48,8 +45,8 @@ df</code></pre>
 <p>The plot can be created using a single piped line of code. This is particularly useful when performing exploratory data analysis because it is easy to add or remove filters, or to change the variable that is being analyzed.</p>
 <pre class="r"><code>tbl(con, &quot;flights&quot;) %&gt;%
   group_by(origin) %&gt;%
-  tally %&gt;%
-  collect %&gt;%
+  tally() %&gt;%
+  collect() %&gt;%
   ggplot() +
     geom_col(aes(x = origin, y = n)) </code></pre>
 <p><img src="/best-practices/visualization_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p>
@@ -127,8 +124,8 @@ db_bin &lt;- function(var, bins = 30, binwidth = NULL) {
 </ul>
 <pre class="r"><code>df &lt;- tbl(con, &quot;flights&quot;) %&gt;%
   group_by(x = !! db_bin(sched_dep_time, bins = 10)) %&gt;%
-  tally %&gt;%
-  collect
+  tally() %&gt;%
+  collect()
 
 head(df)</code></pre>
 <pre><code>## # A tibble: 6 x 2
@@ -153,8 +150,8 @@ head(df)</code></pre>
 <p>Just like with the Bar plot, the entire process can be piped. Here is an example of using the <code>binwidth</code> argument instead of <code>bins</code>; additionally, the bin size is widened to 300-minute intervals:</p>
 <pre class="r"><code>tbl(con, &quot;flights&quot;) %&gt;%
   group_by(x = !! db_bin(sched_dep_time, binwidth = 300)) %&gt;%
-  tally %&gt;%
-  collect %&gt;%
+  tally() %&gt;%
+  collect() %&gt;%
   ggplot() +
     geom_col(aes(x = x, y = n))</code></pre>
 <p><img src="/best-practices/visualization_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -173,7 +170,7 @@ head(df)</code></pre>
     sc_arr_time = !! db_bin(sched_arr_time, bins = 50)
   ) %&gt;%
   summarise(avg_distance = mean(distance)) %&gt;%
-  collect
+  collect()
 
 head(df)</code></pre>
 <pre><code>## # A tibble: 6 x 3
@@ -209,7 +206,7 @@ head(df)</code></pre>
     sc_arr_time = !! db_bin(sched_arr_time, bins = 100)
   ) %&gt;%
   summarise(avg_distance = mean(distance)) %&gt;%
-  collect %&gt;%
+  collect() %&gt;%
   ggplot() +
    geom_raster(aes(x = sc_dep_time, y = sc_arr_time, fill = avg_distance))</code></pre>
 <p><img src="/best-practices/visualization_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
