@@ -128,6 +128,12 @@ googleAnalytics = "UA-20375833-20"
 	parent = "Best Practices"	  
 
 [[menu.main]]
+  weight = 28
+	name   = "Enterprise-ready dashboards"
+	url    = "/best-practices/dashboards/"
+	parent = "Best Practices"	  
+	
+[[menu.main]]
   weight = 30
 	name   = "Databases"
 	url    = "/databases/"

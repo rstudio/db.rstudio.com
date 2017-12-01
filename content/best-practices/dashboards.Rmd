@@ -1,0 +1,265 @@
+---
+title: Enterprise-ready dashboards
+---
+
+![](/best-practices/dashboards/main.png)
+*[Original published in RViews on 9/20/2017](https://rviews.rstudio.com/2017/09/20/dashboards-with-r-and-databases/)*
+
+Inside the enterprise, a dashboard is expected to have up-to-the-minute information, to have a fast response time despite the large amount of data that supports it, and to be available on any device.  An end user may expect that clicking on a bar or column inside a plot will result in either a more detailed report, or a list of the actual records that make up that number.  This article will cover how to use a set of R packages, along with Shiny, to meet those requirements.
+
+## The code
+
+A working example for the dashboard pictured above is available here: [Flights Dashboard](https://edgarruiz.shinyapps.io/flights-dashboard/).  The example has all of the functionality that is discussed in this article, except the database connectivity. The code for the dashboard is available in this Gist: [app.R](https://gist.github.com/edgararuiz/89e771b5d1b82adaa0033c0928d1846d)
+
+The code for the dashboard that actually connects to a database is available in this Gist: [app.R](https://gist.github.com/edgararuiz/876ba4718e56af66c3e1181482b6cb99)
+
+## Begin with `shinydashboard`
+
+
+The [shinydashboard](https://rstudio.github.io/shinydashboard/) package has three important advantages:
+
+  1. **Provides an out-of-the-box framework to create dashboards in Shiny.**  This saves a lot of time, because the developer does not have to create the dashboard features manually using "base" Shiny.
+  
+  2. **Has a dashboard-firendly tag structure.** This allows the developer to get started quickly. Inside the `dashboardPage()`tag, the `dashboardHeader()`, `dashboardSidebar()` and `dashboardBody()` can be added to easily lay out a new dashboard.
+  
+  3. **It is mobile-ready.** Without any additional code, the dashboard layout will adapt to a smaller screen automatically.
+
+### Quick example
+
+If you are new to `shinydashboard`, please feel free to copy and paste the following code to see a very simple dashboard in your environment:
+
+```r
+library(shinydashboard)
+library(shiny)
+ui <- dashboardPage(
+  dashboardHeader(title = "Quick Example"),
+  dashboardSidebar(textInput("text", "Text")),
+  dashboardBody(
+    valueBox(100, "Basic example"),
+    tableOutput("mtcars")
+  )
+)
+server <- function(input, output) {
+  output$mtcars <- renderTable(head(mtcars))
+}
+shinyApp(ui, server)
+```
+
+## Deploy using `config`
+
+It is very common that credentials used during development will not be the same ones used for publishing.  For databases, the best way to accommodate for this is to have a Data Source Name (DSN) with the same alias name set up on both environments. If it is not possible to set up DSNs, then the `config` package can be used to make the switch between credentials used in the different environments invisible.  The [RStudio Connect](http://docs.rstudio.com/connect/admin/process-management.html#using-the-config-package) product supports the use of the `config` package out of the box.  Another advantage of using `config`, in lieu of Kerberos or DSN, is that the credentials used will not appear in the plain text of the R code. A more detailed write-up is available in the [Make scripts portable](http://db.rstudio.com/best-practices/portable-code) article.
+
+This code snippet is an example YAML file that `config` is able to read. It has one driver name for local development, and a different name for use during deployment:
+
+```
+default:
+  mssql:
+      Driver: "SQL Server"
+      Server: "[server's path]"
+      Database: "[database name]"
+      UID: "[user id]"
+      PWD: "[pasword]"
+      Port: 1433
+rsconnect:
+  mssql:
+      Driver: "SQLServer"
+      Server: "[server's path]"
+      Database: "[database name]"
+      UID: "[user id]"
+      PWD: "[pasword]"
+      Port: 1433
+```
+
+The `default` setting will be automatically used when development, and RStudio Connect will use the `rsconnect` values when executing this code:
+
+```r
+dw <- config::get("mssql")
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = dw$Driver,
+                      Server = dw$Server,
+                      UID    = dw$UID,
+                      PWD    = dw$PWD,
+                      Port   = dw$Port,
+                      Database = dw$Database)
+```
+
+
+## Populate Shiny inputs using `purrr`
+
+It is very common for Shiny inputs to retrieve their values from a table or a query.  Because other queries in the dashboard will use the selected input to filter accordingly, the value required to pass to the other queries is normally an identification code, and not the label displayed in the drop down.  To separate the keys from the values, the `map()` function in the `purrr` package can be used.  In the example below, all of the records in the airlines table are collected, and a list of names is created, `map()` is then used to insert the carrier codes into each name node.
+
+```r
+# This code runs in ui
+airline_list <- tbl(con, "airlines") %>%
+  collect  %>%
+  split(.$name) %>%    # Place here the field that will be used for the labels
+  map(~.$carrier)      # Place here the field that will be used for keys
+```
+
+The `selectInput()` drop-down menu is able to read the resulting `airline_list` list variable.
+
+```r
+# This code runs in ui
+ selectInput(
+    inputId = "airline",
+    label = "Airline:", 
+    choices = airline_list) # Use airline_list as the choices argument value
+```
+
+
+## Take advantage of `dplyr`'s "laziness"
+
+
+Dashboards normally have a common data theme, which is sourced with a common data set.  A base query can be built because `dplyr` translates into SQL under the covers and, due to "laziness", doesn't evaluate the query until something is requested from it.  
+
+```r
+db_flights <- tbl(con, "flights") %>%
+  left_join(tbl(con, "airlines"), by = "carrier") %>%
+  rename(airline = name) %>%
+  left_join(tbl(con, "airports"), by = c("origin" = "faa")) %>%
+  rename(origin_name = name) %>%
+  select(-lat, -lon, -alt, -tz, -dst) %>%
+  left_join(tbl(con, "airports"), by = c("dest" = "faa")) %>%
+  rename(dest_name = name) 
+```
+
+The `dplyr` variable can then be used in more than one Shiny output. A second example is in the code used to build the `highcharter` plot below.
+
+```r
+output$total_flights <- renderValueBox({
+
+  result <- db_flights %>%           # Use the db_flights variable
+    filter(carrier == input$airline)
+  if(input$month != 99) result <- filter(result, month == input$month)
+  
+  result <- result %>%
+    tally %>%
+    pull %>%                        # Use pull to get the total count as a vector
+    as.integer()
+  
+  valueBox(value = prettyNum(result, big.mark = ","),
+           subtitle = "Number of Flights")
+})
+```
+
+## Drill down
+
+The idea of a "drill-down" action is that the end user is able to see part or all of the data that makes up the aggregate result displayed in the dashboard.  A "drill-down" action has two parts:
+
+- **A dashboard element that displays a result is clicked. **  The result is usually aggregate data.
+- **A new screen is displayed with another report.** The new report could be another report showing a lower-level aggregation, or it could show a list of rows that make up the result.
+
+### A dashboard element is clicked
+
+The following is one way that capturing a click event is possible.  The idea is to display the top airport destinations for a given airline in a bar plot.  When a bar is clicked, the desired result is for the plot to activate a drill-down.  The `highcharter` package will be used in this example.
+
+To capture a bar-click event in `highcharter`, a small JavaScript needs to be written.  The example below could be used in most cases, so you can copy and paste it as-is into your code.  The variable name and the input name (`bar_clicked`) would be the only two statements that would have to be changed to match your chart.
+
+```r
+ js_bar_clicked <- JS("function(event) {Shiny.onInputChange('bar_clicked', [event.point.category]);}")
+```
+
+The command above creates a new JavaScript inside R that makes it possible to track when a bar is clicked.  Here is a breakdown of the code:
+
+- **JS** - Indicates that the following function is JavaScript
+- **function(event)** - Creates a new function, and expect an `event` variable.  The event that Highchart will pass is when a bar is clicked on, so the `event` will contain information about that given bar.
+- **Shiny.onInputChange** - Is the function that JavaScript will use to interact with Shiny
+- **bar_clicked** - Is the name of a new Shiny input; its value will default to the next item
+- **[event.point.category]** - Passes the **category** value of the **point** where the click was made
+
+The next section will illustrate how to capture the change of the new `input$bar_clicked`, and perform the second part of the "drill down".
+
+In the `renderHighchart()` output function, the variable that contains the JavaScript is passed as part of a list of events: `events = list(click = js_bar_clicked))`.  Because the event is inside the `hc_add_series()` that creates the bar plot, then such click-event is tied to when the bar is clicked.
+
+```r
+output$top_airports <- renderHighchart({
+  # Reuse the dplyr db_flights variable as the base query
+  result <- db_flights %>%
+    filter(carrier == input$airline) 
+  if(input$month != 99) result <- filter(result, month == input$month) 
+  result <- result %>
+    group_by(dest_name) %>%
+    tally() %>%
+    arrange(desc(n)) %>%                          
+    collect %>%
+    head(10)                                      
+  highchart() %>%
+    hc_add_series(
+      data = result$n, 
+      type = "bar",
+      name = paste("No. of Flights"),
+      events = list(click = js_bar_clicked)) %>%   # The JavaScript variable is called here
+    hc_xAxis(
+      categories = result$dest_name,               # Value in event.point.category
+        tickmarkPlacement="on")})
+```
+### Using `appendTab()` to create the drill-down report
+
+The plan is to display a new drill-down report every time the end user clicks on a bar.  To prevent pulling the same data unnecessarily, the code will be smart enough to simply switch the focus to an existing tab if the same bar has been clicked on before.  
+
+The new, and really cool, `appendTab()` function is used to dynamically create a new Shiny tab with a **DataTable** that contains the first 100 rows of the selection.  A simple vector, called `tab_list`, is used to track all existing detail tabs. The `updateTabsetPanel()` function is used to switch to the newly or previously created tab.
+
+The `observeEvent()` function is the one that "catches" the event executed by the JavaScript, because it monitors the `bar_clicked` Shiny input.  Comments are added to the code below to cover more aspects of how to use these features.
+
+```r
+tab_list <- NULL
+
+observeEvent(input$bar_clicked,{  
+       airport <- input$bar_clicked[1]              # Selects the first value sent in [event.point.category]
+       tab_title <- paste(input$airline,            # tab_title is the tab's name and unique identifier
+                          "-", airport ,            
+                          if(input$month != 99)     
+                            paste("-" , month.name[as.integer(input$month)]))
+       
+       if(tab_title %in% tab_list == FALSE){        # Checks to see if the title already exists
+         details <- db_flights %>%                  # Reuses the db_flights dbplyr variable
+           filter(dest_name == airport,             # Uses the [event.point.category] value for the filter
+                  carrier == input$airline)         # Matches the current airline filter
+         
+         if(input$month != 99)                      # Matches the current month selection
+            details <- filter(details, month == input$month) 
+         details <- details %>%
+           head(100) %>%                            # Select only the first 100 records
+           collect()                                # Brings the 100 records into the R environment 
+           
+         appendTab(inputId = "tabs",                # Starts a new Shiny tab inside the tabsetPanel named "tabs"
+                   tabPanel(
+                     tab_title,                     # Sets the name & ID
+                     DT::renderDataTable(details)   # Renders the DataTable with the 100 newly collected rows
+                   ))
+         tab_list <<- c(tab_list, tab_title)        # Adds the new tab to the list, important to use <<- 
+         }
+         
+       # Switches over to a panel that matched the name in tab_title.  
+       # Notice that this function sits outside the if statement because
+       # it still needs to run to select a previously created tab
+       updateTabsetPanel(session, "tabs", selected = tab_title)  
+     })
+```
+  
+### Remove all tabs using `removeTab()` and `purrr`
+
+Creating new tabs dynamically can clutter the dashboard. So a simple `actionLink()` button can be added to the `dashboardSidebar()` in order to remove all tabs except the main dashboard tab.
+  
+```r
+# This code runs in ui
+  dashboardSidebar(
+       actionLink("remove", "Remove detail tabs"))
+```
+The `observeEvent()` function is used once more to catch when the link is clicked.  The `walk()` command from `purrr` is then used to iterate through each tab title in the `tab_list` vector and proceeds to execute the Shiny `removeTab()` command for each name. After that, the tab list variable is reset.  Because of environment scoping, make sure to use double less than ( `<<-` ) when resetting the variable, so it knows to reset the variable defined outside of the `observeEvent()` function.
+
+```r
+# This code runs in server
+  observeEvent(input$remove,{
+    # Use purrr's walk command to cycle through each
+    # panel tabs and remove them
+    tab_list %>%
+      walk(~removeTab("tabs", .x))
+    tab_list <<- NULL
+  })
+  
+```
+
+## Conclusion
+
+ This example uses Shinydashboard to create enterprise dashboards, but there are other technologies as well. Flexdashboard is a great way to build similar enterprise dashboards in R Markdown. We used SQL Server to populate this dashboard, but you can use any database. For more information on using databases with R, see http://db.rstudio.com/.
