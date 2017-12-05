@@ -1,3 +1,5 @@
+{{ partial "swiftype" .}}
+
 <nav data-gumshoe-header aria-label="Header" id="header" class="top-menu">
   <div class="left">
      <a href = "/" data-parenturl="" class="top-menu-item site-title">{{ .Site.Title }}</a>
@@ -17,12 +19,9 @@
         <a href="/advanced" data-parenturl="/advanced" class="top-menu-item">Advanced</a>
     </div>
     
-
-    <!---
-    <div class="search-button">
+    <div class="search-button" aria-hidden="true">
       <i class="fa fa-lg fa-search"></i>
     </div>
-    --->
     
   </div>
 </nav>
@@ -68,6 +67,7 @@
   {{ end }}
 </ul>
 </div>
+
 
 <div id="search-bar" class="search-bar">
   <p class="search-bar__icon"><i class="fa fa-lg fa-search"></i> </p>
