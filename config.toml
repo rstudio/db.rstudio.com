@@ -184,6 +184,11 @@ googleAnalytics = "UA-20375833-20"
 	url    = "/databases/my-sql/"
 	parent = "Databases"
 [[menu.main]]
+  weight = 39
+	name   = "MonetDB"
+	url    = "/databases/monetdb/"
+	parent = "Databases"
+[[menu.main]]
   weight = 40
 	name   = "SQLite"
 	url    = "/databases/sqlite/"

@@ -1,0 +1,26 @@
+---
+title: MonetDB
+logo: "/logos/monetdblarge.png"
+dplyr: "Yes"
+driver: "No"
+package: MonetDBLite
+aliases:
+  - /monetdb
+---
+
+
+
+<p>MonetDBLite for R is a SQL database that runs inside the R environment for statistical computing and does not require the installation of any external software. MonetDBLite is based on free and open-source <a href="https://www.monetdb.org/Home">MonetDB</a>, a product of the <a href="http://www.cwi.nl/">Centrum Wiskunde &amp; Informatica</a>.</p>
+<p>MonetDBLite is similar in functionality to RSQLite, but typically completes queries blazingly fast due to its columnar storage architecture and bulk query processing model. Since both of these embedded SQL options rely on the the R DBI interface, the conversion of legacy RSQLite project syntax over to MonetDBLite code should be a cinch.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install the latest released version of MonetDBLite from CRAN with:</p>
+<pre class="r"><code>install.packages(&quot;MonetDBLite&quot;)</code></pre>
+<p>The latest development version from GitHub on the command line:</p>
+<pre><code>git clone https://github.com/hannesmuehleisen/MonetDBLite-R.git --depth 1 --recursive
+R CMD INSTALL MonetDBLite-R</code></pre>
+</div>
+<div id="usage" class="section level2">
+<h2>Usage</h2>
+<p>For information on how to use, and to report bugs, please refer to the package’s official GitHub repo: <a href="https://github.com/hannesmuehleisen/MonetDBLite-R" class="uri">https://github.com/hannesmuehleisen/MonetDBLite-R</a></p>
+</div>
