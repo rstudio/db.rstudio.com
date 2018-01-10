@@ -59,12 +59,6 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 This section will be updated as new issues are found, and when fixes are applied in the development version of the [dbplyr](https://github.com/tidyverse/dplyr) package.  The issue will be fully removed when the fix is part of of the package's version in CRAN.
 
-- `dbCompute()` is not able to create a temporary table ([Issue 2931](https://github.com/tidyverse/dplyr/issues/2931))
-
-- `is.na()` does not work if used in a `filer()` command ([Issue 2940](https://github.com/tidyverse/dplyr/issues/2940))
-
-- Direct support for Temporary Tables is missing. If using `copy_to()`, the best workaround is to set the `TEMPORARY` argument to `FALSE` and prefix the name with pound signs: `copy_to(my_table, "##my_table", TEMPORARY = FALSE)`.
-
 - **RJDBC** support - Even though it is not considered an issue, we have found a workaround.  The approach is to point the current JDBC connection to the MS SQL translation inside `dbplyr`: 
 ```r
   sql_translate_env.JDBCConnection <- dbplyr:::`sql_translate_env.Microsoft SQL Server`

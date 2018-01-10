@@ -1,0 +1,28 @@
+---
+title: "dbplyr 1.2.0 Now on CRAN"
+date: 2018-01-10T16:15:14-06:00
+categories: 
+  - tools
+summary: We are very excited to announce that dbplyr 1.2.0 is now available on CRAN!  The full announcement was posted in [tidyverse.org](https://www.tidyverse.org/articles/2018/01/dbplyr-1-2/).
+  
+---
+
+
+
+<p>We are very excited to announce that dbplyr 1.2.0 is now available on CRAN! The full announcement was posted in <a href="https://www.tidyverse.org/articles/2018/01/dbplyr-1-2/">tidyverse.org</a>. Here are the highlights:</p>
+<ul>
+<li><p>New custom translation for <strong>Microsoft Access</strong> and <a href="http://db.rstudio.com/databases/teradata/">Teradata</a></p></li>
+<li><p><a href="http://db.rstudio.com/databases/redshift/">Amazon Redshift</a> connections now point to the PostgreSQL translation.</p></li>
+<li>Adds support for <strong>two new database R packages</strong>. These new packages are fully <a href="http://db.rstudio.com/dbi/">DBI</a>-compliant and tested with <a href="https://cran.r-project.org/web/packages/DBItest/index.html">DBItest</a>. We recommend to use these instead of older packages:
+<ol type="1">
+<li><a href="https://cran.r-project.org/web/packages/RMariaDB/index.html">RMariaDB</a>, use in favor of RMySQL</li>
+<li><a href="https://cran.r-project.org/web/packages/RPostgres/index.html">RPostgres</a>, use in favor of RPostgreSQL</li>
+</ol></li>
+<li><a href="https://cran.r-project.org/web/packages/ROracle/index.html">ROracle</a> connections now point to the <a href="http://db.rstudio.com/databases/oracle/">Oracle</a> translation.</li>
+<li><p>Cache query results using <code>copy_to</code>. This feature is very useful because after cached, the results of a long running query can be iteratively analyzed without having to wait for the same base query to run over and over.</p></li>
+<li><p>stringr functions: <code>str_length()</code>, <code>str_to_upper()</code>, <code>str_to_lower()</code>, <code>str_replace_all()</code>, <code>str_detect()</code>, and <code>str_trim()</code> are now supported.</p></li>
+<li><p><code>in_schema()</code> should now work in more places, particularly in <code>copy_to()</code></p></li>
+<li><p>For those who need to extract the resulting SQL query from dplyr code, there is now a new function called <code>remote_query()</code>. Unlike <code>show_query()</code>, <code>remote_query()</code> returns a character object, and unlike <code>sql_render()</code>, the new function automatically detects the type of database attached to the given dplyr code and translates accordingly. There are four additional functions that provide a standard API to get metadata about a remote <code>tbl</code>, these are: <code>remote_name()</code>, <code>remote_con()</code>, <code>remote_src()</code>, and <code>remote_query_plan()</code>.</p></li>
+<li><p>Adds support for temporary tables in Microsoft SQL Server. Additionally, the issue of certain operators working only in <code>mutate()</code> or only in <code>filter()</code> has been resolved.</p></li>
+<li><p>Two new functions for developers: <code>sql_aggregate()</code> and <code>win_aggregate()</code>. They are for generating SQL and windowed SQL functions for aggregates.</p></li>
+</ul>

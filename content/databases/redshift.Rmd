@@ -40,13 +40,3 @@ con <- DBI::dbConnect(odbc::odbc(),
                       Port         = 5439)
 
 ```
-
-## `dbplyr` translation
-
-### Availability
-
-This translation is available in the development version of `dbplyr`
-
-```r
-devtools::install_github("tidyverse/dbplyr")
-```
