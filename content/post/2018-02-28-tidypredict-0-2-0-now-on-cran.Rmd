@@ -1,0 +1,15 @@
+---
+title: tidypredict 0.2.0 Now on CRAN
+author: ''
+date: '2018-02-28'
+slug: tidypredict-0-2-0-now-on-cran
+categories:
+  - tools
+summary:  "We are excited to announce that tidypredict version 0.2.0 is now on CRAN.  This version adds support for ranger() models.  tidypredict parses a fitted R model object, and returns a formula in ‘Tidy Eval’ code that calculates the predictions."
+---
+
+Run predictions inside the database. `tidypredict` parses a fitted R model object, and returns a formula in 'Tidy Eval' code that calculates the predictions.
+
+**It works with several databases back-ends** because it leverages `dplyr` and `dbplyr` for the final SQL translation of the algorithm. It currently supports `lm()`, `glm()`, `randomForest()` and `ranger()` models.
+
+More information is available in the package's official site: http://tidypredict.netlify.com/
