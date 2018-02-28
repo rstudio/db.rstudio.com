@@ -64,17 +64,30 @@ googleAnalytics = "UA-20375833-20"
 
 [[menu.main]]
   weight = 15
+	name   = "dbplot"
+	parent = "Packages"
+	url    = "/dbplot/"
+
+[[menu.main]]
+  weight = 16
+	name   = "tidypredict"
+	parent = "Packages"
+	url    = "/tidypredict/"
+
+
+[[menu.main]]
+  weight = 17
 	name   = "RStudio"
 	url    = "/rstudio/connections/"
 	
 [[menu.main]]
-  weight = 16
+  weight = 18
 	name   = "Connections Pane"
 	parent = "RStudio"
 	url    = "/rstudio/connections/"	
 
 [[menu.main]]
-  weight = 17
+  weight = 19
 	name   = "Professional Drivers"
 	parent = "RStudio"
 	url    = "/rstudio/pro-drivers/"	
