@@ -4,6 +4,18 @@ aliases:
   - /media
 ---
 
+## Connecting to open source databases
+### Kirill Muller
+*Event: rstudio::conf2018*
+
+<p><a href="https://www.rstudio.com/resources/videos/connecting-to-open-source-databases/?wvideo=yf1vdwugk5"><img src="https://embedwistia-a.akamaihd.net/deliveries/6cc6be1f7e21a6ecd6640c0068ecd86a94c235d0.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=4287c7e0" width="500" height="300" style="width: 500px; height: 300px;"></a></p><p><a href="https://www.rstudio.com/resources/videos/connecting-to-open-source-databases/?wvideo=yf1vdwugk5">Connecting to open source databases – RStudio</a></p>
+
+## Best practices for working with databases
+### by Edgar Ruiz - RStudio
+*Event: rstudio::conf2018*
+
+<p><a href="https://www.rstudio.com/resources/videos/best-practices-for-working-with-databases/?wvideo=a4ps6daf64"><img src="https://embedwistia-a.akamaihd.net/deliveries/63eeb1098ce60b58117d8ce172b0adf1650d64c7.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=4287c7e0" width="500" height="300" style="width: 500px; height: 300px;"></a></p><p><a href="https://www.rstudio.com/resources/videos/best-practices-for-working-with-databases/?wvideo=a4ps6daf64">Best practices for working with databases – RStudio</a></p>
+
 ## odbc - A modern database interface
 ### by Jim Hester - RStudio
 
