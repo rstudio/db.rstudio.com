@@ -9,9 +9,10 @@ aliases:
 <p>Typically, a function that produces a plot in R performs the data crunching and the graphical rendering. For example, <code>geom_histogram()</code> calculates the bin sizes and the count per bin, and then it renders the plot. Plotting functions usually require that 100% of the data be passed to them. This is a problem when working with a database. The best approach is to move the data transformation to the database, and then use a graphing function to render the results.</p>
 <p>This article has two goals:</p>
 <ul>
-<li><p>Demonstrate a practical implementation of the “Transform in database, plot in R” concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram, and two continuous variables using a Raster plot, all using data in a database</p></li>
+<li><p>Demonstrate a practical implementation of the <strong>“Transform in database, plot in R”</strong> concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram, and two continuous variables using a Raster plot, all using data in a database</p></li>
 <li><p>Introduce a technique that simplifies the use of complex formulas that are required to move the calculations of the plot to the database</p></li>
 </ul>
+<p>An alternative, is to use a helper R package that already implements the principles shared in this article, please see the <a href="/dbplot">dbplot page</a> for more info.</p>
 <div id="bar-plot" class="section level2">
 <h2>Bar plot</h2>
 <p>A Bar plot is intended to measure and compare categorical data. Passing the category to <code>geom_bar()</code> as <code>x</code> will automatically calculate the height of the bars based on the row count per category. Here is the code of a typical bar plot using <code>ggplot2</code>:</p>
@@ -28,10 +29,10 @@ aliases:
 df</code></pre>
 <pre><code>## # A tibble: 3 x 2
 ##   origin      n
-##    &lt;chr&gt;  &lt;int&gt;
-## 1    LGA 104662
-## 2    EWR 120835
-## 3    JFK 111279</code></pre>
+##   &lt;chr&gt;   &lt;int&gt;
+## 1 LGA    104662
+## 2 EWR    120835
+## 3 JFK    111279</code></pre>
 </div>
 <div id="plotting-results-in-r" class="section level3">
 <h3>Plotting results in R</h3>
@@ -80,40 +81,42 @@ df</code></pre>
 <pre class="r"><code>library(rlang)
 db_bin &lt;- function(var, bins = 30, binwidth = NULL) {
   var &lt;- enexpr(var)
-  
-  range &lt;- expr(max(!!var) - min(!!var))
-  
-  if(is.null(binwidth)){
-    binwidth &lt;- expr((!!range) / (!!bins))
+
+  range &lt;- expr((max(!! var, na.rm = TRUE) - min(!! var, na.rm = TRUE)))
+
+  if (is.null(binwidth)) {
+    binwidth &lt;- expr((!! range / !! bins))
   } else {
-    bins &lt;- expr(as.integer((!!range) / (!!binwidth)))
+    bins &lt;- expr(as.integer(!! range / !! binwidth))
   }
 
   # Made more sense to use floor() to determine the bin value than
   # using the bin number or the max or mean, feel free to customize
-  bin_number &lt;- expr(as.integer(floor(((!!var) - min(!!var)) / (!!binwidth))))
+  bin_number &lt;- expr(as.integer(floor((!! var - min(!! var, na.rm = TRUE)) / !! binwidth)))
 
   # Value(s) that match max(x) will be rebased to bin -1, giving us the exact number of bins requested
-  expr(((!!binwidth) *
-         ifelse((!!bin_number) == (!!bins), (!!bin_number) - 1, (!!bin_number))) + min(!!var))
-
+  expr(((!! binwidth) *
+    ifelse(!! bin_number == !! bins, !! bin_number - 1, !! bin_number)) + min(!! var, na.rm = TRUE))
 }</code></pre>
 <p>Notice that the function returns a <strong>quosure</strong> containing the <strong>unevaluated</strong> R code that calculates the bins. To read more about how this kind of approach works, please refer to this article: <a href="http://dplyr.tidyverse.org/articles/programming.html">Programming with dplyr</a>.</p>
 <p>It is important to note that the database in use needs to support the functions called in the formula, such as <code>min()</code> and <code>max()</code>.</p>
 <p>Here is an example of the function’s output. Notice that a fictitious field called <code>any_field</code> is used, and no “missing field” error is generated. That is because the formula has not yet been evaluated.</p>
 <pre class="r"><code>db_bin(any_field)</code></pre>
-<pre><code>## (((max(any_field) - min(any_field))/(30)) * ifelse((as.integer(floor(((any_field) - 
-##     min(any_field))/((max(any_field) - min(any_field))/(30))))) == 
-##     (30), (as.integer(floor(((any_field) - min(any_field))/((max(any_field) - 
-##     min(any_field))/(30))))) - 1, (as.integer(floor(((any_field) - 
-##     min(any_field))/((max(any_field) - min(any_field))/(30))))))) + 
-##     min(any_field)</code></pre>
+<pre><code>## (((max(any_field, na.rm = TRUE) - min(any_field, na.rm = TRUE))/30) * 
+##     ifelse(as.integer(floor((any_field - min(any_field, na.rm = TRUE))/((max(any_field, 
+##         na.rm = TRUE) - min(any_field, na.rm = TRUE))/30))) == 
+##         30, as.integer(floor((any_field - min(any_field, na.rm = TRUE))/((max(any_field, 
+##         na.rm = TRUE) - min(any_field, na.rm = TRUE))/30))) - 
+##         1, as.integer(floor((any_field - min(any_field, na.rm = TRUE))/((max(any_field, 
+##         na.rm = TRUE) - min(any_field, na.rm = TRUE))/30))))) + 
+##     min(any_field, na.rm = TRUE)</code></pre>
 <p>This is an example of the function using <code>binwidth</code>. The resulting formula is a little different.</p>
 <pre class="r"><code>db_bin(any_field, binwidth = 300)</code></pre>
-<pre><code>## ((300) * ifelse((as.integer(floor(((any_field) - min(any_field))/(300)))) == 
-##     (as.integer((max(any_field) - min(any_field))/(300))), (as.integer(floor(((any_field) - 
-##     min(any_field))/(300)))) - 1, (as.integer(floor(((any_field) - 
-##     min(any_field))/(300)))))) + min(any_field)</code></pre>
+<pre><code>## (300 * ifelse(as.integer(floor((any_field - min(any_field, na.rm = TRUE))/300)) == 
+##     as.integer((max(any_field, na.rm = TRUE) - min(any_field, 
+##         na.rm = TRUE))/300), as.integer(floor((any_field - min(any_field, 
+##     na.rm = TRUE))/300)) - 1, as.integer(floor((any_field - min(any_field, 
+##     na.rm = TRUE))/300)))) + min(any_field, na.rm = TRUE)</code></pre>
 </div>
 <div id="data-transformation-1" class="section level3">
 <h3>Data transformation</h3>
@@ -129,14 +132,14 @@ db_bin &lt;- function(var, bins = 30, binwidth = NULL) {
 
 head(df)</code></pre>
 <pre><code>## # A tibble: 6 x 2
-##        x     n
-##    &lt;dbl&gt; &lt;int&gt;
-## 1  781.9 51999
-## 2  556.6 48864
-## 3 1007.2 38889
-## 4  106.0     1
-## 5  331.3  1861
-## 6 1908.4 39942</code></pre>
+##       x     n
+##   &lt;dbl&gt; &lt;int&gt;
+## 1  782. 51999
+## 2  557. 48864
+## 3 1007. 38889
+## 4  106.     1
+## 5  331.  1861
+## 6 1908. 39942</code></pre>
 </div>
 <div id="plotting-results-in-r-1" class="section level3">
 <h3>Plotting results in R</h3>
@@ -170,19 +173,20 @@ head(df)</code></pre>
     sc_arr_time = !! db_bin(sched_arr_time, bins = 50)
   ) %&gt;%
   summarise(avg_distance = mean(distance)) %&gt;%
-  collect()
-
-head(df)</code></pre>
+  collect()</code></pre>
+<pre><code>## Warning: Missing values are always removed in SQL.
+## Use `AVG(x, na.rm = TRUE)` to silence this warning</code></pre>
+<pre class="r"><code>head(df)</code></pre>
 <pre><code>## # A tibble: 6 x 3
 ## # Groups:   sc_dep_time [6]
 ##   sc_dep_time sc_arr_time avg_distance
 ##         &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;
-## 1     1953.46     2170.36     596.3182
-## 2     2043.58     2123.20     200.5696
-## 3     1728.16     1887.40     496.3788
-## 4     1863.34     2076.04     687.1276
-## 5     1638.04     1793.08     422.2945
-## 6      736.84      944.20     592.7414</code></pre>
+## 1       1953.       2170.         596.
+## 2       2044.       2123.         201.
+## 3       1728.       1887.         496.
+## 4       1863.       2076.         687.
+## 5       1638.       1793.         422.
+## 6        737.        944.         593.</code></pre>
 </div>
 <div id="plotting-results-in-r-2" class="section level3">
 <h3>Plotting results in R</h3>
@@ -209,6 +213,12 @@ head(df)</code></pre>
   collect() %&gt;%
   ggplot() +
    geom_raster(aes(x = sc_dep_time, y = sc_arr_time, fill = avg_distance))</code></pre>
+<pre><code>## Warning: Missing values are always removed in SQL.
+## Use `AVG(x, na.rm = TRUE)` to silence this warning</code></pre>
 <p><img src="/best-practices/visualization_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
+</div>
+<div id="use-an-r-package" class="section level2">
+<h2>Use an R package</h2>
+<p>The <a href="/dbplot">dbplot</a> package provides helper functions that automate the aggregation and plotting steps. For more info, visit the <a href="/dbplot">dbplot article</a> in this website.</p>
 </div>

@@ -27,9 +27,11 @@ Typically, a function that produces a plot in R performs the data crunching and 
 
 This article has two goals:
 
-- Demonstrate a practical implementation of the "Transform in database, plot in R" concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram, and two continuous variables using a Raster plot, all using data in a database
+- Demonstrate a practical implementation of the **"Transform in database, plot in R"** concept by showing how to visualize a categorical variable using a Bar plot, a single continuous variable using a Histogram, and two continuous variables using a Raster plot, all using data in a database
 
 - Introduce a technique that simplifies the use of complex formulas that are required to move the calculations of the plot to the database
+
+An alternative, is to use a helper R package that already implements the principles shared in this article, please see the [dbplot page](/dbplot) for more info.
 
 ## Bar plot
 
@@ -115,23 +117,22 @@ The function has two other arguments:
 library(rlang)
 db_bin <- function(var, bins = 30, binwidth = NULL) {
   var <- enexpr(var)
-  
-  range <- expr(max(!!var) - min(!!var))
-  
-  if(is.null(binwidth)){
-    binwidth <- expr((!!range) / (!!bins))
+
+  range <- expr((max(!! var, na.rm = TRUE) - min(!! var, na.rm = TRUE)))
+
+  if (is.null(binwidth)) {
+    binwidth <- expr((!! range / !! bins))
   } else {
-    bins <- expr(as.integer((!!range) / (!!binwidth)))
+    bins <- expr(as.integer(!! range / !! binwidth))
   }
 
   # Made more sense to use floor() to determine the bin value than
   # using the bin number or the max or mean, feel free to customize
-  bin_number <- expr(as.integer(floor(((!!var) - min(!!var)) / (!!binwidth))))
+  bin_number <- expr(as.integer(floor((!! var - min(!! var, na.rm = TRUE)) / !! binwidth)))
 
   # Value(s) that match max(x) will be rebased to bin -1, giving us the exact number of bins requested
-  expr(((!!binwidth) *
-         ifelse((!!bin_number) == (!!bins), (!!bin_number) - 1, (!!bin_number))) + min(!!var))
-
+  expr(((!! binwidth) *
+    ifelse(!! bin_number == !! bins, !! bin_number - 1, !! bin_number)) + min(!! var, na.rm = TRUE))
 }
 
 ```
@@ -250,4 +251,6 @@ tbl(con, "flights") %>%
 
 ```
 
+## Use an R package
 
+The [dbplot](/dbplot) package provides helper functions that automate the aggregation and plotting steps. For more info, visit the [dbplot article](/dbplot) in this website.
