@@ -1,0 +1,17 @@
+---
+title: Materials from webinar
+author: ''
+date: '2018-04-02'
+slug: databases-r-webinar
+categories: 
+  - education
+tags: 
+  - talk
+  - presentation
+  - demo
+thumbnail: "images/favicon.png"
+  
+---
+
+
+The video and materials are now available for the latest "R and Databases" webinar, presented by RStudio: https://www.rstudio.com/resources/videos/best-practices-for-working-with-databases-webinar/

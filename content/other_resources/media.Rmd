@@ -4,6 +4,13 @@ aliases:
   - /media
 ---
 
+## Best Practices for working with R & Databases
+### Edgar Ruiz - RStudio
+*Event: March 2018 Webinar*
+
+<p><a href="https://www.rstudio.com/resources/webinars/?wvideo=vffitvywy6"><img src="https://embedwistia-a.akamaihd.net/deliveries/29b87d8ee942cd844acf0481b9376c52ecda91a2.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=71a5d4e0" width="500" height="300" style="width: 500px; height: 300px;"></a></p><p><a href="https://www.rstudio.com/resources/webinars/?wvideo=vffitvywy6">Webinars – RStudio</a></p>
+
+
 ## Connecting to open source databases
 ### Kirill Muller
 *Event: rstudio::conf2018*
