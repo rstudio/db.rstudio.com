@@ -9,7 +9,8 @@ aliases:
 <p>As well as working with local in-memory data stored in data frames, <code>dplyr</code> also works with remote on-disk data stored in databases. This is particularly useful in two scenarios:</p>
 <ul>
 <li><p>Your data is already in a database.</p></li>
-<li><p>You have so much data that it does not all fit into memory simultaneously and you need to use some external storage engine.</p></li>
+<li><p>You have so much data that it does not all fit into memory simultaneously
+and you need to use some external storage engine.</p></li>
 </ul>
 <p>(If your data fits in memory, there is no advantage to putting it in a database; it will only be slower and more frustrating.)</p>
 <p>This vignette focuses on the first scenario because it is the most common. If you are using R to do data analysis inside a company, most of the data you need probably already lives in a database (it’s just a matter of figuring out which one!). However, you will learn how to load data in to a local database in order to demonstrate <code>dplyr</code>’s database tools. At the end, I’ll also give you a few pointers if you do need to set up your own database.</p>
@@ -20,11 +21,15 @@ aliases:
 <p>You’ll also need to install a DBI backend package. The <code>DBI</code> package provides a common interface that allows <code>dplyr</code> to work with many different databases using the same code. <code>DBI</code> is automatically installed with <code>dbplyr</code>, but you need to install a specific backend for the database that you want to connect to.</p>
 <p>Five commonly used backends are:</p>
 <ul>
-<li><p><a href="https://github.com/rstats-db/RMySQL#readme">RMySQL</a> connects to MySQL and MariaDB</p></li>
-<li><p><a href="https://CRAN.R-project.org/package=RPostgreSQL">RPostgreSQL</a> connects to Postgres and Redshift.</p></li>
+<li><p><a href="https://github.com/rstats-db/RMySQL#readme">RMySQL</a>
+connects to MySQL and MariaDB</p></li>
+<li><p><a href="https://CRAN.R-project.org/package=RPostgreSQL">RPostgreSQL</a>
+connects to Postgres and Redshift.</p></li>
 <li><p><a href="https://github.com/rstats-db/RSQLite">RSQLite</a> embeds a SQLite database.</p></li>
-<li><p><a href="https://github.com/rstats-db/odbc#odbc">odbc</a> connects to many commercial databases via the open database connectivity protocol.</p></li>
-<li><p><a href="https://github.com/rstats-db/bigrquery">bigrquery</a> connects to Google’s BigQuery.</p></li>
+<li><p><a href="https://github.com/rstats-db/odbc#odbc">odbc</a> connects to many commercial
+databases via the open database connectivity protocol.</p></li>
+<li><p><a href="https://github.com/rstats-db/bigrquery">bigrquery</a> connects to Google’s
+BigQuery.</p></li>
 </ul>
 <p>If the database you need to connect to is not listed here, you’ll need to do some investigation yourself.</p>
 <p>In this vignette, we’re going to use the <code>RSQLite</code> backend, which is automatically installed when you install <code>dbplyr</code>. SQLite is a great way to get started with databases because it’s completely embedded inside an R package. Unlike most other systems, you don’t need to set up a separate database server. SQLite is great for demos, but is surprisingly powerful, and with a little practice you can use it to easily work with many gigabytes of data.</p>
@@ -33,7 +38,7 @@ aliases:
 <h2>Connecting to the database</h2>
 <p>To work with a database in <code>dplyr</code>, you must first connect to it, using <code>DBI::dbConnect()</code>. We’re not going to go into the details of the <code>DBI</code> package here, but it’s the foundation upon which <code>dbplyr</code> is built. You’ll need to learn more about if you need to do things to the database that are beyond the scope of <code>dplyr</code>.</p>
 <pre class="r"><code>library(dplyr)
-con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:memory:&quot;)</code></pre>
+con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code></pre>
 <p>The arguments to <code>DBI::dbConnect()</code> vary from database to database, but the first argument is always the database backend. It’s <code>RSQLite::SQLite()</code> for RSQLite, <code>RMySQL::MySQL()</code> for RMySQL, <code>RPostgreSQL::PostgreSQL()</code> for RPostgreSQL, <code>odbc::odbc()</code> for odbc, and <code>bigrquery::bigquery()</code> for BigQuery. SQLite only needs one other argument: the path to the database. Here we use the special string, <code>&quot;:memory:&quot;</code>, which causes SQLite to make a temporary in-memory database.</p>
 <p>Most existing databases don’t live in a file, but instead live on another server. In real life that your code will look more like this:</p>
 <pre class="r"><code>con &lt;- DBI::dbConnect(RMySQL::MySQL(), 
@@ -61,12 +66,12 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:memory:&quot;)</code><
 #&gt; # Database: sqlite 3.19.3 []
 #&gt;    year month   day dep_time sched_dep_time dep_delay arr_time
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-#&gt; 1  2013     1     1      517            515         2      830
-#&gt; 2  2013     1     1      533            529         4      850
-#&gt; 3  2013     1     1      542            540         2      923
-#&gt; 4  2013     1     1      544            545        -1     1004
-#&gt; 5  2013     1     1      554            600        -6      812
-#&gt; 6  2013     1     1      554            558        -4      740
+#&gt; 1  2013     1     1      517            515        2.      830
+#&gt; 2  2013     1     1      533            529        4.      850
+#&gt; 3  2013     1     1      542            540        2.      923
+#&gt; 4  2013     1     1      544            545       -1.     1004
+#&gt; 5  2013     1     1      554            600       -6.      812
+#&gt; 6  2013     1     1      554            558       -4.      740
 #&gt; # ... with more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
 #&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
 #&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
@@ -82,12 +87,12 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:memory:&quot;)</code><
 #&gt; # Database: sqlite 3.19.3 []
 #&gt;    year month   day dep_delay arr_delay
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-#&gt; 1  2013     1     1         2        11
-#&gt; 2  2013     1     1         4        20
-#&gt; 3  2013     1     1         2        33
-#&gt; 4  2013     1     1        -1       -18
-#&gt; 5  2013     1     1        -6       -25
-#&gt; 6  2013     1     1        -4        12
+#&gt; 1  2013     1     1        2.       11.
+#&gt; 2  2013     1     1        4.       20.
+#&gt; 3  2013     1     1        2.       33.
+#&gt; 4  2013     1     1       -1.      -18.
+#&gt; 5  2013     1     1       -6.      -25.
+#&gt; 6  2013     1     1       -4.       12.
 #&gt; # ... with more rows
 
 flights_db %&gt;% filter(dep_delay &gt; 240)
@@ -95,12 +100,12 @@ flights_db %&gt;% filter(dep_delay &gt; 240)
 #&gt; # Database: sqlite 3.19.3 []
 #&gt;    year month   day dep_time sched_dep_time dep_delay arr_time
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-#&gt; 1  2013     1     1      848           1835       853     1001
-#&gt; 2  2013     1     1     1815           1325       290     2120
-#&gt; 3  2013     1     1     1842           1422       260     1958
-#&gt; 4  2013     1     1     2115           1700       255     2330
-#&gt; 5  2013     1     1     2205           1720       285       46
-#&gt; 6  2013     1     1     2343           1724       379      314
+#&gt; 1  2013     1     1      848           1835      853.     1001
+#&gt; 2  2013     1     1     1815           1325      290.     2120
+#&gt; 3  2013     1     1     1842           1422      260.     1958
+#&gt; 4  2013     1     1     2115           1700      255.     2330
+#&gt; 5  2013     1     1     2205           1720      285.       46
+#&gt; 6  2013     1     1     2343           1724      379.      314
 #&gt; # ... with more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
 #&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
 #&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
@@ -109,22 +114,25 @@ flights_db %&gt;% filter(dep_delay &gt; 240)
 flights_db %&gt;% 
   group_by(dest) %&gt;%
   summarise(delay = mean(dep_time))
+#&gt; Warning: Missing values are always removed in SQL.
+#&gt; Use `AVG(x, na.rm = TRUE)` to silence this warning
 #&gt; # Source:   lazy query [?? x 2]
 #&gt; # Database: sqlite 3.19.3 []
-#&gt;    dest delay
+#&gt;   dest  delay
 #&gt;   &lt;chr&gt; &lt;dbl&gt;
-#&gt; 1   ABQ  2006
-#&gt; 2   ACK  1033
-#&gt; 3   ALB  1627
-#&gt; 4   ANC  1635
-#&gt; 5   ATL  1293
-#&gt; 6   AUS  1521
+#&gt; 1 ABQ   2006.
+#&gt; 2 ACK   1033.
+#&gt; 3 ALB   1627.
+#&gt; 4 ANC   1635.
+#&gt; 5 ATL   1293.
+#&gt; 6 AUS   1521.
 #&gt; # ... with more rows</code></pre>
 <p>However, in the long run, I highly recommend you at least learn the basics of SQL. It’s a valuable skill for any data scientist, and it will help you debug problems if you run into problems with <code>dplyr</code>’s automatic translation. If you’re completely new to SQL, you might start with this <a href="https://www.codecademy.com/learn/learn-sql">codeacademy tutorial</a>. If you have some familiarity with SQL and you’d like to learn more, I found <a href="http://www.sqlite.org/queryplanner.html">how indexes work in SQLite</a> and <a href="http://blog.jooq.org/2016/03/17/10-easy-steps-to-a-complete-understanding-of-sql">10 easy steps to a complete understanding of SQL</a> to be particularly helpful.</p>
 <p>The most important difference between ordinary data frames and remote database queries is that your R code is translated into SQL and executed in the database, not in R. When working with databases, <code>dplyr</code> tries to be as lazy as possible:</p>
 <ul>
 <li><p>It never pulls data into R unless you explicitly ask for it.</p></li>
-<li><p>It delays doing any work until the last possible moment: it collects together everything you want to do and then sends it to the database in one step.</p></li>
+<li><p>It delays doing any work until the last possible moment: it collects together
+everything you want to do and then sends it to the database in one step.</p></li>
 </ul>
 <p>For example, take the following code:</p>
 <pre class="r"><code>tailnum_delay_db &lt;- flights_db %&gt;% 
@@ -137,20 +145,24 @@ flights_db %&gt;%
   filter(n &gt; 100)</code></pre>
 <p>Surprisingly, this sequence of operations never touches the database. It’s not until you ask for the data (e.g., by printing <code>tailnum_delay</code>) that <code>dplyr</code> generates the SQL and requests the results from the database. Even then it tries to do as little work as possible and only pulls down a few rows.</p>
 <pre class="r"><code>tailnum_delay_db
+#&gt; Warning: Missing values are always removed in SQL.
+#&gt; Use `AVG(x, na.rm = TRUE)` to silence this warning
 #&gt; # Source:     lazy query [?? x 3]
 #&gt; # Database:   sqlite 3.19.3 []
 #&gt; # Ordered by: desc(delay)
 #&gt;   tailnum delay     n
-#&gt;     &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;
-#&gt; 1  N11119  30.3   148
-#&gt; 2  N16919  29.9   251
-#&gt; 3  N14998  27.9   230
-#&gt; 4  N15910  27.6   280
-#&gt; 5  N13123  26.0   121
-#&gt; 6  N11192  25.9   154
+#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;int&gt;
+#&gt; 1 N11119   30.3   148
+#&gt; 2 N16919   29.9   251
+#&gt; 3 N14998   27.9   230
+#&gt; 4 N15910   27.6   280
+#&gt; 5 N13123   26.0   121
+#&gt; 6 N11192   25.9   154
 #&gt; # ... with more rows</code></pre>
 <p>Behind the scenes, <code>dplyr</code> is translating your R code into SQL. You can see the SQL it’s generating with <code>show_query()</code>:</p>
 <pre class="r"><code>tailnum_delay_db %&gt;% show_query()
+#&gt; Warning: Missing values are always removed in SQL.
+#&gt; Use `AVG(x, na.rm = TRUE)` to silence this warning
 #&gt; &lt;SQL&gt;
 #&gt; SELECT *
 #&gt; FROM (SELECT *
@@ -162,21 +174,25 @@ flights_db %&gt;%
 <p>If you’re familiar with SQL, this probably isn’t exactly what you’d write by hand, but it does the job. You can learn more about the SQL translation in <code>vignette(&quot;sql-translation&quot;)</code>.</p>
 <p>Typically, you’ll iterate a few times before you figure out what data you need from the database. Once you’ve figured it out, use <code>collect()</code> to pull all the data down into a local tibble:</p>
 <pre class="r"><code>tailnum_delay &lt;- tailnum_delay_db %&gt;% collect()
+#&gt; Warning: Missing values are always removed in SQL.
+#&gt; Use `AVG(x, na.rm = TRUE)` to silence this warning
 tailnum_delay
 #&gt; # A tibble: 1,201 x 3
 #&gt;   tailnum delay     n
-#&gt;     &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;
-#&gt; 1  N11119  30.3   148
-#&gt; 2  N16919  29.9   251
-#&gt; 3  N14998  27.9   230
-#&gt; 4  N15910  27.6   280
-#&gt; 5  N13123  26.0   121
-#&gt; 6  N11192  25.9   154
+#&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;int&gt;
+#&gt; 1 N11119   30.3   148
+#&gt; 2 N16919   29.9   251
+#&gt; 3 N14998   27.9   230
+#&gt; 4 N15910   27.6   280
+#&gt; 5 N13123   26.0   121
+#&gt; 6 N11192   25.9   154
 #&gt; # ... with 1,195 more rows</code></pre>
 <p><code>collect()</code> requires that database does some work, so it may take a long time to complete. Otherwise, <code>dplyr</code> tries to prevent you from accidentally performing expensive query operations:</p>
 <ul>
-<li><p>Because there’s generally no way to determine how many rows a query will return unless you actually run it, <code>nrow()</code> is always <code>NA</code>.</p></li>
-<li><p>Because you can’t find the last few rows without executing the whole query, you can’t use <code>tail()</code>.</p></li>
+<li><p>Because there’s generally no way to determine how many rows a query will
+return unless you actually run it, <code>nrow()</code> is always <code>NA</code>.</p></li>
+<li><p>Because you can’t find the last few rows without executing the whole
+query, you can’t use <code>tail()</code>.</p></li>
 </ul>
 <pre class="r"><code>nrow(tailnum_delay_db)
 #&gt; [1] NA
