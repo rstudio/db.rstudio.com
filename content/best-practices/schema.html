@@ -1,28 +1,128 @@
 ---
 title: Schema selection
+aliases:
+  - /schema
 ---
 
 
 
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>It is common for enterprise databases to use multiple schemata to partition the data, it is either separated by business domain or some other context.</p>
+<p>This is especially true for Data warehouses. It is rare when the default schema is going to have all of the data needed for an analysis.</p>
+<p>For analyses using <code>dplyr</code>, the <code>in_schema()</code> function should cover most of the cases when the non-default schema needs to be accessed.</p>
+</div>
+<div id="an-example" class="section level2">
+<h2>An example</h2>
+<p>The following ODBC connection opens a session with the <strong>datawarehouse</strong> database:</p>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(), &quot;datawarehouse&quot;)</code></pre>
+<p>The database contains several schemata. The default schema is <strong>dbo</strong>. So to it is very straightforward to access it via <code>dplyr</code>. The difficulty occurs when attempting to access a table not in that schema, such as tables in the <strong>production</strong> schema.</p>
+<p><img src="connection.PNG" /></p>
+<p>This is how to access a table inside the <strong>dbo</strong> schema, using <code>dplyr</code>:</p>
 <pre class="r"><code>library(dplyr)
 library(dbplyr)
-library(DBI)
 
-library(odbc)
-con &lt;- dbConnect(odbc(), Driver = &quot;SQL Server&quot;, Server = &quot;localhost\\SQLEXPRESS&quot;, 
-    Database = &quot;datawarehouse&quot;, Trusted_Connection = &quot;True&quot;)
+tbl(con, &quot;mtcars&quot;) %&gt;%
+  head()</code></pre>
+<pre><code>## # Source:   lazy query [?? x 12]
+## # Database: Microsoft SQL Server
+## #   14.00.1000[dbo@DESKTOP-10DBTVP\SQLEXPRESS/datawarehouse]
+##   row_names      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Mazda RX4     21.0    6.  160.  110.  3.90  2.62  16.5    0.    1.    4.
+## 2 Mazda RX4 W~  21.0    6.  160.  110.  3.90  2.88  17.0    0.    1.    4.
+## 3 Datsun 710    22.8    4.  108.   93.  3.85  2.32  18.6    1.    1.    4.
+## 4 Hornet 4 Dr~  21.4    6.  258.  110.  3.08  3.22  19.4    1.    0.    3.
+## 5 Hornet Spor~  18.7    8.  360.  175.  3.15  3.44  17.0    0.    0.    3.
+## 6 Valiant       18.1    6.  225.  105.  2.76  3.46  20.2    1.    0.    3.
+## # ... with 1 more variable: carb &lt;dbl&gt;</code></pre>
+<p>The same approach does not work for accessing the <strong>flights</strong> table, which resides in the <strong>production</strong> schema:</p>
+<pre class="r"><code>tbl(con, &quot;flights&quot;)</code></pre>
+<pre><code>Error: &lt;SQL&gt; &#39;SELECT * FROM &quot;flights&quot; AS &quot;zzz2&quot; WHERE (0 = 1)&#39; nanodbc/nanodbc.cpp:
+1587: 42S02: [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid object name 
+&#39;flights&#39;.</code></pre>
+</div>
+<div id="using-in_schema" class="section level2">
+<h2>Using <code>in_schema()</code></h2>
+<p>The <code>in_schema()</code> function works by passing it inside the <code>tbl()</code> function. The schema and table are passed as quoted names:</p>
+<pre class="r"><code>tbl(con, in_schema(&quot;production&quot;, &quot;flights&quot;)) %&gt;%
+  head()</code></pre>
+<pre><code>## # Source:   lazy query [?? x 29]
+## # Database: Microsoft SQL Server
+## #   14.00.1000[dbo@DESKTOP-10DBTVP\SQLEXPRESS/datawarehouse]
+##    year month dayofmonth dayofweek deptime crsdeptime arrtime crsarrtime
+##   &lt;int&gt; &lt;int&gt;      &lt;int&gt;     &lt;int&gt;   &lt;int&gt;      &lt;int&gt;   &lt;int&gt;      &lt;int&gt;
+## 1  2006     1         11         3     743        745    1024       1018
+## 2  2006     1         11         3    1053       1053    1313       1318
+## 3  2006     1         11         3    1915       1915    2110       2133
+## 4  2006     1         11         3    1753       1755    1925       1933
+## 5  2006     1         11         3     824        832    1015       1015
+## 6  2006     1         11         3     627        630     834        832
+## # ... with 21 more variables: uniquecarrier &lt;chr&gt;, flightnum &lt;int&gt;,
+## #   tailnum &lt;chr&gt;, actualelapsedtime &lt;int&gt;, crselapsedtime &lt;int&gt;,
+## #   airtime &lt;int&gt;, arrdelay &lt;int&gt;, depdelay &lt;int&gt;, origin &lt;chr&gt;,
+## #   dest &lt;chr&gt;, distance &lt;int&gt;, taxiin &lt;int&gt;, taxiout &lt;int&gt;,
+## #   cancelled &lt;int&gt;, cancellationcode &lt;chr&gt;, diverted &lt;int&gt;,
+## #   carrierdelay &lt;int&gt;, weatherdelay &lt;int&gt;, nasdelay &lt;int&gt;,
+## #   securitydelay &lt;int&gt;, lateaircraftdelay &lt;int&gt;</code></pre>
+<div id="ideal-use" class="section level3">
+<h3>Ideal use</h3>
+<p>For interactive use, we would avoid using the <code>tbl()</code> command at the top of every <code>dplyr</code> piped code set. So it is better to load the table pointer into a variable:</p>
+<pre class="r"><code>db_flights &lt;- tbl(con, in_schema(&quot;production&quot;, &quot;flights&quot;))</code></pre>
+<p>An additional advantage of loading a variable with the table reference is that the field auto-completion is activated. This happens because the <code>vars</code> attribute, from the <code>tbl()</code> output, is loaded in the variable.</p>
+<p>The operations that follow become more natural for a <code>dplyr</code> user</p>
+<pre class="r"><code>db_flights %&gt;%
+  group_by(month) %&gt;%
+  summarise(
+    canceled= sum(cancelled, na.rm = TRUE),
+    total = n()) %&gt;%
+  arrange(month)</code></pre>
+<pre><code>## # Source:     lazy query [?? x 3]
+## # Database:   Microsoft SQL Server
+## #   14.00.1000[dbo@DESKTOP-10DBTVP\SQLEXPRESS/datawarehouse]
+## # Ordered by: month
+##    month canceled   total
+##    &lt;int&gt;    &lt;int&gt;   &lt;int&gt;
+##  1     1    25564 1202846
+##  2     2    36758 1096851
+##  3     3    24463 1244426
+##  4     4    17742 1199999
+##  5     5    13898 1234528
+##  6     6    27331 1227595
+##  7     7    24241 1269804
+##  8     8    22078 1282011
+##  9     9    16457 1185124
+## 10    10    18726 1241710
+## # ... with more rows</code></pre>
+</div>
+</div>
+<div id="writing-data" class="section level2">
+<h2>Writing data</h2>
+<p>The <code>copy_to()</code> command defaults to creating and populating <strong>temporary</strong> tables. So when used with <code>in_schema()</code>, the most likely result is that the command will be ignored, and a table called “[schema].[table]” is created.</p>
+<pre class="r"><code>copy_to(con, iris, in_schema(&quot;production&quot;, &quot;iris&quot;))</code></pre>
+<pre><code>Created a temporary table named: ##production.iris</code></pre>
+<p>Each enterprise grade database has its own way to manage of temporary tables. So the best course of action is to relay on the those mechanisms, and just request a temporary table.</p>
+<pre class="r"><code>db_iris &lt;- copy_to(con, iris)</code></pre>
+<pre><code>## Created a temporary table named: ##iris</code></pre>
+<pre class="r"><code>head(db_iris)</code></pre>
+<pre><code>## # Source:   lazy query [?? x 5]
+## # Database: Microsoft SQL Server
+## #   14.00.1000[dbo@DESKTOP-10DBTVP\SQLEXPRESS/datawarehouse]
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;  
+## 1         5.10        3.50         1.40       0.200 setosa 
+## 2         4.90        3.00         1.40       0.200 setosa 
+## 3         4.70        3.20         1.30       0.200 setosa 
+## 4         4.60        3.10         1.50       0.200 setosa 
+## 5         5.00        3.60         1.40       0.200 setosa 
+## 6         5.40        3.90         1.70       0.400 setosa</code></pre>
+<p>In this particular case, the <code>iris</code> dataset was copied to the <strong>tempdb</strong> database, but in a mirror schema called <strong>production</strong></p>
+<div id="write-non-temporary-tables" class="section level3">
+<h3>Write non-temporary tables</h3>
+<p>The best way to create a permanent table, inside a specific schema, is to use the <code>DBI</code> package. The <code>dbWriteTable()</code> and <code>SQL()</code> commands should accomplish the task:</p>
+<pre class="r"><code>library(DBI)
 
-tbl(con, in_schema(&quot;dbo&quot;, &quot;airports&quot;))
-
-dbGetQuery(con, &quot;CREATE SCHEMA Production&quot;)
-dbWriteTable(con, &quot;mtcars&quot;, mtcars, schema_name = &quot;Production&quot;)
-
-copy_to(con, mtcars, in_schema(&quot;user1&quot;, &quot;mtcars1&quot;), temporary = FALSE)
-
-
-#dbListTables(con, schema_name = &quot;dbo&quot;)</code></pre>
-<pre class="r"><code>dbGetQuery(con, &quot;ALTER SCHEMA Production TRANSFER dbo.vwFlights&quot;)
-dbListTables(con, schema_name = &quot;dbo&quot;)
-dbRemoveTable(con, &quot;user1.mtcars1&quot;)
-
-tbl(con, in_schema(&quot;Production&quot;, &quot;mtcars&quot;))</code></pre>
+dbWriteTable(con, SQL(&quot;production.iris&quot;), iris)</code></pre>
+<p><img src="after-iris.PNG" /></p>
+</div>
+</div>

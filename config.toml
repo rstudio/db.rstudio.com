@@ -147,6 +147,12 @@ googleAnalytics = "UA-20375833-20"
 	parent = "Best Practices"	  
 	
 [[menu.main]]
+  weight = 29
+	name   = "Schema selection"
+	url    = "/best-practices/schema/"
+	parent = "Best Practices"	  
+	
+[[menu.main]]
   weight = 30
 	name   = "Databases"
 	url    = "/databases/"
