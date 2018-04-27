@@ -4,12 +4,16 @@ aliases:
   - /odbc
 ---
 
+<div>
+  <img src="/homepage/commercial.png" height="180" width="350" align="right">
+</div>
+
 The goal of the `odbc` package is to provide a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
 
 Usage
 -----
 
-All of the following examples assume you have already created a connection `con`. See [Connecting to a database](#connecting-to-a-database) for more information on establishing a connection.
+All of the following examples assume you have already created a connection `con`. To find out how to connect to your specific database type, please visit the [Databases](/databases) page.
 
 ### Table and Field information
 
