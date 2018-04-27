@@ -127,3 +127,102 @@ For more information on data access, see this [article](https://support.rstudio.
 credentials should not be stored as plain text in either the configuration file
 or the R code. See [securing credentials](keyring.html) for more details.
 
+## Deploying with the `config` Package
+
+An alternative to relying on DSNs is to use the [config](https://github.com/rstudio/config) package. The `config`
+package allows the connection code in R to reference an external file that
+defines values based on the environment. This process makes it easy to specify
+values to use for a connection locally and values to use after deployment.
+
+For example:
+
+R code:
+
+```r
+library(DBI)
+library(odbc)
+library(config)
+
+dw <- get("datawarehouse")
+
+con <- dbConnect(
+   Driver = dw$driver,
+   Server = dw$server,
+   UID    = dw$uid,
+   PWD    = dw$pwd,
+   Port   = dw$port,
+   Database = dw$database
+)
+```
+
+config.yml:
+
+```ini
+default:
+  datawarehouse:
+    driver: 'Postgres' 
+    server: 'mydb-test.company.com'
+    uid: 'local-account'
+    pwd: 'my-password'  // not recommended, see alternatives below
+    port: 5432
+    database: 'regional-sales-sample'
+    
+rsconnect:
+  datawarehouse:
+    driver: 'PostgresPro'
+    server: 'mydb-prod.company.com'
+    uid: 'service-account'
+    pwd: 'service-password' // not recommended, see alternatives below
+    port: 5432
+    database: 'regional-sales-full'
+```
+
+The `config` package determines the active configuration by looking at the
+`R_CONFIG_ACTIVE` environment variable. By default, RStudio Connect sets
+`R_CONFIG_ACTIVE` to the value  `rsconnect`. In the config file above, the
+default datawarehouse values would be used locally and the datawarehouse values
+defined in the `rsconnect` section would be used on RStudio Connect.
+Administrators can optionally customize the name of the active configuration
+used in Connect.
+
+## Credentials inside Environment Variables in RStudio Connect
+
+Starting with version 1.6, RStudio Connect allows R [Environment Variables](http://docs.rstudio.com/connect/1.6.0/admin/security-auditing.html#application-environment-variables) to be saved at the application level.  The variables are encrypted on-disk, and in-memory. 
+
+The recommended approach would be to use an `.Renviron` file in your local session of R, which can be used to store the credentials, and then retrieved with `Sys.getenv()`.  Here are the steps:
+
+1. Create a new file defining the credentials:
+
+    ```{r, eval = FALSE}
+    userid = "username"
+    pwd = "password"
+    ```
+2. Save it in your home directory with the file name `.Renviron`. If you are asked whether you want to save a file whose name begins with a dot, say **YES**.
+
+3. Note that by default, dot files are usually hidden. However, within RStudio, the file browser will make .Renviron visible and therefore easy to edit in the future.
+
+4. Restart R. .Renviron is processed only at the start of an R session.
+
+5. Retrieve the credentials using `Sys.getenv()` while opening the connection:
+    ```{r, eval = FALSE}
+    con <- DBI::dbConnect(odbc::odbc(),
+      Driver = "impala", 
+      Host   = "database.rstudio.com",
+      UID    = Sys.getenv("userid"),
+      PWD    = Sys.getenv("pwd")
+    )
+    ```
+
+6. Develop the app or document and deploy to RStudio Connect
+
+7. In RStudio Connect, select the `{X} Vars` tab
+
+8. Click on `Add Environment Variable` blue button
+
+9. Create each the password and user ID variables
+
+<div>
+  <img src="/best-practices/deployment/rsc-env-variables.PNG" height="300" width="500">
+</div>
+
+

@@ -63,7 +63,7 @@ deployment to succeed, but different enough for other parts of the code to fail.
 When in doubt, be sure to ask your administrator to compare the odbc.ini and
 odbcinst.ini files used locally and on the deployed server.
 
-## Deploying with Config Package
+## Deploying with the `config` Package
 
 An alternative to relying on DSNs is to use the [config](https://github.com/rstudio/config) package. The `config`
 package allows the connection code in R to reference an external file that
@@ -121,7 +121,7 @@ defined in the `rsconnect` section would be used on RStudio Connect.
 Administrators can optionally customize the name of the active configuration
 used in Connect.
 
-## Deploying with Config Package and Credentials
+## Deploying with the `config` Package and Credentials
 
 In the previous example, the credentials used locally and after deployment were
 stored in plain text in the configuration file. There are many ways to avoid

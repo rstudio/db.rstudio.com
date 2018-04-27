@@ -18,12 +18,23 @@ aliases:
 <p>The most common methods are:</p>
 <div id="service-account" class="section level2">
 <h2>Service Account</h2>
-<p>It is typical for shiny applications and R Markdown reports to provide insight from data that is not directly accessible by the content audience. In these 1-to-many cases, it is common to define service accounts that access the database on behalf of the content audience. The previous examples assumed this type of model.</p>
-<p>Sometimes, during local development, the data scientist might be expected to use their own credentials. It is possible through a DSN or the <code>config</code> package to specify that local connections use the data scientist’s credentials and deployed connections use a service account. Be sure the code works for results for both accounts!</p>
+<p>It is typical for shiny applications and R Markdown reports to provide insight
+from data that is not directly accessible by the content audience. In these
+1-to-many cases, it is common to define service accounts that access the
+database on behalf of the content audience. The previous examples assumed this
+type of model.</p>
+<p>Sometimes, during local development, the data scientist might be expected to use
+their own credentials. It is possible through a DSN or the <code>config</code> package to
+specify that local connections use the data scientist’s credentials and deployed
+connections use a service account. Be sure the code works for results for both
+accounts!</p>
 </div>
 <div id="query-by-user-shiny" class="section level2">
 <h2>Query by User (Shiny)</h2>
-<p>Even when a service account is used, it is still possible to restrict access to data using logic inside the application code. One option is to update the query based on the logged-in user. The username is available in Shiny applications through the <code>session$user</code> object. For example:</p>
+<p>Even when a service account is used, it is still possible to restrict access to
+data using logic inside the application code. One option is to update the query
+based on the logged-in user. The username is available in Shiny applications
+through the <code>session$user</code> object. For example:</p>
 <pre class="r"><code>library(shiny)
 library(DBI)
 library(odbc)
@@ -76,10 +87,19 @@ server &lt;- function(input, output, session) {
 </div>
 <div id="run-as-the-logged-in-user-kerberos" class="section level2">
 <h2>Run As the Logged-in User (Kerberos)</h2>
-<p>In rare cases, it may be necessary for the data to be accessed by the application or report on behalf of the specific logged-in user without prompting the user for their credentials.</p>
-<p>This scenario is rare because it implies that each end user of the report or application has an account and access controls in the database. In other words, this model assumes a 1-to-1 model instead of the 1-to-many distribution model facilitated by a service account.</p>
-<p>In these scenarios, it is most common to use Kerberos. RStudio Connect will need to be setup to run the application as the logged-in user. The <a href="http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current">admin guide</a> contains more details.</p>
-<p>Deployment of this type of content is usually straightforward because the connection code does not include any credentials, and is the same in the local and deployed context.</p>
+<p>In rare cases, it may be necessary for the data to be accessed by the
+application or report on behalf of the specific logged-in user without prompting
+the user for their credentials.</p>
+<p>This scenario is rare because it implies that each end user of the report or
+application has an account and access controls in the database. In other words,
+this model assumes a 1-to-1 model instead of the 1-to-many distribution model
+facilitated by a service account.</p>
+<p>In these scenarios, it is most common to use Kerberos. RStudio Connect will need
+to be setup to run the application as the logged-in user. The <a href="http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current">admin guide</a>
+contains more details.</p>
+<p>Deployment of this type of content is usually straightforward because the
+connection code does not include any credentials, and is the same in the local
+and deployed context.</p>
 <p>For example:</p>
 <pre class="r"><code>library(DBI)
 library(odbc)
@@ -89,5 +109,82 @@ con &lt;- dbConnect(odbc::odbc(),
   Database  = &quot;Datawarehouse&quot;,
   trusted_connection = &quot;True&quot;
 )</code></pre>
-<p>For more information on data access, see this <a href="https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases">article</a>. In all cases, the credentials should not be stored as plain text in either the configuration file or the R code. See <a href="keyring.html">securing credentials</a> for more details.</p>
+<p>For more information on data access, see this <a href="https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases">article</a>. In all cases, the
+credentials should not be stored as plain text in either the configuration file
+or the R code. See <a href="keyring.html">securing credentials</a> for more details.</p>
+</div>
+<div id="deploying-with-the-config-package" class="section level2">
+<h2>Deploying with the <code>config</code> Package</h2>
+<p>An alternative to relying on DSNs is to use the <a href="https://github.com/rstudio/config">config</a> package. The <code>config</code>
+package allows the connection code in R to reference an external file that
+defines values based on the environment. This process makes it easy to specify
+values to use for a connection locally and values to use after deployment.</p>
+<p>For example:</p>
+<p>R code:</p>
+<pre class="r"><code>library(DBI)
+library(odbc)
+library(config)
+
+dw &lt;- get(&quot;datawarehouse&quot;)
+
+con &lt;- dbConnect(
+   Driver = dw$driver,
+   Server = dw$server,
+   UID    = dw$uid,
+   PWD    = dw$pwd,
+   Port   = dw$port,
+   Database = dw$database
+)</code></pre>
+<p>config.yml:</p>
+<pre class="ini"><code>default:
+  datawarehouse:
+    driver: &#39;Postgres&#39; 
+    server: &#39;mydb-test.company.com&#39;
+    uid: &#39;local-account&#39;
+    pwd: &#39;my-password&#39;  // not recommended, see alternatives below
+    port: 5432
+    database: &#39;regional-sales-sample&#39;
+    
+rsconnect:
+  datawarehouse:
+    driver: &#39;PostgresPro&#39;
+    server: &#39;mydb-prod.company.com&#39;
+    uid: &#39;service-account&#39;
+    pwd: &#39;service-password&#39; // not recommended, see alternatives below
+    port: 5432
+    database: &#39;regional-sales-full&#39;</code></pre>
+<p>The <code>config</code> package determines the active configuration by looking at the
+<code>R_CONFIG_ACTIVE</code> environment variable. By default, RStudio Connect sets
+<code>R_CONFIG_ACTIVE</code> to the value <code>rsconnect</code>. In the config file above, the
+default datawarehouse values would be used locally and the datawarehouse values
+defined in the <code>rsconnect</code> section would be used on RStudio Connect.
+Administrators can optionally customize the name of the active configuration
+used in Connect.</p>
+</div>
+<div id="credentials-inside-environment-variables-in-rstudio-connect" class="section level2">
+<h2>Credentials inside Environment Variables in RStudio Connect</h2>
+<p>Starting with version 1.6, RStudio Connect allows R <a href="http://docs.rstudio.com/connect/1.6.0/admin/security-auditing.html#application-environment-variables">Environment Variables</a> to be saved at the application level. The variables are encrypted on-disk, and in-memory.</p>
+<p>The recommended approach would be to use an <code>.Renviron</code> file in your local session of R, which can be used to store the credentials, and then retrieved with <code>Sys.getenv()</code>. Here are the steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Create a new file defining the credentials:</p>
+<pre class="r"><code>userid = &quot;username&quot;
+pwd = &quot;password&quot;</code></pre></li>
+<li><p>Save it in your home directory with the file name <code>.Renviron</code>. If you are asked whether you want to save a file whose name begins with a dot, say <strong>YES</strong>.</p></li>
+<li><p>Note that by default, dot files are usually hidden. However, within RStudio, the file browser will make .Renviron visible and therefore easy to edit in the future.</p></li>
+<li><p>Restart R. .Renviron is processed only at the start of an R session.</p></li>
+<li><p>Retrieve the credentials using <code>Sys.getenv()</code> while opening the connection:</p>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+  Driver = &quot;impala&quot;, 
+  Host   = &quot;database.rstudio.com&quot;,
+  UID    = Sys.getenv(&quot;userid&quot;),
+  PWD    = Sys.getenv(&quot;pwd&quot;)
+)</code></pre></li>
+<li><p>Develop the app or document and deploy to RStudio Connect</p></li>
+<li><p>In RStudio Connect, select the <code>{X} Vars</code> tab</p></li>
+<li><p>Click on <code>Add Environment Variable</code> blue button</p></li>
+<li><p>Create each the password and user ID variables</p></li>
+</ol>
+<div>
+<p><img src="/best-practices/deployment/rsc-env-variables.PNG" height="300" width="500"></p>
+</div>
 </div>
