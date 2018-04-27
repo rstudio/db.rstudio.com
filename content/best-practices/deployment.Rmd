@@ -213,7 +213,7 @@ The recommended approach would be to use an `.Renviron` file in your local sessi
     )
     ```
 
-6. Develop the app or document and deploy to RStudio Connect
+6. Develop the app or document and deploy to RStudio Connect.  Make sure to leave the `.Renviron` file out of the deployment process.
 
 7. In RStudio Connect, select the `{X} Vars` tab
 
