@@ -32,6 +32,16 @@ googleAnalytics = "UA-20375833-20"
     	text = "sans-serif"
     	code = "Ubuntu Mono"
 
+[[menu.main]]
+  weight = 1
+  name = "Getting Started"
+
+[[menu.main]]
+  weight = 2
+  name = "Connect to a Database"
+  url = "/connect-to-database"
+  parent = "Getting Started"
+
 
 [[menu.main]]
   weight = 10

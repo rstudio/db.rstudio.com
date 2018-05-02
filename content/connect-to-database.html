@@ -1,0 +1,31 @@
+---
+title: "Connect to a Database"
+output: html_document
+---
+
+
+
+<p>This article is geared toward those who need to connect to an existing database using an ODBC driver. To review other options, such as using a database R package or JDBC, please refer to the <a href="/best-practices/select-interface/">Selecting a database interface</a> page. If the intent is to learn with a local and small database, refer to the example in the <a href="/dplyr">dplyr</a> page.</p>
+<ol style="list-style-type: decimal">
+<li><p>Install the <a href="/dbi">DBI</a> and <a href="/odbc">odbc</a> package:</p>
+<pre class="r"><code>install.packages(&quot;DBI&quot;)
+install.packages(&quot;odbc&quot;)</code></pre></li>
+<li><p>Verify that <code>odbc</code> recognizes the installed drivers using <code>odbcListDrivers()</code>. Here is an example result:</p>
+<pre class="r"><code>library(odbc)
+sort(unique(odbcListDrivers()[[1]]))</code></pre>
+<pre><code>[1] &quot;Devart ODBC Driver for PostgreSQL&quot;    
+[2] &quot;MapR Drill ODBC Driver&quot;               
+[3] &quot;ODBC Driver 13 for SQL Server&quot;        
+[4] &quot;Simba Athena ODBC Driver&quot;             
+[5] &quot;Simba ODBC Driver for Google BigQuery&quot;
+[6] &quot;SQL Server&quot;                           </code></pre></li>
+<li><p>Determine if a DSN is going to be used to connect to the database. This would be typically something that the Database Administrator, or the technical owner of the database, would setup and provide the R developer a name (known as an alias). Use <code>dbConnect()</code> to open a database connection in this manner:</p>
+<pre class="r"><code>con &lt;- dbConnect(odbc(), &quot;DSN name&quot;)</code></pre></li>
+<li><p>If no DSN is available, then the connection needs to usually pass the server address, database name, and the credentials to be used. There may be other settings unique to a given database that will also need to be passed. In the following example, the <em>Trusted_Connection</em> setting is unique to a MS SQL connection:</p>
+<pre class="r"><code>con &lt;- dbConnect(odbc(), 
+                 Driver = &quot;SQL Server&quot;, 
+                 Server = &quot;localhost\\SQLEXPRESS&quot;, 
+                 Database = &quot;datawarehouse&quot;, 
+                 Trusted_Connection = &quot;True&quot;)</code></pre>
+<p>For information specific to how to connect to a specific database vendor, visit the <a href="/databases">Databses</a> page for a list of the database types we have information available for.</p></li>
+</ol>
