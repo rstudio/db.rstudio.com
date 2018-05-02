@@ -1,0 +1,130 @@
+---
+title: Database Queries With R
+---
+
+
+
+<p>There are many ways to query data with R. This article shows you three of the most common ways:</p>
+<ol style="list-style-type: decimal">
+<li>Using <code>DBI</code></li>
+<li>Using <code>dplyr</code> syntax</li>
+<li>Using R Notebooks</li>
+</ol>
+<div id="background" class="section level3">
+<h3>Background</h3>
+<p>Several recent package improvements make it easier for you to use databases with R. The query examples below demonstrate some of the capabilities of these R packages.</p>
+<ul>
+<li><a href="https://rstats-db.github.io/DBI//index.html">DBI</a>. The <code>DBI</code> specification has gone through many <a href="https://www.r-consortium.org/blog/2017/05/15/improving-dbi-a-retrospect">recent improvements</a>. When working with databases, you should always use packages that are <code>DBI</code>-compliant.</li>
+<li><a href="http://dplyr.tidyverse.org/">dplyr</a> &amp; <a href="http://dbplyr.tidyverse.org/">dbplyr</a>. The <code>dplyr</code> package now has a generalized SQL backend for talking to databases, and the new <code>dbplyr</code> package translates R code into database-specific variants. As of this writing, SQL variants are supported for the following databases: Oracle, Microsoft SQL Server, PostgreSQL, Amazon Redshift, Apache Hive, and Apache Impala. More will follow over time.</li>
+<li><a href="https://github.com/rstats-db/odbc">odbc</a>. The <code>odbc</code> R package provides a standard way for you to connect to any database as long as you have an ODBC driver installed. The <code>odbc</code> R package is <code>DBI</code>-compliant, and is recommended for ODBC connections.</li>
+</ul>
+<p>RStudio also made recent improvements to its products so they work better with databases.</p>
+<ul>
+<li><a href="https://blog.rstudio.com/2017/10/09/rstudio-v1.1-released/">RStudio IDE (v1.1)</a>. With the latest version of the RStudio IDE, you can connect to, explore, and view data in a variety of databases. The IDE has a wizard for setting up new connections, and a tab for exploring established connections. These new features are extensible and will work with any R package that has a <a href="https://rstudio.github.io/rstudio-extensions/connections-contract.html">connections contract</a>.</li>
+<li><a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a>. If you are using RStudio professional products, you can download RStudio Professional Drivers for no additional cost. The examples below use the Oracle ODBC driver. If you are using open-source tools, you can bring your own driver or use community packages – many open-source drivers and community packages exist for connecting to a variety of databases.</li>
+</ul>
+<p>Using databases with R is a broad subject and there is more work to be done. An earlier blog post discussed <a href="https://blog.rstudio.com/2017/06/27/dbplyr-1-1-0/">our vision</a>. Part of that vision was to create a website where you can find everything about databases and R in one place. To learn more, visit our site at <a href="http://db.rstudio.com/best-practices/drivers">db.rstudio.com</a>.</p>
+</div>
+<div id="example-query-bank-data-in-an-oracle-database" class="section level3">
+<h3>Example: Query bank data in an Oracle database</h3>
+<p>In this example, we will query bank data in an Oracle database. We connect to the database by using the <code>DBI</code> and <code>odbc</code> packages. This specific connection requires a database driver and a data source name (DSN) that have both been configured by the system administrator. Your connection might use another method.</p>
+<pre><code>library(DBI)
+library(dplyr)
+library(dbplyr)
+library(odbc)
+con &lt;- dbConnect(odbc::odbc(), &quot;Oracle DB&quot;)</code></pre>
+</div>
+<div id="query-using-dbi" class="section level3">
+<h3>1. Query using <code>DBI</code></h3>
+<p>You can query your data with <code>DBI</code> by using the <code>dbGetQuery()</code> function. Simply paste your SQL code into the R function as a quoted string. This method is sometimes referred to as <em>pass through SQL code</em>, and is probably the simplest way to query your data. Care should be used to escape your quotes as needed. For example, <code>'yes'</code> is written as <code>\'yes\'</code>.</p>
+<pre><code>dbGetQuery(con,&#39;
+  select &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;,
+  sum(case when &quot;term_deposit&quot; = \&#39;yes\&#39; then 1.0 else 0.0 end) as subscribe,
+  count(*) as total
+  from &quot;bank&quot;
+  group by &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;
+&#39;)</code></pre>
+</div>
+<div id="query-using-dplyr-syntax" class="section level3">
+<h3>2. Query using dplyr syntax</h3>
+<p>You can write your code in <code>dplyr</code> syntax, and <code>dplyr</code> will translate your code into SQL. There are several benefits to writing queries in <code>dplyr</code> syntax: you can keep the same consistent language both for R objects and database tables, no knowledge of SQL or the specific SQL variant is required, and you can take advantage of the fact that <code>dplyr</code> uses <a href="http://dbplyr.tidyverse.org/articles/dbplyr.html">lazy evaluation</a>. <code>dplyr</code> syntax is easy to read, but you can always inspect the SQL translation with the <code>show_query()</code> function.</p>
+<pre><code>q1 &lt;- tbl(con, &quot;bank&quot;) %&gt;%
+  group_by(month_idx, year, month) %&gt;%
+  summarise(
+    subscribe = sum(ifelse(term_deposit == &quot;yes&quot;, 1, 0)),
+    total = n())
+show_query(q1)</code></pre>
+<p><br/></p>
+<pre><code>&lt;SQL&gt;
+SELECT &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;, SUM(CASE WHEN (&quot;term_deposit&quot; = &#39;yes&#39;) THEN (1.0) ELSE (0.0) END) AS &quot;subscribe&quot;, COUNT(*) AS &quot;total&quot;
+FROM (&quot;bank&quot;) 
+GROUP BY &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;</code></pre>
+</div>
+<div id="query-using-an-r-notebooks" class="section level3">
+<h3>3. Query using an R Notebooks</h3>
+<p>Did you know that you can run SQL code in an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a> code chunk? To use SQL, open an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a> in the RStudio IDE under the <strong>File &gt; New File</strong> menu. Start a new code chunk with <code>{sql}</code>, and specify your connection with the <code>connection=con</code> code chunk option. If you want to send the query output to an R dataframe, use <code>output.var = &quot;mydataframe&quot;</code> in the code chunk options. When you specify <code>output.var</code>, you will be able to use the output in subsequent R code chunks. In this example, we use the output in <code>ggplot2</code>.</p>
+<pre><code>```{sql, connection=con, output.var = &quot;mydataframe&quot;}
+SELECT &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;, SUM(CASE WHEN (&quot;term_deposit&quot; = &#39;yes&#39;) THEN (1.0) ELSE (0.0) END) AS &quot;subscribe&quot;,
+COUNT(*) AS &quot;total&quot;
+FROM (&quot;bank&quot;) 
+GROUP BY &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;
+```</code></pre>
+<p><br/></p>
+<pre><code>```{r}
+library(ggplot2)
+ggplot(mydataframe, aes(total, subscribe, color = year)) +
+  geom_point() +
+  xlab(&quot;Total contacts&quot;) +
+  ylab(&quot;Term Deposit Subscriptions&quot;) +
+  ggtitle(&quot;Contact volume&quot;)
+```</code></pre>
+<p><img src="/images/bankggplot.png" /></p>
+<p>The benefits to using SQL in a code chunk are that you can paste your SQL code without any modification. For example, you do not have to escape quotes. If you are using the proverbial <em>spaghetti code</em> that is hundreds of lines long, then a SQL code chunk might be a good option. Another benefit is that the SQL code in a code chunk is highlighted, making it very easy to read. For more information on SQL engines, see this page on <a href="http://rmarkdown.rstudio.com/authoring_knitr_engines.html">knitr language engines</a>.</p>
+</div>
+<div id="summary" class="section level3">
+<h3>Summary</h3>
+<p>There is no single best way to query data with R. You have many methods to chose from, and each has its advantages. Here are some of the advantages using the methods described in this article.</p>
+<table>
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Advantages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><ol style="list-style-type: decimal">
+<li>DBI::dbGetQuery</li>
+</ol></td>
+<td><ul>
+<li>Fewer dependencies required</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td><ol start="2" style="list-style-type: decimal">
+<li>dplyr syntax</li>
+</ol></td>
+<td><ul>
+<li>Use the same syntax for R and database objects</li>
+<li>No knowledge of SQL required</li>
+<li>Code is standard across SQL variants</li>
+<li>Lazy evaluation</li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td><ol start="3" style="list-style-type: decimal">
+<li>R Notebook SQL engine</li>
+</ol></td>
+<td><ul>
+<li>Copy and paste SQL – no formatting required</li>
+<li>SQL syntax is highlighted</li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+<p><em>You can download the R Notebook for these examples <a href="http://rpubs.com/nwstephens/318586">here</a>.</em></p>
+</div>
