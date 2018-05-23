@@ -43,4 +43,4 @@ This article is geared toward those who need to connect to an existing database 
                      Trusted_Connection = "True")
     ```
 
-    For information specific to how to connect to a specific database vendor, visit the [Databses](/databases) page for a list of the database types we have information available for.
+    For information specific to how to connect to a specific database vendor, visit the [Databases](/databases) page for a list of the database types we have information available for.
