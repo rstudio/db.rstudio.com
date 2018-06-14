@@ -46,14 +46,15 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ### Known Issues
 
-This section will be updated as new issues are found, and when fixes are applied in the development version of the [dbplyr](https://github.com/tidyverse/dplyr) package.  The issue will be fully removed 
+This section will be updated as new issues are found, and when fixes are applied in the development version of the [dbplyr](https://github.com/tidyverse/dplyr) package.  The issue will be fully removed when the fix is part of of the package’s version in CRAN.
+
 - **RJDBC** support - Even though it is not considered an issue, we have found a workaround.  The approach is to point the current JDBC connection to the Oracle translation inside `dbplyr`: 
+
 ```r
 sql_translate_env.JDBCConnection <- dbplyr:::sql_translate_env.Oracle
 sql_select.JDBCConnection <- dbplyr:::sql_select.Oracle
 sql_subquery.JDBCConnection <- dbplyr:::sql_subquery.Oracle
+```
 
 Please refer to the [Issues section in `dplyr`](https://github.com/tidyverse/dplyr/issues/) to find out the latest regarding bugs and resolutions.
-
-
 
