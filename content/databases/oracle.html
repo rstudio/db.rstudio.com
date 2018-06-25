@@ -9,19 +9,19 @@ aliases:
 
 
 
-<section id="driver-options" class="level2">
+<div id="driver-options" class="section level2">
 <h2>Driver Options</h2>
 <ul>
 <li><p><strong>Oracle</strong> - Please refer to Oracle’s website for instructions on how to download and setup their official driver: <a href="http://www.oracle.com/technetwork/database/windows/index-098976.html">Oracle ODBC driver page</a></p></li>
 <li><p><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Oracle databases. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</p></li>
 </ul>
-</section>
-<section id="package-options" class="level2">
+</div>
+<div id="package-options" class="section level2">
 <h2>Package Options</h2>
 <p>There are packages that either connect via ODBC but do not provide support for <code>DBI</code>, or offer <code>DBI</code> support but connect via JDBC. The <strong><code>odbc</code></strong> package, in combination with a driver, satisfies both requirements.</p>
 <p>Another package that provides both ODBC connectivity and <code>DBI</code> support is <code>ROracle</code>. The current version of <code>dbplyr</code> in CRAN does not yet fully support a connection coming from <code>ROracle</code>, but we are working on it.</p>
-</section>
-<section id="connection-settings" class="level2">
+</div>
+<div id="connection-settings" class="section level2">
 <h2>Connection Settings</h2>
 <p>There are six settings needed to make a connection:</p>
 <ul>
@@ -39,12 +39,18 @@ aliases:
                       UID    = rstudioapi::askForPassword(&quot;Database user&quot;),
                       PWD    = rstudioapi::askForPassword(&quot;Database password&quot;),
                       Port   = 1521)</code></pre>
-</section>
-<section id="dplyr-translation" class="level2">
+</div>
+<div id="dplyr-translation" class="section level2">
 <h2><code>dplyr</code> Translation</h2>
-<section id="known-issues" class="level3">
+<div id="known-issues" class="section level3">
 <h3>Known Issues</h3>
-<p>This section will be updated as new issues are found, and when fixes are applied in the development version of the <a href="https://github.com/tidyverse/dplyr">dbplyr</a> package. The issue will be fully removed - <strong>RJDBC</strong> support - Even though it is not considered an issue, we have found a workaround. The approach is to point the current JDBC connection to the Oracle translation inside <code>dbplyr</code>: ```r sql_translate_env.JDBCConnection &lt;- dbplyr:::sql_translate_env.Oracle sql_select.JDBCConnection &lt;- dbplyr:::sql_select.Oracle sql_subquery.JDBCConnection &lt;- dbplyr:::sql_subquery.Oracle</p>
+<p>This section will be updated as new issues are found, and when fixes are applied in the development version of the <a href="https://github.com/tidyverse/dplyr">dbplyr</a> package. The issue will be fully removed when the fix is part of of the package’s version in CRAN.</p>
+<ul>
+<li><strong>RJDBC</strong> support - Even though it is not considered an issue, we have found a workaround. The approach is to point the current JDBC connection to the Oracle translation inside <code>dbplyr</code>:</li>
+</ul>
+<pre class="r"><code>sql_translate_env.JDBCConnection &lt;- dbplyr:::sql_translate_env.Oracle
+sql_select.JDBCConnection &lt;- dbplyr:::sql_select.Oracle
+sql_subquery.JDBCConnection &lt;- dbplyr:::sql_subquery.Oracle</code></pre>
 <p>Please refer to the <a href="https://github.com/tidyverse/dplyr/issues/">Issues section in <code>dplyr</code></a> to find out the latest regarding bugs and resolutions.</p>
-</section>
-</section>
+</div>
+</div>
