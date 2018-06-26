@@ -4,21 +4,32 @@ title: Enterprise-ready dashboards
 
 
 
-<p><img src="/best-practices/dashboards/main.png" /> <em><a href="https://rviews.rstudio.com/2017/09/20/dashboards-with-r-and-databases/">Original published in RViews on 9/20/2017</a></em></p>
-<p>Inside the enterprise, a dashboard is expected to have up-to-the-minute information, to have a fast response time despite the large amount of data that supports it, and to be available on any device. An end user may expect that clicking on a bar or column inside a plot will result in either a more detailed report, or a list of the actual records that make up that number. This article will cover how to use a set of R packages, along with Shiny, to meet those requirements.</p>
+<p><img src="/best-practices/dashboards/main.png" /></p>
+<div id="design-principles" class="section level2">
+<h2>Design principles</h2>
+<p>There are two main principles to keep in mind when developing an enterprise level dashboard:</p>
+<ul>
+<li><p><strong>Push as much of the calculations of the dashboard back to the database</strong> - The time it takes for a dashboard to load, and respond, will quickly become the most important aspect of its design. It may be acceptable for a model to run for minutes or hours, but for dashboards, the expected time frame are a few seconds.</p></li>
+<li><p><strong>Give the end-user with “train of thought” paths</strong> - These paths are commonly provided by way of a drill down or drill through from within the dashboard. These paths allows the end-user to quickly answer questions that are currently on their mind.</p></li>
+</ul>
+</div>
 <div id="the-code" class="section level2">
 <h2>The code</h2>
-<p>A working example for the dashboard pictured above is available here: <a href="https://edgarruiz.shinyapps.io/flights-dashboard/">Flights Dashboard</a>. The example has all of the functionality that is discussed in this article, except the database connectivity. The code for the dashboard is available in this Gist: <a href="https://gist.github.com/edgararuiz/89e771b5d1b82adaa0033c0928d1846d">app.R</a></p>
-<p>The code for the dashboard that actually connects to a database is available in this Gist: <a href="https://gist.github.com/edgararuiz/876ba4718e56af66c3e1181482b6cb99">app.R</a></p>
+<p>A working example of the dashboard that will be used as the base of this article is available on GitHub. The project repository contains the code and all the supporting files:</p>
+<ul>
+<li><p>Visit the repository: <a href="https://github.com/sol-eng/db-dashboard" class="uri">https://github.com/sol-eng/db-dashboard</a></p></li>
+<li><p>Download a zipped file with all of the files from the repository: <a href="https://github.com/sol-eng/db-dashboard/archive/master.zip" class="uri">https://github.com/sol-eng/db-dashboard/archive/master.zip</a></p></li>
+</ul>
 </div>
-<div id="begin-with-shinydashboard" class="section level2">
-<h2>Begin with <code>shinydashboard</code></h2>
+<div id="use-shinydashboard" class="section level2">
+<h2>Use <code>shinydashboard</code></h2>
 <p>The <a href="https://rstudio.github.io/shinydashboard/">shinydashboard</a> package has three important advantages:</p>
 <ol style="list-style-type: decimal">
 <li><p><strong>Provides an out-of-the-box framework to create dashboards in Shiny.</strong> This saves a lot of time, because the developer does not have to create the dashboard features manually using “base” Shiny.</p></li>
 <li><p><strong>Has a dashboard-firendly tag structure.</strong> This allows the developer to get started quickly. Inside the <code>dashboardPage()</code>tag, the <code>dashboardHeader()</code>, <code>dashboardSidebar()</code> and <code>dashboardBody()</code> can be added to easily lay out a new dashboard.</p></li>
 <li><p><strong>It is mobile-ready.</strong> Without any additional code, the dashboard layout will adapt to a smaller screen automatically.</p></li>
 </ol>
+<p>Another option for creating dashboard with R is <a href="https://rmarkdown.rstudio.com/flexdashboard/">flexdashboard</a>. It will support all but one of the features discussed in this article: dynamic tabs, which are the basis of the techinque used in the example to drive the drill throughs.</p>
 <div id="quick-example" class="section level3">
 <h3>Quick example</h3>
 <p>If you are new to <code>shinydashboard</code>, please feel free to copy and paste the following code to see a very simple dashboard in your environment:</p>
@@ -38,10 +49,16 @@ server &lt;- function(input, output) {
 shinyApp(ui, server)</code></pre>
 </div>
 </div>
-<div id="deploy-using-config" class="section level2">
-<h2>Deploy using <code>config</code></h2>
-<p>It is very common that credentials used during development will not be the same ones used for publishing. For databases, the best way to accommodate for this is to have a Data Source Name (DSN) with the same alias name set up on both environments. If it is not possible to set up DSNs, then the <code>config</code> package can be used to make the switch between credentials used in the different environments invisible. The <a href="http://docs.rstudio.com/connect/admin/process-management.html#using-the-config-package">RStudio Connect</a> product supports the use of the <code>config</code> package out of the box. Another advantage of using <code>config</code>, in lieu of Kerberos or DSN, is that the credentials used will not appear in the plain text of the R code. A more detailed write-up is available in the <a href="http://db.rstudio.com/best-practices/portable-code">Make scripts portable</a> article.</p>
-<p>This code snippet is an example YAML file that <code>config</code> is able to read. It has one driver name for local development, and a different name for use during deployment:</p>
+<div id="connection-strings-and-credentials" class="section level2">
+<h2>Connection strings and credentials</h2>
+<p>Even though is not addressed until after a first version needs to be publised, securing the credentials that the app will use to access the database is a very important step.</p>
+<p>In a lot of cases, the app is developed against one database, and run in production against a differente database. This can present a challange if the connection string is “hard coded”.</p>
+<p>This site provides a couple of articles to help with addressing credentials and portability of code:</p>
+<ul>
+<li><a href="/best-practices/deployment/">Securing Deployed Content</a></li>
+<li><a href="/best-practices/portable-code/">Making Scripts Portable</a></li>
+</ul>
+<p>In the example for this article, the <a href="/best-practices/portable-code/#deploying-with-the-config-package">config</a> package will be used to help us manage the deployment of the app. This code snippet is an example YAML file that <code>config</code> is able to read. It has one driver name for local development, and a different name for use during deployment:</p>
 <pre><code>default:
   mssql:
       Driver: &quot;SQL Server&quot;

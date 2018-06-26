@@ -3,18 +3,25 @@ title: Enterprise-ready dashboards
 ---
 
 ![](/best-practices/dashboards/main.png)
-*[Original published in RViews on 9/20/2017](https://rviews.rstudio.com/2017/09/20/dashboards-with-r-and-databases/)*
 
-Inside the enterprise, a dashboard is expected to have up-to-the-minute information, to have a fast response time despite the large amount of data that supports it, and to be available on any device.  An end user may expect that clicking on a bar or column inside a plot will result in either a more detailed report, or a list of the actual records that make up that number.  This article will cover how to use a set of R packages, along with Shiny, to meet those requirements.
+## Design principles
+
+There are two main principles to keep in mind when developing an enterprise level dashboard:
+
+- **Push as much of the calculations of the dashboard back to the database** - The time it takes for a dashboard to load, and respond, will quickly become the most important aspect of its design.  It may be acceptable for a model to run for minutes or hours, but for dashboards, the expected time frame are a few seconds.  
+
+- **Give the end-user with "train of thought" paths** -  These paths are commonly provided by way of a drill down or drill through from within the dashboard.  These paths allows the end-user to quickly answer questions that are currently on their mind.
 
 ## The code
 
-A working example for the dashboard pictured above is available here: [Flights Dashboard](https://edgarruiz.shinyapps.io/flights-dashboard/).  The example has all of the functionality that is discussed in this article, except the database connectivity. The code for the dashboard is available in this Gist: [app.R](https://gist.github.com/edgararuiz/89e771b5d1b82adaa0033c0928d1846d)
+A working example of the dashboard that will be used as the base of this article is available on GitHub. The project repository contains the code and all the supporting files:
 
-The code for the dashboard that actually connects to a database is available in this Gist: [app.R](https://gist.github.com/edgararuiz/876ba4718e56af66c3e1181482b6cb99)
+- Visit the repository: https://github.com/sol-eng/db-dashboard
 
-## Begin with `shinydashboard`
+- Download a zipped file with all of the files from the repository: https://github.com/sol-eng/db-dashboard/archive/master.zip
 
+
+## Use `shinydashboard`
 
 The [shinydashboard](https://rstudio.github.io/shinydashboard/) package has three important advantages:
 
@@ -23,6 +30,8 @@ The [shinydashboard](https://rstudio.github.io/shinydashboard/) package has thre
   2. **Has a dashboard-firendly tag structure.** This allows the developer to get started quickly. Inside the `dashboardPage()`tag, the `dashboardHeader()`, `dashboardSidebar()` and `dashboardBody()` can be added to easily lay out a new dashboard.
   
   3. **It is mobile-ready.** Without any additional code, the dashboard layout will adapt to a smaller screen automatically.
+  
+Another option for creating dashboard with R is [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/).  It will support all but one of the features discussed in this article: dynamic tabs, which are the basis of the techinque used in the example to drive the drill throughs. 
 
 ### Quick example
 
@@ -45,11 +54,20 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
-## Deploy using `config`
+## Connection strings and credentials
 
-It is very common that credentials used during development will not be the same ones used for publishing.  For databases, the best way to accommodate for this is to have a Data Source Name (DSN) with the same alias name set up on both environments. If it is not possible to set up DSNs, then the `config` package can be used to make the switch between credentials used in the different environments invisible.  The [RStudio Connect](http://docs.rstudio.com/connect/admin/process-management.html#using-the-config-package) product supports the use of the `config` package out of the box.  Another advantage of using `config`, in lieu of Kerberos or DSN, is that the credentials used will not appear in the plain text of the R code. A more detailed write-up is available in the [Make scripts portable](http://db.rstudio.com/best-practices/portable-code) article.
+Even though is not addressed until after a first version needs to be publised, securing the credentials that the app will use to access the database is a very important step. 
 
-This code snippet is an example YAML file that `config` is able to read. It has one driver name for local development, and a different name for use during deployment:
+In a lot of cases, the app is developed against one database, and run in production against a differente database.  This can present a challange if the connection string is "hard coded".
+
+This site provides a couple of articles to help with addressing credentials and portability of code:
+
+- [Securing Deployed Content](/best-practices/deployment/)
+- [Making Scripts Portable](/best-practices/portable-code/)
+
+
+
+In the example for this article, the [config](/best-practices/portable-code/#deploying-with-the-config-package) package will be used to help us manage the deployment of the app.  This code snippet is an example YAML file that `config` is able to read. It has one driver name for local development, and a different name for use during deployment:
 
 ```
 default:
