@@ -6,11 +6,15 @@ title: Enterprise-ready dashboards
 
 ## Design principles
 
-There are two main principles to keep in mind when developing an enterprise level dashboard:
+A few principles to keep in mind when developing an enterprise level dashboard:
 
 - **Push as much of the calculations of the dashboard back to the database** - The time it takes for a dashboard to load, and respond, will quickly become the most important aspect of its design.  It may be acceptable for a model to run for minutes or hours, but for dashboards, the expected time frame are a few seconds.  
 
 - **Give the end-user with "train of thought" paths** -  These paths are commonly provided by way of a drill down or drill through from within the dashboard.  These paths allows the end-user to quickly answer questions that are currently on their mind.
+
+- **Make data driven inputs** - It is easy to "hard code" the values that will be available in an input, such as a drop down.  This may become a problem later on if the possible values change over time.  An ancillary principle is to always use a look up table to obtain the list of values, when available.  It is not ideal to obtain a list of possible values by grouping and summarizing a large column. 
+
+- **Secure the database credentials** - Most often, a service account is made available for reports and dashboards that have access to a database.  In that case, it is important to know how to properly safeguard the credentials of the service account. 
 
 ## The code
 
@@ -207,58 +211,68 @@ Then, the Shiny `output` function starts with the base query (`base_flights`), a
       )
   })
 ```
+## Using `r2d3` for interactivity and drill-down
 
-## Drill down
+The idea of a "drill-down" action is that the end user is able to see part or all of the data that makes up the aggregate result displayed where the end-user clicks on. 
 
-The idea of a "drill-down" action is that the end user is able to see part or all of the data that makes up the aggregate result displayed in the dashboard.  A "drill-down" action has two parts:
+In a Shiny app or dashboard, there's the R object that contains the plot or table needs a way to pass to Shiny the value what was that was clicked on.  The best way to do this, is by using Shiny's JavaScript inside a given plot. This activates a reactive function inside the app.
 
-1. **A dashboard plot or table is clicked.**  The value that user clicks on is usually aggregated data.
-1. **A new screen is displayed with another report.** The new report could display a lower-level aggregation, or row level table.
+The use of the visualization packages called [htmlwidgets](http://www.htmlwidgets.org/) is very common. This set of packages are wrappers on top of D3/JavaScript plots. There may be times when the available `htmlwidgets` package falls short, either by not integrating with Shiny, or by not providing the exact visualization that is needed for the dashboard.
 
-### A dashboard element is clicked
+This article, the package [r2d3](https://rstudio.github.io/r2d3/index.html) will be used.  This package allows us to custom build D3 visualizations from the ground up, for maximum flexibility and best integration with Shiny. A more in-depth article on how to integrate Shiny with `r2d3` is available here: [Using r2d3 with Shiny](https://rstudio.github.io/r2d3/articles/shiny.html).
 
-The following is one way that capturing a click event is possible.  The idea is to display the top airport destinations for a given airline in a bar plot.  When a bar is clicked, the desired result is for the plot to activate a drill-down.  The `highcharter` package will be used in this example.
+### Two ready-to-use `r2d3` plots
 
-To capture a bar-click event in `highcharter`, a small JavaScript needs to be written.  The example below could be used in most cases, so you can copy and paste it as-is into your code.  The variable name and the input name (`bar_clicked`) would be the only two statements that would have to be changed to match your chart.
+The example dashboard used in this article contains two D3 scripts that are "Shiny ready".  One is a column plot and the other a bar plot.  They have been developed in a way that you can easily copy the entire script and use it in your own dashboard.  
 
-```r
- js_bar_clicked <- JS("function(event) {Shiny.onInputChange('bar_clicked', [event.point.category]);}")
-```
+- [col_plot.js](https://github.com/sol-eng/db-dashboard/blob/master/col_plot.js) -  Requires a `data.frame` or `tibble` with the following names and type of data:
+    - `x` - Expects the category's value.  For example, if it represents a month, then it would contain the month's number.
+    - `y` - Expects the value of the height of the column.
+    - `label` - Expects the category's caption.  It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month's name.
 
-The command above creates a new JavaScript inside R that makes it possible to track when a bar is clicked.  Here is a breakdown of the code:
+- [bar_plot.js](https://github.com/sol-eng/db-dashboard/blob/master/bar_plot.js) -  -  Requires a `data.frame` or `tibble` with the following names and type of data:
+    - `x` - Expects the value of the widht of the bar.
+    - `y` - Expects the category's value.  For example, if it represents a month, then it would contain the month's number.
+    - `label` - Expects the category's caption.  It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month's name.
 
-- **JS** - Indicates that the following function is JavaScript
-- **function(event)** - Creates a new function, and expect an `event` variable.  The event that Highchart will pass is when a bar is clicked on, so the `event` will contain information about that given bar.
-- **Shiny.onInputChange** - Is the function that JavaScript will use to interact with Shiny
-- **bar_clicked** - Is the name of a new Shiny input; its value will default to the next item
-- **[event.point.category]** - Passes the **category** value of the **point** where the click was made
-
-The next section will illustrate how to capture the change of the new `input$bar_clicked`, and perform the second part of the "drill down".
-
-In the `renderHighchart()` output function, the variable that contains the JavaScript is passed as part of a list of events: `events = list(click = js_bar_clicked))`.  Because the event is inside the `hc_add_series()` that creates the bar plot, then such click-event is tied to when the bar is clicked.
+Thanks to `r2d3`, the plots can easily be rendered.  This code snippet shows how simple is to combine the technique of using a base query, and then pipe the finishing transformations directly into the `r2d3()` function.  
 
 ```r
-output$top_airports <- renderHighchart({
-  # Reuse the dplyr db_flights variable as the base query
-  result <- db_flights %>%
-    filter(carrier == input$airline) 
-  if(input$month != 99) result <- filter(result, month == input$month) 
-  result <- result %>
-    group_by(dest_name) %>%
-    tally() %>%
-    arrange(desc(n)) %>%                          
-    collect %>%
-    head(10)                                      
-  highchart() %>%
-    hc_add_series(
-      data = result$n, 
-      type = "bar",
-      name = paste("No. of Flights"),
-      events = list(click = js_bar_clicked)) %>%   # The JavaScript variable is called here
-    hc_xAxis(
-      categories = result$dest_name,               # Value in event.point.category
-        tickmarkPlacement="on")})
+  output$top_airports <- renderD3({
+    # The following code runs inside the database
+    base_flights() %>%
+      group_by(dest, dest_name) %>%
+      tally() %>%
+      collect() %>%
+      arrange(desc(n)) %>%
+      head(10) %>%
+      arrange(dest_name) %>%
+      mutate(dest_name = str_sub(dest_name, 1, 30)) %>%
+      rename(
+        x = dest,              # Make sure to rename the 
+        y = n,                 # variables to what the 
+        label = dest_name      #  D3 script expects
+      ) %>%
+      r2d3("bar_plot.js")
+  })
 ```
+
+### Handling the click event from D3
+
+The D3 plots provided in the GitHub repository already contain the necessary Shiny JS code to trigger a reactive function when clicked on:
+
+- **col_plot.js** - Creates a `input$col_clicked` inside the Shiny app.
+
+- **bar_plot.js** - Creates a `input$bar_clicked` inside the Shiny app.
+
+Inside the app, include an `observeEvent()` function that will capture the value returned by the D3 plot:
+
+```
+  observeEvent(input$bar_clicked, {
+  # ----- Function's code --------
+  })
+```
+
 ### Using `appendTab()` to create the drill-down report
 
 The plan is to display a new drill-down report every time the end user clicks on a bar.  To prevent pulling the same data unnecessarily, the code will be smart enough to simply switch the focus to an existing tab if the same bar has been clicked on before.  

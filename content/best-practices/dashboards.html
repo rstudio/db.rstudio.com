@@ -7,10 +7,12 @@ title: Enterprise-ready dashboards
 <p><img src="/best-practices/dashboards/main.png" /></p>
 <div id="design-principles" class="section level2">
 <h2>Design principles</h2>
-<p>There are two main principles to keep in mind when developing an enterprise level dashboard:</p>
+<p>A few principles to keep in mind when developing an enterprise level dashboard:</p>
 <ul>
 <li><p><strong>Push as much of the calculations of the dashboard back to the database</strong> - The time it takes for a dashboard to load, and respond, will quickly become the most important aspect of its design. It may be acceptable for a model to run for minutes or hours, but for dashboards, the expected time frame are a few seconds.</p></li>
 <li><p><strong>Give the end-user with “train of thought” paths</strong> - These paths are commonly provided by way of a drill down or drill through from within the dashboard. These paths allows the end-user to quickly answer questions that are currently on their mind.</p></li>
+<li><p><strong>Make data driven inputs</strong> - It is easy to “hard code” the values that will be available in an input, such as a drop down. This may become a problem later on if the possible values change over time. An ancillary principle is to always use a look up table to obtain the list of values, when available. It is not ideal to obtain a list of possible values by grouping and summarizing a large column.</p></li>
+<li><p><strong>Secure the database credentials</strong> - Most often, a service account is made available for reports and dashboards that have access to a database. In that case, it is important to know how to properly safeguard the credentials of the service account.</p></li>
 </ul>
 </div>
 <div id="the-code" class="section level2">
@@ -165,48 +167,59 @@ month_list$`All Year` &lt;- 99  </code></pre>
       )
   })</code></pre>
 </div>
-<div id="drill-down" class="section level2">
-<h2>Drill down</h2>
-<p>The idea of a “drill-down” action is that the end user is able to see part or all of the data that makes up the aggregate result displayed in the dashboard. A “drill-down” action has two parts:</p>
-<ol style="list-style-type: decimal">
-<li><strong>A dashboard plot or table is clicked.</strong> The value that user clicks on is usually aggregated data.</li>
-<li><strong>A new screen is displayed with another report.</strong> The new report could display a lower-level aggregation, or row level table.</li>
-</ol>
-<div id="a-dashboard-element-is-clicked" class="section level3">
-<h3>A dashboard element is clicked</h3>
-<p>The following is one way that capturing a click event is possible. The idea is to display the top airport destinations for a given airline in a bar plot. When a bar is clicked, the desired result is for the plot to activate a drill-down. The <code>highcharter</code> package will be used in this example.</p>
-<p>To capture a bar-click event in <code>highcharter</code>, a small JavaScript needs to be written. The example below could be used in most cases, so you can copy and paste it as-is into your code. The variable name and the input name (<code>bar_clicked</code>) would be the only two statements that would have to be changed to match your chart.</p>
-<pre class="r"><code> js_bar_clicked &lt;- JS(&quot;function(event) {Shiny.onInputChange(&#39;bar_clicked&#39;, [event.point.category]);}&quot;)</code></pre>
-<p>The command above creates a new JavaScript inside R that makes it possible to track when a bar is clicked. Here is a breakdown of the code:</p>
+<div id="using-r2d3-for-interactivity-and-drill-down" class="section level2">
+<h2>Using <code>r2d3</code> for interactivity and drill-down</h2>
+<p>The idea of a “drill-down” action is that the end user is able to see part or all of the data that makes up the aggregate result displayed where the end-user clicks on.</p>
+<p>In a Shiny app or dashboard, there’s the R object that contains the plot or table needs a way to pass to Shiny the value what was that was clicked on. The best way to do this, is by using Shiny’s JavaScript inside a given plot. This activates a reactive function inside the app.</p>
+<p>The use of the visualization packages called <a href="http://www.htmlwidgets.org/">htmlwidgets</a> is very common. This set of packages are wrappers on top of D3/JavaScript plots. There may be times when the available <code>htmlwidgets</code> package falls short, either by not integrating with Shiny, or by not providing the exact visualization that is needed for the dashboard.</p>
+<p>This article, the package <a href="https://rstudio.github.io/r2d3/index.html">r2d3</a> will be used. This package allows us to custom build D3 visualizations from the ground up, for maximum flexibility and best integration with Shiny. A more in-depth article on how to integrate Shiny with <code>r2d3</code> is available here: <a href="https://rstudio.github.io/r2d3/articles/shiny.html">Using r2d3 with Shiny</a>.</p>
+<div id="two-ready-to-use-r2d3-plots" class="section level3">
+<h3>Two ready-to-use <code>r2d3</code> plots</h3>
+<p>The example dashboard used in this article contains two D3 scripts that are “Shiny ready”. One is a column plot and the other a bar plot. They have been developed in a way that you can easily copy the entire script and use it in your own dashboard.</p>
 <ul>
-<li><strong>JS</strong> - Indicates that the following function is JavaScript</li>
-<li><strong>function(event)</strong> - Creates a new function, and expect an <code>event</code> variable. The event that Highchart will pass is when a bar is clicked on, so the <code>event</code> will contain information about that given bar.</li>
-<li><strong>Shiny.onInputChange</strong> - Is the function that JavaScript will use to interact with Shiny</li>
-<li><strong>bar_clicked</strong> - Is the name of a new Shiny input; its value will default to the next item</li>
-<li><strong>[event.point.category]</strong> - Passes the <strong>category</strong> value of the <strong>point</strong> where the click was made</li>
+<li><a href="https://github.com/sol-eng/db-dashboard/blob/master/col_plot.js">col_plot.js</a> - Requires a <code>data.frame</code> or <code>tibble</code> with the following names and type of data:
+<ul>
+<li><code>x</code> - Expects the category’s value. For example, if it represents a month, then it would contain the month’s number.</li>
+<li><code>y</code> - Expects the value of the height of the column.</li>
+<li><code>label</code> - Expects the category’s caption. It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month’s name.</li>
+</ul></li>
+<li><a href="https://github.com/sol-eng/db-dashboard/blob/master/bar_plot.js">bar_plot.js</a> - - Requires a <code>data.frame</code> or <code>tibble</code> with the following names and type of data:
+<ul>
+<li><code>x</code> - Expects the value of the widht of the bar.</li>
+<li><code>y</code> - Expects the category’s value. For example, if it represents a month, then it would contain the month’s number.</li>
+<li><code>label</code> - Expects the category’s caption. It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month’s name.</li>
+</ul></li>
 </ul>
-<p>The next section will illustrate how to capture the change of the new <code>input$bar_clicked</code>, and perform the second part of the “drill down”.</p>
-<p>In the <code>renderHighchart()</code> output function, the variable that contains the JavaScript is passed as part of a list of events: <code>events = list(click = js_bar_clicked))</code>. Because the event is inside the <code>hc_add_series()</code> that creates the bar plot, then such click-event is tied to when the bar is clicked.</p>
-<pre class="r"><code>output$top_airports &lt;- renderHighchart({
-  # Reuse the dplyr db_flights variable as the base query
-  result &lt;- db_flights %&gt;%
-    filter(carrier == input$airline) 
-  if(input$month != 99) result &lt;- filter(result, month == input$month) 
-  result &lt;- result %&gt;
-    group_by(dest_name) %&gt;%
-    tally() %&gt;%
-    arrange(desc(n)) %&gt;%                          
-    collect %&gt;%
-    head(10)                                      
-  highchart() %&gt;%
-    hc_add_series(
-      data = result$n, 
-      type = &quot;bar&quot;,
-      name = paste(&quot;No. of Flights&quot;),
-      events = list(click = js_bar_clicked)) %&gt;%   # The JavaScript variable is called here
-    hc_xAxis(
-      categories = result$dest_name,               # Value in event.point.category
-        tickmarkPlacement=&quot;on&quot;)})</code></pre>
+<p>Thanks to <code>r2d3</code>, the plots can easily be rendered. This code snippet shows how simple is to combine the technique of using a base query, and then pipe the finishing transformations directly into the <code>r2d3()</code> function.</p>
+<pre class="r"><code>  output$top_airports &lt;- renderD3({
+    # The following code runs inside the database
+    base_flights() %&gt;%
+      group_by(dest, dest_name) %&gt;%
+      tally() %&gt;%
+      collect() %&gt;%
+      arrange(desc(n)) %&gt;%
+      head(10) %&gt;%
+      arrange(dest_name) %&gt;%
+      mutate(dest_name = str_sub(dest_name, 1, 30)) %&gt;%
+      rename(
+        x = dest,              # Make sure to rename the 
+        y = n,                 # variables to what the 
+        label = dest_name      #  D3 script expects
+      ) %&gt;%
+      r2d3(&quot;bar_plot.js&quot;)
+  })</code></pre>
+</div>
+<div id="handling-the-click-event-from-d3" class="section level3">
+<h3>Handling the click event from D3</h3>
+<p>The D3 plots provided in the GitHub repository already contain the necessary Shiny JS code to trigger a reactive function when clicked on:</p>
+<ul>
+<li><p><strong>col_plot.js</strong> - Creates a <code>input$col_clicked</code> inside the Shiny app.</p></li>
+<li><p><strong>bar_plot.js</strong> - Creates a <code>input$bar_clicked</code> inside the Shiny app.</p></li>
+</ul>
+<p>Inside the app, include an <code>observeEvent()</code> function that will capture the value returned by the D3 plot:</p>
+<pre><code>  observeEvent(input$bar_clicked, {
+  # ----- Function&#39;s code --------
+  })</code></pre>
 </div>
 <div id="using-appendtab-to-create-the-drill-down-report" class="section level3">
 <h3>Using <code>appendTab()</code> to create the drill-down report</h3>
