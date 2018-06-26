@@ -127,40 +127,51 @@ month_list$`All Year` &lt;- 99  </code></pre>
   )</code></pre>
 </div>
 </div>
-<div id="take-advantage-of-dplyrs-laziness" class="section level2">
-<h2>Take advantage of <code>dplyr</code>’s “laziness”</h2>
-<p>Dashboards normally have a common data theme, which is sourced with a common data set. A base query can be built because <code>dplyr</code> translates into SQL under the covers and, due to “laziness”, doesn’t evaluate the query until something is requested from it.</p>
-<pre class="r"><code>db_flights &lt;- tbl(con, &quot;flights&quot;) %&gt;%
-  left_join(tbl(con, &quot;airlines&quot;), by = &quot;carrier&quot;) %&gt;%
-  rename(airline = name) %&gt;%
-  left_join(tbl(con, &quot;airports&quot;), by = c(&quot;origin&quot; = &quot;faa&quot;)) %&gt;%
-  rename(origin_name = name) %&gt;%
-  select(-lat, -lon, -alt, -tz, -dst) %&gt;%
-  left_join(tbl(con, &quot;airports&quot;), by = c(&quot;dest&quot; = &quot;faa&quot;)) %&gt;%
-  rename(dest_name = name) </code></pre>
-<p>The <code>dplyr</code> variable can then be used in more than one Shiny output. A second example is in the code used to build the <code>highcharter</code> plot below.</p>
-<pre class="r"><code>output$total_flights &lt;- renderValueBox({
-
-  result &lt;- db_flights %&gt;%           # Use the db_flights variable
-    filter(carrier == input$airline)
-  if(input$month != 99) result &lt;- filter(result, month == input$month)
-  
-  result &lt;- result %&gt;%
-    tally %&gt;%
-    pull %&gt;%                        # Use pull to get the total count as a vector
-    as.integer()
-  
-  valueBox(value = prettyNum(result, big.mark = &quot;,&quot;),
-           subtitle = &quot;Number of Flights&quot;)
-})</code></pre>
+<div id="create-a-base-query-using-dplyr" class="section level2">
+<h2>Create a base query using <code>dplyr</code></h2>
+<p>In most cases, all of the plots and tables in a dashboard share a common base query. For example, they will all show the same month’s data. Using <code>dplyr</code> to build the base query has the following advantages:</p>
+<ul>
+<li>Simplifies the code because it prevents the repetition of the same filters and joins</li>
+<li><code>dplyr</code> “laziness” allows for the base query to be built with out it being executed until it is used to get the data for a given plot or table</li>
+<li>Abstracts the translation of the SQL syntax. The dashboard will work with no, or minimal, changes if the database vendor changes.</li>
+<li>The modular nature of this approach allows to just add a few simple, and easy to understand, <code>dplyr</code> steps to get the slice or aggregation of the data needed to be displayed on the plot or table.</li>
+</ul>
+<p>Because the base query will more likely have to be assembled based on the current input selection, then a Shiny <code>reactive()</code> function is necessary to be used instead of a regular <code>function()</code>. This is because the <code>input$...</code> variables can only be evaluated inside a Shiny reactive function.</p>
+<pre class="r"><code>  base_flights &lt;- reactive({
+    res &lt;- flights %&gt;%
+      filter(carrier == input$airline) %&gt;%
+      left_join(airlines, by = &quot;carrier&quot;) %&gt;%
+      rename(airline = name) %&gt;%
+      left_join(airports, by = c(&quot;origin&quot; = &quot;faa&quot;)) %&gt;%
+      rename(origin_name = name) %&gt;%
+      select(-lat, -lon, -alt, -tz, -dst) %&gt;%
+      left_join(airports, by = c(&quot;dest&quot; = &quot;faa&quot;)) %&gt;%
+      rename(dest_name = name)
+    if (input$month != 99) res &lt;- filter(res, month == input$month)
+    res
+  })</code></pre>
+<p>Then, the Shiny <code>output</code> function starts with the base query (<code>base_flights</code>), and finishing <code>dplyr</code> steps, in the form of verbs, are appended, and piped directly to the plotting or display function. It is important to note that before sending the resulting data set to Shiny, either a <code>collect()</code> or <code>pull()</code> function needs to be used.</p>
+<pre class="r"><code>  output$per_day &lt;- renderValueBox({
+    base_flights() %&gt;%      #------ Base query 
+      group_by(day, month) %&gt;%  #-- Finishing steps   
+      tally() %&gt;%                  
+      summarise(avg = mean(n)) %&gt;%
+      pull() %&gt;%
+      round() %&gt;%
+      prettyNum(big.mark = &quot;,&quot;) %&gt;% 
+      valueBox(             # -- Pipe right into a Value Box
+        subtitle = &quot;Average Flights per day&quot;,
+        color = &quot;blue&quot;
+      )
+  })</code></pre>
 </div>
 <div id="drill-down" class="section level2">
 <h2>Drill down</h2>
 <p>The idea of a “drill-down” action is that the end user is able to see part or all of the data that makes up the aggregate result displayed in the dashboard. A “drill-down” action has two parts:</p>
-<ul>
-<li><strong>A dashboard element that displays a result is clicked. </strong> The result is usually aggregate data.</li>
-<li><strong>A new screen is displayed with another report.</strong> The new report could be another report showing a lower-level aggregation, or it could show a list of rows that make up the result.</li>
-</ul>
+<ol style="list-style-type: decimal">
+<li><strong>A dashboard plot or table is clicked.</strong> The value that user clicks on is usually aggregated data.</li>
+<li><strong>A new screen is displayed with another report.</strong> The new report could display a lower-level aggregation, or row level table.</li>
+</ol>
 <div id="a-dashboard-element-is-clicked" class="section level3">
 <h3>A dashboard element is clicked</h3>
 <p>The following is one way that capturing a click event is possible. The idea is to display the top airport destinations for a given airline in a bar plot. When a bar is clicked, the desired result is for the plot to activate a drill-down. The <code>highcharter</code> package will be used in this example.</p>
@@ -253,8 +264,4 @@ observeEvent(input$bar_clicked,{
   })
   </code></pre>
 </div>
-</div>
-<div id="conclusion" class="section level2">
-<h2>Conclusion</h2>
-<p>This example uses Shinydashboard to create enterprise dashboards, but there are other technologies as well. Flexdashboard is a great way to build similar enterprise dashboards in R Markdown. We used SQL Server to populate this dashboard, but you can use any database. For more information on using databases with R, see <a href="http://db.rstudio.com/" class="uri">http://db.rstudio.com/</a>.</p>
 </div>

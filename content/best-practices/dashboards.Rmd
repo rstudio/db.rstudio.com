@@ -162,47 +162,58 @@ The `selectInput()` list menu is able to read the resulting `month_list` list va
 ```
 
 
-## Take advantage of `dplyr`'s "laziness"
+## Create a base query using `dplyr`
 
+In most cases, all of the plots and tables in a dashboard share a common base query.  For example, they will all show the same month's data.  Using `dplyr` to build the base query has the following advantages:
 
-Dashboards normally have a common data theme, which is sourced with a common data set.  A base query can be built because `dplyr` translates into SQL under the covers and, due to "laziness", doesn't evaluate the query until something is requested from it.  
+- Simplifies the code because it prevents the repetition of the same filters and joins
+- `dplyr` "laziness" allows for the base query to be built with out it being executed until it is used to get the data for a given plot or table
+- Abstracts the translation of the SQL syntax.  The dashboard will work with no, or minimal, changes if the database vendor changes.
+- The modular nature of this approach allows to just add a few simple, and easy to understand, `dplyr` steps to get the slice or aggregation of the data needed to be displayed on the plot or table.
+
+Because the base query will more likely have to be assembled based on the current input selection, then a Shiny `reactive()` function is necessary to be used instead of a regular `function()`.  This is because the `input$...` variables can only be evaluated inside a Shiny reactive function.
 
 ```r
-db_flights <- tbl(con, "flights") %>%
-  left_join(tbl(con, "airlines"), by = "carrier") %>%
-  rename(airline = name) %>%
-  left_join(tbl(con, "airports"), by = c("origin" = "faa")) %>%
-  rename(origin_name = name) %>%
-  select(-lat, -lon, -alt, -tz, -dst) %>%
-  left_join(tbl(con, "airports"), by = c("dest" = "faa")) %>%
-  rename(dest_name = name) 
+  base_flights <- reactive({
+    res <- flights %>%
+      filter(carrier == input$airline) %>%
+      left_join(airlines, by = "carrier") %>%
+      rename(airline = name) %>%
+      left_join(airports, by = c("origin" = "faa")) %>%
+      rename(origin_name = name) %>%
+      select(-lat, -lon, -alt, -tz, -dst) %>%
+      left_join(airports, by = c("dest" = "faa")) %>%
+      rename(dest_name = name)
+    if (input$month != 99) res <- filter(res, month == input$month)
+    res
+  })
 ```
 
-The `dplyr` variable can then be used in more than one Shiny output. A second example is in the code used to build the `highcharter` plot below.
+Then, the Shiny `output` function starts with the base query (`base_flights`), and finishing `dplyr` steps, in the form of verbs, are appended, and piped directly to the plotting or display function.  It is important to note that before sending the resulting data set to Shiny, either a `collect()` or `pull()` function needs to be used.
+
 
 ```r
-output$total_flights <- renderValueBox({
-
-  result <- db_flights %>%           # Use the db_flights variable
-    filter(carrier == input$airline)
-  if(input$month != 99) result <- filter(result, month == input$month)
-  
-  result <- result %>%
-    tally %>%
-    pull %>%                        # Use pull to get the total count as a vector
-    as.integer()
-  
-  valueBox(value = prettyNum(result, big.mark = ","),
-           subtitle = "Number of Flights")
-})
+  output$per_day <- renderValueBox({
+    base_flights() %>%      #------ Base query 
+      group_by(day, month) %>%  #-- Finishing steps   
+      tally() %>%                  
+      summarise(avg = mean(n)) %>%
+      pull() %>%
+      round() %>%
+      prettyNum(big.mark = ",") %>% 
+      valueBox(             # -- Pipe right into a Value Box
+        subtitle = "Average Flights per day",
+        color = "blue"
+      )
+  })
 ```
 
 ## Drill down
 
 The idea of a "drill-down" action is that the end user is able to see part or all of the data that makes up the aggregate result displayed in the dashboard.  A "drill-down" action has two parts:
 
-- **A dashboard element that displays a result is clicked. **  The result is usually aggregate data.
-- **A new screen is displayed with another report.** The new report could be another report showing a lower-level aggregation, or it could show a list of rows that make up the result.
+1. **A dashboard plot or table is clicked.**  The value that user clicks on is usually aggregated data.
+1. **A new screen is displayed with another report.** The new report could display a lower-level aggregation, or row level table.
 
 ### A dashboard element is clicked
 
@@ -314,7 +325,3 @@ The `observeEvent()` function is used once more to catch when the link is clicke
   })
   
 ```
-
-## Conclusion
-
- This example uses Shinydashboard to create enterprise dashboards, but there are other technologies as well. Flexdashboard is a great way to build similar enterprise dashboards in R Markdown. We used SQL Server to populate this dashboard, but you can use any database. For more information on using databases with R, see http://db.rstudio.com/.
