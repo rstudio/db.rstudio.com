@@ -31,7 +31,7 @@ title: Enterprise-ready dashboards
 <li><p><strong>Has a dashboard-firendly tag structure.</strong> This allows the developer to get started quickly. Inside the <code>dashboardPage()</code>tag, the <code>dashboardHeader()</code>, <code>dashboardSidebar()</code> and <code>dashboardBody()</code> can be added to easily lay out a new dashboard.</p></li>
 <li><p><strong>It is mobile-ready.</strong> Without any additional code, the dashboard layout will adapt to a smaller screen automatically.</p></li>
 </ol>
-<p>Another option for creating dashboard with R is <a href="https://rmarkdown.rstudio.com/flexdashboard/">flexdashboard</a>. It will support all but one of the features discussed in this article: dynamic tabs, which are the basis of the techinque used in the example to drive the drill throughs.</p>
+<p>Another option for creating dashboard with R is <a href="https://rmarkdown.rstudio.com/flexdashboard/">flexdashboard</a>. It will support all but one of the features discussed in this article: dynamic tabs, which are the basis of the technique used in the example to drive the drill throughs.</p>
 <div id="quick-example" class="section level3">
 <h3>Quick example</h3>
 <p>If you are new to <code>shinydashboard</code>, please feel free to copy and paste the following code to see a very simple dashboard in your environment:</p>
@@ -53,8 +53,8 @@ shinyApp(ui, server)</code></pre>
 </div>
 <div id="connection-strings-and-credentials" class="section level2">
 <h2>Connection strings and credentials</h2>
-<p>Even though is not addressed until after a first version needs to be publised, securing the credentials that the app will use to access the database is a very important step.</p>
-<p>In a lot of cases, the app is developed against one database, and run in production against a differente database. This can present a challange if the connection string is “hard coded”.</p>
+<p>Securing the credentials that the app will use to access the database is a very important step.</p>
+<p>In many cases, the app is developed against one database, and run in production against a different database. This can present a challenge if the connection string is “hard coded”.</p>
 <p>This site provides a couple of articles to help with addressing credentials and portability of code:</p>
 <ul>
 <li><a href="/best-practices/deployment/">Securing Deployed Content</a></li>
@@ -185,7 +185,7 @@ month_list$`All Year` &lt;- 99  </code></pre>
 </ul></li>
 <li><a href="https://github.com/sol-eng/db-dashboard/blob/master/bar_plot.js">bar_plot.js</a> - - Requires a <code>data.frame</code> or <code>tibble</code> with the following names and type of data:
 <ul>
-<li><code>x</code> - Expects the value of the widht of the bar.</li>
+<li><code>x</code> - Expects the value of the width of the bar.</li>
 <li><code>y</code> - Expects the category’s value. For example, if it represents a month, then it would contain the month’s number.</li>
 <li><code>label</code> - Expects the category’s caption. It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month’s name.</li>
 </ul></li>
@@ -209,9 +209,11 @@ month_list$`All Year` &lt;- 99  </code></pre>
       r2d3(&quot;bar_plot.js&quot;)
   })</code></pre>
 </div>
-<div id="handling-the-click-event-from-d3" class="section level3">
-<h3>Handling the click event from D3</h3>
-<p>The D3 plots provided in the GitHub repository already contain the necessary Shiny JS code to trigger a reactive function when clicked on:</p>
+</div>
+<div id="handling-a-click-event-from-the-plot" class="section level2">
+<h2>Handling a click event from the plot</h2>
+<p>The ideal outcome of a click event is that it activates a Shiny <code>input</code>. This allows the app to execute a reactive function when the click, or any other event recognized by the plot, is triggered.</p>
+<p>The D3 plots, available in the example’s GitHub repository, already contain the necessary Shiny JS code to trigger a reactive function when clicked on:</p>
 <ul>
 <li><p><strong>col_plot.js</strong> - Creates a <code>input$col_clicked</code> inside the Shiny app.</p></li>
 <li><p><strong>bar_plot.js</strong> - Creates a <code>input$bar_clicked</code> inside the Shiny app.</p></li>
@@ -221,44 +223,39 @@ month_list$`All Year` &lt;- 99  </code></pre>
   # ----- Function&#39;s code --------
   })</code></pre>
 </div>
+<div id="create-the-drill-down-report" class="section level2">
+<h2>Create the drill-down report</h2>
 <div id="using-appendtab-to-create-the-drill-down-report" class="section level3">
 <h3>Using <code>appendTab()</code> to create the drill-down report</h3>
-<p>The plan is to display a new drill-down report every time the end user clicks on a bar. To prevent pulling the same data unnecessarily, the code will be smart enough to simply switch the focus to an existing tab if the same bar has been clicked on before.</p>
-<p>The new, and really cool, <code>appendTab()</code> function is used to dynamically create a new Shiny tab with a <strong>DataTable</strong> that contains the first 100 rows of the selection. A simple vector, called <code>tab_list</code>, is used to track all existing detail tabs. The <code>updateTabsetPanel()</code> function is used to switch to the newly or previously created tab.</p>
-<p>The <code>observeEvent()</code> function is the one that “catches” the event executed by the JavaScript, because it monitors the <code>bar_clicked</code> Shiny input. Comments are added to the code below to cover more aspects of how to use these features.</p>
-<pre class="r"><code>tab_list &lt;- NULL
+<p>The plan is to display a new drill-down report every time the end user clicks on a bar. To prevent pulling the same data unnecessarily, the code will be “smart” enough to simply switch the focus to an existing tab if the same bar has been clicked on before. This switch also prevent unnecessary trips to the database.</p>
+<p>The new, and really cool, <code>appendTab()</code> function is used to dynamically create a new Shiny tab with a data table from the <a href="https://rstudio.github.io/DT/">DT</a> package that contains the first 100 rows of the selection. A simple vector, called <code>tab_list</code>, is used to track all existing detail tabs. The <code>updateTabsetPanel()</code> function is used to switch to the newly or previously created tab.</p>
+<p>The <code>observeEvent()</code> function is the one that “catches” the event executed by the D3 code. It monitors the <code>bar_clicked</code> Shiny input.</p>
+<pre class="r"><code>  observeEvent(input$bar_clicked, {
+    airport &lt;- input$bar_clicked
+    month &lt;- input$month
+    tab_title &lt;- paste(
+      input$airline, &quot;-&quot;, airport,
+      if (month != 99) {
+        paste(&quot;-&quot;, month.name[as.integer(month)])
+      }
+    )
+    if (!(tab_title %in% tab_list)) {
+      appendTab(
+        inputId = &quot;tabs&quot;,
+        tabPanel(
+          tab_title,
+          DT::renderDataTable(
+            # This function return a data.frame with
+            # the top 100 records of that airport
+            get_details(airport = airport) 
+          )
+        )
+      )
 
-observeEvent(input$bar_clicked,{  
-       airport &lt;- input$bar_clicked[1]              # Selects the first value sent in [event.point.category]
-       tab_title &lt;- paste(input$airline,            # tab_title is the tab&#39;s name and unique identifier
-                          &quot;-&quot;, airport ,            
-                          if(input$month != 99)     
-                            paste(&quot;-&quot; , month.name[as.integer(input$month)]))
-       
-       if(tab_title %in% tab_list == FALSE){        # Checks to see if the title already exists
-         details &lt;- db_flights %&gt;%                  # Reuses the db_flights dbplyr variable
-           filter(dest_name == airport,             # Uses the [event.point.category] value for the filter
-                  carrier == input$airline)         # Matches the current airline filter
-         
-         if(input$month != 99)                      # Matches the current month selection
-            details &lt;- filter(details, month == input$month) 
-         details &lt;- details %&gt;%
-           head(100) %&gt;%                            # Select only the first 100 records
-           collect()                                # Brings the 100 records into the R environment 
-           
-         appendTab(inputId = &quot;tabs&quot;,                # Starts a new Shiny tab inside the tabsetPanel named &quot;tabs&quot;
-                   tabPanel(
-                     tab_title,                     # Sets the name &amp; ID
-                     DT::renderDataTable(details)   # Renders the DataTable with the 100 newly collected rows
-                   ))
-         tab_list &lt;&lt;- c(tab_list, tab_title)        # Adds the new tab to the list, important to use &lt;&lt;- 
-         }
-         
-       # Switches over to a panel that matched the name in tab_title.  
-       # Notice that this function sits outside the if statement because
-       # it still needs to run to select a previously created tab
-       updateTabsetPanel(session, &quot;tabs&quot;, selected = tab_title)  
-     })</code></pre>
+      tab_list &lt;&lt;- c(tab_list, tab_title)
+    }
+    updateTabsetPanel(session, &quot;tabs&quot;, selected = tab_title)
+  })</code></pre>
 </div>
 <div id="remove-all-tabs-using-removetab-and-purrr" class="section level3">
 <h3>Remove all tabs using <code>removeTab()</code> and <code>purrr</code></h3>
