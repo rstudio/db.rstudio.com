@@ -87,18 +87,45 @@ con &lt;- DBI::dbConnect(odbc::odbc(),
 </div>
 <div id="populate-shiny-inputs-using-purrr" class="section level2">
 <h2>Populate Shiny inputs using <code>purrr</code></h2>
-<p>It is very common for Shiny inputs to retrieve their values from a table or a query. Because other queries in the dashboard will use the selected input to filter accordingly, the value required to pass to the other queries is normally an identification code, and not the label displayed in the drop down. To separate the keys from the values, the <code>map()</code> function in the <code>purrr</code> package can be used. In the example below, all of the records in the airlines table are collected, and a list of names is created, <code>map()</code> is then used to insert the carrier codes into each name node.</p>
-<pre class="r"><code># This code runs in ui
-airline_list &lt;- tbl(con, &quot;airlines&quot;) %&gt;%
+<p>It a is very common preference for the values displayed in a user input, such as list or drop down, to be “human readable”, and that the value of the selection be a unique identifier so that dependent queries return the correct information.</p>
+<p>This section examines two cases and ways to format the list of options to be “shiny-friendly”.</p>
+<div id="drop-down-populated-from-database" class="section level3">
+<h3>Drop down populated from database</h3>
+<p>Ideally, a look up table is available in the database so that the query is simple to execute.</p>
+<p>To separate the keys from the values, the <code>map()</code> function in the <code>purrr</code> package can be used. In the example below, all of the records in the airlines table are collected, and a list of names is created, <code>map()</code> is then used to insert the carrier codes into each name node.</p>
+<pre class="r"><code>airline_list &lt;- tbl(con, &quot;airlines&quot;) %&gt;%
   collect  %&gt;%
-  split(.$name) %&gt;%    # Place here the field that will be used for the labels
-  map(~.$carrier)      # Place here the field that will be used for keys</code></pre>
+  split(.$name) %&gt;%    # Field that will be used for the labels
+  map(~.$carrier)      # Field that will be used for keys</code></pre>
 <p>The <code>selectInput()</code> drop-down menu is able to read the resulting <code>airline_list</code> list variable.</p>
-<pre class="r"><code># This code runs in ui
- selectInput(
-    inputId = &quot;airline&quot;,
-    label = &quot;Airline:&quot;, 
-    choices = airline_list) # Use airline_list as the choices argument value</code></pre>
+<pre class="r"><code>  dashboardSidebar(
+    selectInput(
+      inputId = &quot;airline&quot;,
+      label = &quot;Airline:&quot;,
+      choices = airline_list,
+      selected = &quot;DL&quot;,
+      selectize = FALSE
+    )</code></pre>
+</div>
+<div id="list-populated-from-a-vector" class="section level3">
+<h3>List populated from a vector</h3>
+<p>There are times when the possible values are static and small enough so that they fit in a vector.</p>
+<p>A common example is the month name. Tables typically store the month number, which is what needs to be used as a filter for all the queries in the dashboard. The values that are ideally displayed to the user are the names of the months.</p>
+<p>For that, a newer function called <code>set_names()</code> can be used to add the caption that will be displayed in the input in a way that is “Shiny friendly”</p>
+<pre class="r"><code>month_list &lt;- as.list(1:12) %&gt;%
+  set_names(month.name)
+  
+month_list$`All Year` &lt;- 99  </code></pre>
+<p>The <code>selectInput()</code> list menu is able to read the resulting <code>month_list</code> list variable.</p>
+<pre class="r"><code>  selectInput(
+    inputId = &quot;month&quot;,
+    label = &quot;Month:&quot;,
+    choices = month_list,
+    selected = 99,
+    size = 13,
+    selectize = FALSE
+  )</code></pre>
+</div>
 </div>
 <div id="take-advantage-of-dplyrs-laziness" class="section level2">
 <h2>Take advantage of <code>dplyr</code>’s “laziness”</h2>

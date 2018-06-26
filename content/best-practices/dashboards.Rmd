@@ -104,24 +104,61 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ## Populate Shiny inputs using `purrr`
 
-It is very common for Shiny inputs to retrieve their values from a table or a query.  Because other queries in the dashboard will use the selected input to filter accordingly, the value required to pass to the other queries is normally an identification code, and not the label displayed in the drop down.  To separate the keys from the values, the `map()` function in the `purrr` package can be used.  In the example below, all of the records in the airlines table are collected, and a list of names is created, `map()` is then used to insert the carrier codes into each name node.
+It a is very common preference for the values displayed in a user input, such as list or drop down, to be "human readable", and that the value of the selection be a unique identifier so that dependent queries return the correct information.
+
+This section examines two cases and ways to format the list of options to be "shiny-friendly". 
+
+### Drop down populated from database
+
+Ideally, a look up table is available in the database so that the query is simple to execute. 
+
+To separate the keys from the values, the `map()` function in the `purrr` package can be used.  In the example below, all of the records in the airlines table are collected, and a list of names is created, `map()` is then used to insert the carrier codes into each name node.
 
 ```r
-# This code runs in ui
 airline_list <- tbl(con, "airlines") %>%
   collect  %>%
-  split(.$name) %>%    # Place here the field that will be used for the labels
-  map(~.$carrier)      # Place here the field that will be used for keys
+  split(.$name) %>%    # Field that will be used for the labels
+  map(~.$carrier)      # Field that will be used for keys
 ```
 
 The `selectInput()` drop-down menu is able to read the resulting `airline_list` list variable.
 
 ```r
-# This code runs in ui
- selectInput(
-    inputId = "airline",
-    label = "Airline:", 
-    choices = airline_list) # Use airline_list as the choices argument value
+  dashboardSidebar(
+    selectInput(
+      inputId = "airline",
+      label = "Airline:",
+      choices = airline_list,
+      selected = "DL",
+      selectize = FALSE
+    )
+```
+
+### List populated from a vector
+
+There are times when the possible values are static and small enough so that they fit in a vector.
+
+A common example is the month name.  Tables typically store the month number, which is what needs to be used as a filter for all the queries in the dashboard.  The values that are ideally displayed to the user are the names of the months.  
+
+For that, a newer function called `set_names()` can be used to add the caption that will be displayed in the input in a way that is "Shiny friendly"
+
+```r
+month_list <- as.list(1:12) %>%
+  set_names(month.name)
+  
+month_list$`All Year` <- 99  
+```
+The `selectInput()` list menu is able to read the resulting `month_list` list variable.
+
+```r
+  selectInput(
+    inputId = "month",
+    label = "Month:",
+    choices = month_list,
+    selected = 99,
+    size = 13,
+    selectize = FALSE
+  )
 ```
 
 
