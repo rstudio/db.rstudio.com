@@ -8,9 +8,9 @@ title: Enterprise-ready dashboards
 
 A few principles to keep in mind when developing an enterprise level dashboard:
 
-- **Push as much of the calculations of the dashboard back to the database** - The time it takes for a dashboard to load, and respond, will quickly become the most important aspect of its design.  It may be acceptable for a model to run for minutes or hours, but for dashboards, the expected time frame are a few seconds.  
+- **Push as much of the calculations of the dashboard back to the database** - The time it takes for a dashboard to load, and respond, will become the most important aspect of its design.  For dashboards, the expected time to load and response is a few seconds.  
 
-- **Give the end-user with "train of thought" paths** -  These paths are commonly provided by way of a drill down or drill through from within the dashboard.  These paths allows the end-user to quickly answer questions that are currently on their mind.
+- **Give the end-user with "train of thought" paths** -  These paths are commonly provided by way of a drill down from within the dashboard.  These paths allows the end-user to quickly answer questions they currently have.
 
 - **Make data driven inputs** - It is easy to "hard code" the values that will be available in an input, such as a drop down.  This may become a problem later on if the possible values change over time.  An ancillary principle is to always use a look up table to obtain the list of values, when available.  It is not ideal to obtain a list of possible values by grouping and summarizing a large column. 
 
@@ -60,8 +60,6 @@ shinyApp(ui, server)
 
 ## Connection strings and credentials
 
-Securing the credentials that the app will use to access the database is a very important step. 
-
 In many cases, the app is developed against one database, and run in production against a different database.  This can present a challenge if the connection string is "hard coded".
 
 This site provides a couple of articles to help with addressing credentials and portability of code:
@@ -70,47 +68,11 @@ This site provides a couple of articles to help with addressing credentials and 
 - [Making Scripts Portable](/best-practices/portable-code/)
 
 
-
-In the example for this article, the [config](/best-practices/portable-code/#deploying-with-the-config-package) package will be used to help us manage the deployment of the app.  This code snippet is an example YAML file that `config` is able to read. It has one driver name for local development, and a different name for use during deployment:
-
-```
-default:
-  mssql:
-      Driver: "SQL Server"
-      Server: "[server's path]"
-      Database: "[database name]"
-      UID: "[user id]"
-      PWD: "[pasword]"
-      Port: 1433
-rsconnect:
-  mssql:
-      Driver: "SQLServer"
-      Server: "[server's path]"
-      Database: "[database name]"
-      UID: "[user id]"
-      PWD: "[pasword]"
-      Port: 1433
-```
-
-The `default` setting will be automatically used when development, and RStudio Connect will use the `rsconnect` values when executing this code:
-
-```r
-dw <- config::get("mssql")
-con <- DBI::dbConnect(odbc::odbc(),
-                      Driver = dw$Driver,
-                      Server = dw$Server,
-                      UID    = dw$UID,
-                      PWD    = dw$PWD,
-                      Port   = dw$Port,
-                      Database = dw$Database)
-```
-
-
 ## Populate Shiny inputs using `purrr`
 
-It a is very common preference for the values displayed in a user input, such as list or drop down, to be "human readable", and that the value of the selection be a unique identifier so that dependent queries return the correct information.
+The usual preference is for the values displayed in a user input, such as drop down, to be "human readable".  The actual value of the selection should be a unique identifier so that dependent queries return the correct information.
 
-This section examines two cases and ways to format the list of options to be "shiny-friendly". 
+This section examines two cases and ways to format the list of options to be in a format that Shiny can use. 
 
 ### Drop down populated from database
 
@@ -140,11 +102,11 @@ The `selectInput()` drop-down menu is able to read the resulting `airline_list` 
 
 ### List populated from a vector
 
-There are times when the possible values are static and small enough so that they fit in a vector.
+There are times when the possible values are static, and small enough, so that they all fit in a vector.
 
-A common example is the month name.  Tables typically store the month number, which is what needs to be used as a filter for all the queries in the dashboard.  The values that are ideally displayed to the user are the names of the months.  
+A common example is the month name.  A given table store the month number, and that number is what needs to be used as the filter value  The values presented to the end-user will be the month name, but when a selection is made, the month number is what will be passed to Shiny.
 
-For that, a newer function called `set_names()` can be used to add the caption that will be displayed in the input in a way that is "Shiny friendly"
+For that, a function called `set_names()` can be used to add the caption that will be displayed in the input in a way that is "Shiny friendly"
 
 ```r
 month_list <- as.list(1:12) %>%
@@ -170,8 +132,8 @@ The `selectInput()` list menu is able to read the resulting `month_list` list va
 
 In most cases, all of the plots and tables in a dashboard share a common base query.  For example, they will all show the same month's data.  Using `dplyr` to build the base query has the following advantages:
 
-- Simplifies the code because it prevents the repetition of the same filters and joins
-- `dplyr` "laziness" allows for the base query to be built with out it being executed until it is used to get the data for a given plot or table
+- Simplifies the code because it prevents the repetition of filters and joins.
+- `dplyr` "laziness" allows for the base query to be built with out it being executed until it is used to get the data for a given plot or table.
 - Abstracts the translation of the SQL syntax.  The dashboard will work with no, or minimal, changes if the database vendor changes.
 - The modular nature of this approach allows to just add a few simple, and easy to understand, `dplyr` steps to get the slice or aggregation of the data needed to be displayed on the plot or table.
 
@@ -213,17 +175,17 @@ Then, the Shiny `output` function starts with the base query (`base_flights`), a
 ```
 ## Using `r2d3` for interactivity and drill-down
 
-The idea of a "drill-down" action is that the end user is able to see part or all of the data that makes up the aggregate result displayed where the end-user clicks on. 
+A "drill-down" is a great way to provide the end-user with "train of thought" paths.
 
 In a Shiny app or dashboard, there's the R object that contains the plot or table needs a way to pass to Shiny the value what was that was clicked on.  The best way to do this, is by using Shiny's JavaScript inside a given plot. This activates a reactive function inside the app.
 
-The use of the visualization packages called [htmlwidgets](http://www.htmlwidgets.org/) is very common. This set of packages are wrappers on top of D3/JavaScript plots. There may be times when the available `htmlwidgets` package falls short, either by not integrating with Shiny, or by not providing the exact visualization that is needed for the dashboard.
+The visualization packages called [htmlwidgets](http://www.htmlwidgets.org/) are widely used. They are a set of packages are wrappers on top of D3/JavaScript plots. There may be times when the available `htmlwidgets` package falls short, either by not integrating with Shiny, or by not providing the exact visualization that is needed for the dashboard.
 
 This article, the package [r2d3](https://rstudio.github.io/r2d3/index.html) will be used.  This package allows us to custom build D3 visualizations from the ground up, for maximum flexibility and best integration with Shiny. A more in-depth article on how to integrate Shiny with `r2d3` is available here: [Using r2d3 with Shiny](https://rstudio.github.io/r2d3/articles/shiny.html).
 
 ### Two ready-to-use `r2d3` plots
 
-The example dashboard used in this article contains two D3 scripts that are "Shiny ready".  One is a column plot and the other a bar plot.  They have been developed in a way that you can easily copy the entire script and use it in your own dashboard.  
+The example dashboard used in this article contains two D3 scripts that are "Shiny-ready".  One is a column plot and the other a bar plot.  They have been developed in a way that you can easily copy the entire script and use it in your own dashboard.  
 
 - [col_plot.js](https://github.com/sol-eng/db-dashboard/blob/master/col_plot.js) -  Requires a `data.frame` or `tibble` with the following names and type of data:
     - `x` - Expects the category's value.  For example, if it represents a month, then it would contain the month's number.
@@ -274,6 +236,9 @@ Inside the app, include an `observeEvent()` function that will capture the value
   # ----- Function's code --------
   })
 ```
+
+**Troubleshooting tip** - If the nothing happens when a bar is clicked on, please confirm that the installed `shiny` package version is 1.1.0 or above.
+
 
 ## Create the drill-down report
 
@@ -336,3 +301,11 @@ The `observeEvent()` function is used once more to catch when the link is clicke
   })
   
 ```
+
+## Full example
+
+There are two versions of the app available in the GitHub repository:
+
+- [local_app.R](https://github.com/sol-eng/db-dashboard/blob/master/local_app.R) - Example that works without a database connection.  
+
+- [db_app.R](https://github.com/sol-eng/db-dashboard/blob/master/db_app.R) - Full example, it shows how it connects to a database.
