@@ -16,7 +16,17 @@ A few principles to keep in mind when developing an enterprise level dashboard:
 
 - **Secure the database credentials** - Most often, a service account is made available for reports and dashboards that have access to a database.  In that case, it is important to know how to properly safeguard the credentials of the service account. 
 
-## The code
+## Example
+
+<div>
+  <a href = "https://edgarruiz.shinyapps.io/db-dashboard/">
+  <figure>
+    <img src="/best-practices/dashboards/dashboard.png" align="center" height="300" width="600">
+    <figcaption>Click to see the live dashboard</figcaption>
+  </figure>
+  </a>
+</div>
+<br/>
 
 A working example of the dashboard that will be used as the base of this article is available on GitHub. The project repository contains the code and all the supporting files:
 
@@ -24,6 +34,8 @@ A working example of the dashboard that will be used as the base of this article
 
 - Download a zipped file with all of the files from the repository: https://github.com/sol-eng/db-dashboard/archive/master.zip
 
+
+A live version of the app can be found in shinyapps.io: [DB Dashboard](https://edgarruiz.shinyapps.io/db-dashboard/) 
 
 ## Use `shinydashboard`
 
