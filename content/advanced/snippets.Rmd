@@ -42,7 +42,7 @@ data[data$mpg == ${0:Miles per Gallon=21.4} | data$cyl == ${1:Cylinders=6}, ]
 
 <img src="resources/connections/fields-connection-interface.png" width="300" style="display: inline-block;margin: 0 auto;"/>
 
-In order to craete a `;` separated list of values, one can use the syntax `${Position:Label=Default:Key}`. Semicolon-separated list are common in database connections and therefore, natevely supported in snippet files, for instance:
+In order to create a `;` separated list of values, one can use the syntax `${Position:Label=Default:Key}`. Semicolon-separated list are common in database connections and therefore, natevely supported in snippet files, for instance:
 
 ```r
 "${2:Letters=ABC:LettersKey}${3:Numbers=123:NumbersKey}"
