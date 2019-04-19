@@ -43,7 +43,7 @@
       {{ .Content }}
       </div>
      
-      {{ range (where .Paginator.Pages "Section" "post") }}
+      {{ range first 5 (where .Paginator.Pages "Section" "post") }}
       {{ partial "blog-article" . }}
       {{ end }}
       
