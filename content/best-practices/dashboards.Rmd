@@ -318,6 +318,6 @@ The `observeEvent()` function is used once more to catch when the link is clicke
 
 There are two versions of the app available in the GitHub repository:
 
-- [local_app.R](https://github.com/sol-eng/db-dashboard/blob/master/local_app.R) - Example that works without a database connection.  
+- [local_app.R](https://github.com/sol-eng/db-dashboard/blob/master/local/local_app.R) - Example that works without a database connection.  
 
-- [db_app.R](https://github.com/sol-eng/db-dashboard/blob/master/db_app.R) - Full example, it shows how it connects to a database.
+- [db_app.R](https://github.com/sol-eng/db-dashboard/blob/master/database/db_app.R) - Full example, it shows how it connects to a database.
