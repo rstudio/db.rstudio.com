@@ -39,3 +39,21 @@ aliases:
                       PWD    = rstudioapi::askForPassword(&quot;Database password&quot;),
                       Port   = 21050)</code></pre>
 </div>
+<div id="known-issues" class="section level2">
+<h2>Known issues</h2>
+<div id="switching-form-impala-to-hive" class="section level3">
+<h3>Switching form Impala to Hive</h3>
+<p>If you create a table in Impala and then drop the Hive metadata, you will need to invalidate the Impala metadata.</p>
+<pre class="r"><code>impala_con &lt;- dbConnect(odbc::odbc(), &quot;Impala&quot;)
+dbWriteTable(impala_con, &quot;mtcars&quot;, mtcars)
+hive_con &lt;- dbConnect(odbc::odbc(), &quot;Hive&quot;)
+dbRemoveTable(hive_con, &quot;mtcars&quot;)
+
+dbReadTable(impala_con, &quot;mtcars&quot;) # succeeds
+dbExistsTable(impala_con, &quot;mtcars&quot;) # fails
+
+dbGetQuery(odbcCon, &quot;INVALIDATE METADATA mtcars&quot;)
+dbExistsTable(impala_con, &quot;mtcars&quot;) # succeeds</code></pre>
+<p>This happens because dropping the Hive metadata does not drop the Impala metadata. More information can be found in the Cloudera documentation <a href="https://www.cloudera.com/documentation/enterprise/5-2-x/topics/impala_hadoop.html">here</a>.</p>
+</div>
+</div>

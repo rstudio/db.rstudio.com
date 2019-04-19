@@ -40,5 +40,23 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ```
 
+## Known issues
 
+### Switching form Impala to Hive
 
+If you create a table in Impala and then drop the Hive metadata, you will need to invalidate the Impala metadata.
+
+```r
+impala_con <- dbConnect(odbc::odbc(), "Impala")
+dbWriteTable(impala_con, "mtcars", mtcars)
+hive_con <- dbConnect(odbc::odbc(), "Hive")
+dbRemoveTable(hive_con, "mtcars")
+
+dbReadTable(impala_con, "mtcars") # succeeds
+dbExistsTable(impala_con, "mtcars") # fails
+
+dbGetQuery(odbcCon, "INVALIDATE METADATA mtcars")
+dbExistsTable(impala_con, "mtcars") # succeeds
+```
+
+This happens because dropping the Hive metadata does not drop the Impala metadata. More information can be found in the Cloudera documentation [here](https://www.cloudera.com/documentation/enterprise/5-2-x/topics/impala_hadoop.html).
