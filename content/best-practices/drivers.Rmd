@@ -53,7 +53,7 @@ application is used to manage ODBC data sources on Windows.
 
 ### Setting up database connections
 
-See the section with the same name in the [Linux section](/drivers/#linux-debian-ubuntu).
+See the section with the same name in the [Linux section](/best-practices/drivers/#setting-up-database-connections-1).
 
 ## Linux Debian / Ubuntu
 
