@@ -10,39 +10,59 @@ aliases:
 
 
 
-<p>The bigrquery packages provides an R interface to <a href="https://developers.google.com/bigquery/">Google BigQuery</a>. It makes it easy to retrieve metadata about your projects, datasets, tables and jobs, and provides a convenient wrapper for working with bigquery from R.</p>
-<section id="installation" class="level2">
+<p>The bigrquery packages provides an R interface to
+<a href="https://developers.google.com/bigquery/">Google BigQuery</a>. It makes it easy
+to retrieve metadata about your projects, datasets, tables and jobs, and
+provides a convenient wrapper for working with bigquery from R.</p>
+<div id="installation" class="section level2">
 <h2>Installation</h2>
 <p>The current bigrquery release can be installed from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;bigrquery&quot;)</code></pre>
 <p>The newest development release can be installed from github:</p>
 <pre class="r"><code># install.packages(&#39;devtools&#39;)
 devtools::install_github(&quot;rstats-db/bigrquery&quot;)</code></pre>
-</section>
-<section id="authentication" class="level2">
+</div>
+<div id="authentication" class="section level2">
 <h2>Authentication</h2>
-<p>The first time you use bigrquery in a session, it will ask you to <a href="https://developers.google.com/bigquery/authorization">authorize bigrquery</a> in the browser. This gives bigrquery the credentials to access data on your behalf. By default, bigrquery picks up <a href="http://github.com/hadley/httr">httr’s</a> policy of caching per-working-directory credentials in <code>.httr-oauth</code>.</p>
-<p>Note that <code>bigrquery</code> requests permission to modify your data; in general, the only data created or modified by <code>bigrquery</code> are the temporary tables created as query results, unless you explicitly modify your own data (say by calling <code>delete_table()</code> or <code>insert_upload_job()</code>).</p>
-</section>
-<section id="sample-data-and-a-billing-project" class="level2">
+<p>The first time you use bigrquery in a session, it will ask you to
+<a href="https://developers.google.com/bigquery/authorization">authorize bigrquery</a> in
+the browser. This gives bigrquery the credentials to access data on your
+behalf. By default, bigrquery picks up <a href="http://github.com/hadley/httr">httr’s</a>
+policy of caching per-working-directory credentials in <code>.httr-oauth</code>.</p>
+<p>Note that <code>bigrquery</code> requests permission to modify your data; in general, the
+only data created or modified by <code>bigrquery</code> are the temporary tables created
+as query results, unless you explicitly modify your own data (say by calling
+<code>delete_table()</code> or <code>insert_upload_job()</code>).</p>
+</div>
+<div id="sample-data-and-a-billing-project" class="section level2">
 <h2>Sample data and a billing project</h2>
-<p>If you just want to play around with the bigquery API, it’s easiest to start with the Google’s free <a href="https://developers.google.com/bigquery/docs/sample-tables">sample data</a>. To do that, you’ll also need to create your own project for billing purposes. If you’re just playing around, it’s unlikely that you’ll go over the 10,000 request/day free limit, but google still needs a project that it can bill (you don’t even need to provide a credit card).</p>
+<p>If you just want to play around with the bigquery API, it’s easiest to start
+with the Google’s free
+<a href="https://developers.google.com/bigquery/docs/sample-tables">sample data</a>. To
+do that, you’ll also need to create your own project for billing purposes. If
+you’re just playing around, it’s unlikely that you’ll go over the 10,000
+request/day free limit, but google still needs a project that it can bill (you
+don’t even need to provide a credit card).</p>
 <p>To create a project:</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li>Open <a href="https://console.cloud.google.com/" class="uri">https://console.cloud.google.com/</a></li>
 <li>Click “Create Project” at the top</li>
 <li>Select a name and project ID, and click “Create”</li>
-<li>Turn on the BigQuery API by clicking “APIs &amp; Auth” on the left, scrolling down to “BigQuery API”, and clicking the button at the right from “OFF” to “ON”.</li>
+<li>Turn on the BigQuery API by clicking “APIs &amp; Auth” on the left, scrolling
+down to “BigQuery API”, and clicking the button at the right from “OFF” to
+“ON”.</li>
 <li>Click on “Overview” at the left</li>
-<li>Use the <code>Project ID</code> or <code>Project Number</code> to identify your project with <code>bigrquery</code>. (You can also use the project number, though it’s harder to remember.)</li>
+<li>Use the <code>Project ID</code> or <code>Project Number</code> to identify your project with
+<code>bigrquery</code>. (You can also use the project number, though it’s harder to
+remember.)</li>
 </ol>
 <p>To run your first query:</p>
 <pre class="r"><code>library(bigrquery)
 project &lt;- &quot;fantastic-voyage-389&quot; # put your project ID here
 sql &lt;- &quot;SELECT year, month, day, weight_pounds FROM [publicdata:samples.natality] LIMIT 5&quot;
 query_exec(sql, project = project)</code></pre>
-</section>
-<section id="using-dbi-and-dplyr" class="level2">
+</div>
+<div id="using-dbi-and-dplyr" class="section level2">
 <h2>Using <code>DBI</code> and <code>dplyr</code></h2>
 <p>For a more traditional database connection using <code>dbConnect()</code>, the driver to use is <code>bigrquery::dbi_driver()</code>.</p>
 <p>The arguments passed to Big Query connections differ a bit from others, there are 3 specific arguments:</p>
@@ -58,8 +78,8 @@ query_exec(sql, project = project)</code></pre>
                        billing = project)</code></pre>
 <p>The <code>stations</code> table can then be referred to using <code>tbl()</code></p>
 <pre class="r"><code>tbl(con, &quot;stations&quot;)</code></pre>
-</section>
-<section id="useful-links" class="level2">
+</div>
+<div id="useful-links" class="section level2">
 <h2>Useful links</h2>
 <ul>
 <li><a href="https://developers.google.com/bigquery/query-reference">SQL reference</a></li>
@@ -67,4 +87,4 @@ query_exec(sql, project = project)</code></pre>
 <li><a href="https://bigquery.cloud.google.com/">Query/job console</a></li>
 <li><a href="https://console.cloud.google.com/">Billing console</a></li>
 </ul>
-</section>
+</div>
