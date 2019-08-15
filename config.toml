@@ -8,104 +8,81 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 canonifyurls = true
 # Enable Google Analytics by entering your tracking id
 googleAnalytics = "UA-20375833-20"
-
 [params]
-
 	author = "RStudio"
 	description = ""
 	copyright = ""
-	
 	provider = ""
 	repo_url = ""
-
   version = "1.0.0"
   logo = "/rstudio-logo.png"
   favicon = "favicon.png"
-  
-
-
 	[params.palette]
     	primary = "rstudio-dark"
     	accent  = "orange"
-
-    [params.font]
-    	text = "sans-serif"
-    	code = "Ubuntu Mono"
-
+  [params.font]
+  	text = "sans-serif"
+  	code = "Ubuntu Mono"
 [[menu.main]]
   weight = 1
   name = "Getting Started"
   url = "/getting-started/"
-
 [[menu.main]]
   weight = 2
   name = "Connect to a Database"
   url = "/getting-started/connect-to-database"
   parent = "Getting Started"
-
 [[menu.main]]
   weight = 3
   name = "Database Queries"
   url = "/getting-started/database-queries"
   parent = "Getting Started"
-
 [[menu.main]]
   weight = 10
 	name   = "Packages"
-	
 [[menu.main]]
   weight = 11
 	name   = "dplyr"
 	parent = "Packages"
 	url    = "/dplyr/"
-
 [[menu.main]]
   weight = 12
 	name   = "DBI"
 	parent = "Packages"
 	url    = "/dbi/"
-	
 [[menu.main]]
   weight = 13
 	name   = "odbc"
 	parent = "Packages"
 	url    = "/odbc/"
-
 [[menu.main]]
   weight = 17
 	name   = "RStudio"
 	url    = "/rstudio/connections/"
-	
 [[menu.main]]
   weight = 18
 	name   = "Connections Pane"
 	parent = "RStudio"
 	url    = "/rstudio/connections/"	
-
 [[menu.main]]
   weight = 19
 	name   = "Professional Drivers"
 	parent = "RStudio"
-	url    = "/rstudio/pro-drivers/"	
-
-
+	url    = "/rstudio/pro-drivers/"
 [[menu.main]]
   weight = 20
 	name   = "Best Practices"
 	url    = "/best-practices/"
-	
 [[menu.main]]
   weight = 21
   name = "Setting up ODBC Drivers"
   url    = "/best-practices/drivers/"
   parent = "Best Practices"
-
 [[menu.main]]
 	weight = 22
   name   = "Run Queries Safely"
 	url    = "/best-practices/run-queries-safely/"
 	parent = "Best Practices"
-
 [[menu.main]]
   weight = 23
 	name   = "Securing Deployed Content"
@@ -117,42 +94,35 @@ googleAnalytics = "UA-20375833-20"
 	name   = "Securing Credentials"
 	url    = "/best-practices/managing-credentials/"
 	parent = "Best Practices"	
-
 [[menu.main]]
   weight = 25
 	name   = "Making Scripts Portable"
 	url    = "/best-practices/portable-code/"
 	parent = "Best Practices"	  
-
 [[menu.main]]
   weight = 26
 	name   = "Creating Visualizations"
 	url    = "/best-practices/visualization/"
 	parent = "Best Practices"	  
-	
 [[menu.main]]
   weight = 27
 	name   = "Selecting a database interface"
 	url    = "/best-practices/select-interface/"
 	parent = "Best Practices"	  
-
 [[menu.main]]
   weight = 28
 	name   = "Enterprise-ready dashboards"
 	url    = "/best-practices/dashboards/"
-	parent = "Best Practices"	  
-	
+	parent = "Best Practices"	
 [[menu.main]]
   weight = 29
 	name   = "Schema selection"
 	url    = "/best-practices/schema/"
-	parent = "Best Practices"	  
-	
+	parent = "Best Practices"	 
 [[menu.main]]
   weight = 30
 	name   = "Databases"
 	url    = "/databases/"
-	
 [[menu.main]]
   weight = 31
 	name   = "MS SQL Server"
@@ -222,49 +192,36 @@ googleAnalytics = "UA-20375833-20"
   weight = 50
 	name   = "Advanced"
 	url    = "/advanced/"
-
 [[menu.main]]
   weight = 51
 	name   = "DBI Backend"
 	parent = "Advanced"
 	url    = "/advanced/backend/"
-	
 [[menu.main]]
   weight = 52
 	name   = "SQL Translation"
 	parent = "Advanced"
 	url    = "/advanced/translation/"
-
 [[menu.main]]
   weight = 52
 	name   = "Connection Contract"
 	parent = "Advanced"
 	url    = "/advanced/contract/"
-
 [[menu.main]]
   weight = 52
 	name   = "Connection Snippet"
 	parent = "Advanced"
 	url    = "/advanced/snippets/"
-
-	
 [[menu.main]]
   weight = 60
 	name   = "Other Resources"
 	url    = "/other_resources/media/"
-	
 [[menu.main]]
   weight = 61
 	name   = "Media"
 	parent   = "Other Resources"
 	url    = "/other_resources/media/"
-
-
-
-	
 [social]
 	twitter = "rstudio"
 	github  = "rstudio"
 	email   = "info@rstudio.com"
-
-
