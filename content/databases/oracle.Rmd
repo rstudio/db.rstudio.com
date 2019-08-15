@@ -8,6 +8,7 @@ aliases:
 ---
 
 ## Driver Options
+Connections to Oracle require the [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client.html) to be installed.
 
 - **Oracle** - Please refer to Oracle's website for instructions on how to download and setup their official driver: [Oracle ODBC driver page](http://www.oracle.com/technetwork/database/windows/index-098976.html )
 
