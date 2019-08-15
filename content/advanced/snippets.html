@@ -34,7 +34,7 @@ data &lt;- read_csv(readr_example(&quot;mtcars.csv&quot;))</code></pre>
 data &lt;- read_csv(readr_example(&quot;mtcars.csv&quot;))
 data[data$mpg == ${0:Miles per Gallon=21.4} | data$cyl == ${1:Cylinders=6}, ]</code></pre>
 <p><img src="resources/connections/fields-connection-interface.png" width="300" style="display: inline-block;margin: 0 auto;"/></p>
-<p>In order to create a <code>;</code> separated list of values, one can use the syntax <code>${Position:Label=Default:Key}</code>. Semicolon-separated list are common in database connections and therefore, natevely supported in snippet files, for instance:</p>
+<p>In order to create a <code>;</code> separated list of values, one can use the syntax <code>${Position:Label=Default:Key}</code>. Semicolon-separated list are common in database connections and therefore, natively supported in snippet files, for instance:</p>
 <pre class="r"><code>&quot;${2:Letters=ABC:LettersKey}${3:Numbers=123:NumbersKey}&quot;</code></pre>
 <p><img src="resources/connections/keyvalue-connection-interface.png" width="300" style="display: inline-block;margin: 0 auto;"/></p>
 <p>There are a couple escape characters supported: <code>$colon$</code> to escape <code>:</code> and <code>$equal</code> to escape <code>=</code>.</p>
@@ -56,7 +56,7 @@ data[data$mpg == ${0:Miles per Gallon=21.4} | data$cyl == ${1:Cylinders=6}, ]</c
 </div>
 <div id="snippet-files-1" class="section level3">
 <h3>Snippet Files</h3>
-<p>Snippet Files are specified under the <code>/inst/rstudio/connections</code> and follow the same syntax mentioend in the “Snippet Files” section.</p>
+<p>Snippet Files are specified under the <code>/inst/rstudio/connections</code> and follow the same syntax mentioned in the “Snippet Files” section.</p>
 </div>
 <div id="shiny-application" class="section level3">
 <h3>Shiny Application</h3>

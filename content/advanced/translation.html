@@ -22,37 +22,40 @@ library(dplyr)</code></pre>
 <li><p><code>&quot;</code> and <code>'</code> mean different things</p>
 <pre class="r"><code># In SQLite, variable names are escaped by double quotes:
 translate_sql(x)
-#&gt; &lt;SQL&gt; &quot;x&quot;
+#&gt; &lt;SQL&gt; `x`
 # And strings are escaped by single quotes
 translate_sql(&quot;x&quot;)
 #&gt; &lt;SQL&gt; &#39;x&#39;</code></pre></li>
 <li><p>Many functions have slightly different names</p>
 <pre class="r"><code>translate_sql(x == 1 &amp;&amp; (y &lt; 2 || z &gt; 3))
-#&gt; &lt;SQL&gt; &quot;x&quot; = 1.0 AND (&quot;y&quot; &lt; 2.0 OR &quot;z&quot; &gt; 3.0)
+#&gt; &lt;SQL&gt; `x` = 1.0 AND (`y` &lt; 2.0 OR `z` &gt; 3.0)
 translate_sql(x ^ 2 &lt; 10)
-#&gt; &lt;SQL&gt; POWER(&quot;x&quot;, 2.0) &lt; 10.0
+#&gt; &lt;SQL&gt; POWER(`x`, 2.0) &lt; 10.0
 translate_sql(x %% 2 == 10)
-#&gt; &lt;SQL&gt; &quot;x&quot; % 2.0 = 10.0</code></pre></li>
+#&gt; &lt;SQL&gt; `x` % 2.0 = 10.0</code></pre></li>
 <li><p>And some functions have different argument orders:</p>
 <pre class="r"><code>translate_sql(substr(x, 5, 10))
-#&gt; &lt;SQL&gt; substr(&quot;x&quot;, 5, 6)
+#&gt; &lt;SQL&gt; SUBSTR(`x`, 5, 6)
 translate_sql(log(x, 10))
-#&gt; &lt;SQL&gt; log(10.0, &quot;x&quot;)</code></pre></li>
-<li><p>R and SQL have different defaults for integers and reals. In R, 1 is a real, and 1L is an integer. In SQL, 1 is an integer, and 1.0 is a real</p>
+#&gt; &lt;SQL&gt; LOG(10.0, `x`)</code></pre></li>
+<li><p>R and SQL have different defaults for integers and reals.
+In R, 1 is a real, and 1L is an integer. In SQL, 1 is an integer, and 1.0 is a real</p>
 <pre class="r"><code>translate_sql(1)
 #&gt; &lt;SQL&gt; 1.0
 translate_sql(1L)
 #&gt; &lt;SQL&gt; 1</code></pre></li>
 <li><p>If statements are translated into a case statement:</p>
 <pre class="r"><code>translate_sql(if (x &gt; 5) &quot;big&quot; else &quot;small&quot;)
-#&gt; &lt;SQL&gt; CASE WHEN (&quot;x&quot; &gt; 5.0) THEN (&#39;big&#39;) ELSE (&#39;small&#39;) END</code></pre></li>
+#&gt; &lt;SQL&gt; CASE WHEN (`x` &gt; 5.0) THEN (&#39;big&#39;) WHEN NOT(`x` &gt; 5.0) THEN (&#39;small&#39;) END</code></pre></li>
 </ul>
 <div id="known-functions" class="section level3">
 <h3>Known functions</h3>
 <p><code>dplyr</code> knows how to convert the following R functions to SQL:</p>
 <ul>
 <li>basic math operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%%</code>, <code>^</code></li>
-<li>math functions: <code>abs</code>, <code>acos</code>, <code>acosh</code>, <code>asin</code>, <code>asinh</code>, <code>atan</code>, <code>atan2</code>, <code>atanh</code>, <code>ceiling</code>, <code>cos</code>, <code>cosh</code>, <code>cot</code>, <code>coth</code>, <code>exp</code>, <code>floor</code>, <code>log</code>, <code>log10</code>, <code>round</code>, <code>sign</code>, <code>sin</code>, <code>sinh</code>, <code>sqrt</code>, <code>tan</code>, <code>tanh</code></li>
+<li>math functions: <code>abs</code>, <code>acos</code>, <code>acosh</code>, <code>asin</code>, <code>asinh</code>, <code>atan</code>, <code>atan2</code>,
+<code>atanh</code>, <code>ceiling</code>, <code>cos</code>, <code>cosh</code>, <code>cot</code>, <code>coth</code>, <code>exp</code>, <code>floor</code>,
+<code>log</code>, <code>log10</code>, <code>round</code>, <code>sign</code>, <code>sin</code>, <code>sinh</code>, <code>sqrt</code>, <code>tan</code>, <code>tanh</code></li>
 <li>logical comparisons: <code>&lt;</code>, <code>&lt;=</code>, <code>!=</code>, <code>&gt;=</code>, <code>&gt;</code>, <code>==</code>, <code>%in%</code></li>
 <li>boolean operations: <code>&amp;</code>, <code>&amp;&amp;</code>, <code>|</code>, <code>||</code>, <code>!</code>, <code>xor</code></li>
 <li>basic aggregations: <code>mean</code>, <code>sum</code>, <code>min</code>, <code>max</code>, <code>sd</code>, <code>var</code></li>
@@ -61,7 +64,7 @@ translate_sql(1L)
 </ul>
 <p>Perfect translation is not possible because databases don’t have all the functions that R does. The goal of <code>dplyr</code> is to provide a semantic rather than a literal translation: what you mean rather than what is done. In fact, even for functions that exist both in databases and R, you shouldn’t expect results to be identical; database programmers have different priorities than R core programmers. For example, in R, in order to get a higher level of numerical accuracy, <code>mean()</code> loops through the data twice. R’s <code>mean()</code> also provides a <code>trim</code> option for computing trimmed means; this is something that databases do not provide. Databases automatically drop NULLs (their equivalent of missing values), whereas in R you have to ask nicely. This means the essence of simple calls like <code>mean(x)</code> will be translated accurately, but more complicated calls like <code>mean(x, trim = 0.5, na.rm = TRUE)</code> will raise an error:</p>
 <pre class="r"><code>translate_sql(mean(x, na.rm = TRUE))
-#&gt; Error in mean(x, na.rm = TRUE): unused argument (na.rm = TRUE)
+#&gt; &lt;SQL&gt; AVG(`x`) OVER ()
 translate_sql(mean(x, trim = 0.1))
 #&gt; Error in mean(x, trim = 0.1): unused argument (trim = 0.1)</code></pre>
 <p><code>translate_sql()</code> takes an optional <code>con</code> parameter. If not supplied, this causes <code>dplyr</code> to generate (approximately) SQL-92-compliant SQL. If supplied, <code>dplyr</code> uses <code>sql_translate_env()</code> to look up a custom environment, which makes it possible for different databases to generate slightly different SQL; see <code>vignette(&quot;new-backend&quot;)</code> for more details.</p>
@@ -70,47 +73,77 @@ translate_sql(mean(x, trim = 0.1))
 <h3>Unknown functions</h3>
 <p>Any function that <code>dplyr</code> doesn’t know how to convert is left as-is. This means that database functions that are not covered by <code>dplyr</code> can be used directly via <code>translate_sql()</code>. Here a couple of examples that will work with <a href="http://www.sqlite.org/lang_corefunc.html">SQLite</a>:</p>
 <pre class="r"><code>translate_sql(glob(x, y))
-#&gt; &lt;SQL&gt; GLOB(&quot;x&quot;, &quot;y&quot;)
+#&gt; &lt;SQL&gt; glob(`x`, `y`)
 translate_sql(x %like% &quot;ab%&quot;)
-#&gt; &lt;SQL&gt; &quot;x&quot; LIKE &#39;ab%&#39;</code></pre>
+#&gt; &lt;SQL&gt; `x` like &#39;ab%&#39;</code></pre>
 </div>
 <div id="window-functions" class="section level3">
 <h3>Window functions</h3>
 <p>Things get a little trickier with window functions, because SQL’s window functions are considerably more expressive than the specific variants provided by base R or <code>dplyr</code>. They have the form <code>[expression] OVER ([partition clause] [order clause] [frame_clause])</code>:</p>
 <ul>
-<li><p>The <strong>expression</strong> is a combination of variable names and window functions. Support for window functions varies from database to database, but most support the ranking functions, <code>lead</code>, <code>lag</code>, <code>nth</code>, <code>first</code>, <code>last</code>, <code>count</code>, <code>min</code>, <code>max</code>, <code>sum</code>, <code>avg</code> and <code>stddev</code>.</p></li>
-<li><p>The <strong>partition clause</strong> specifies how the window function is broken down over groups. It plays an analogous role to <code>GROUP BY</code> for aggregate functions, and <code>group_by()</code> in <code>dplyr</code>. It is possible for different window functions to be partitioned into different groups, but not all databases support it, and neither does <code>dplyr</code>.</p></li>
-<li><p>The <strong>order clause</strong> controls the ordering (when it makes a difference). This is important for the ranking functions since it specifies which variables to rank by, but it’s also needed for cumulative functions and lead. Whenever you’re thinking about before and after in SQL, you must always tell it which variable defines the order. If the order clause is missing when needed, some databases fail with an error message while others return non-deterministic results.</p></li>
-<li><p>The <strong>frame clause</strong> defines which rows, or <strong>frame</strong>, that are passed to the window function, describing which rows (relative to the current row) should be included. The frame clause provides two offsets which determine the start and end of frame. There are three special values: <code>-Inf</code> means to include all preceeding rows (in SQL, “unbounded preceding”), <code>0</code> means the current row (“current row”), and <code>Inf</code> means all following rows (“unbounded following)”. The complete set of options is comprehensive, but fairly confusing, and is summarised visually below.</p>
+<li><p>The <strong>expression</strong> is a combination of variable names and window functions.
+Support for window functions varies from database to database, but most
+support the ranking functions, <code>lead</code>, <code>lag</code>, <code>nth</code>, <code>first</code>,
+<code>last</code>, <code>count</code>, <code>min</code>, <code>max</code>, <code>sum</code>, <code>avg</code> and <code>stddev</code>.</p></li>
+<li><p>The <strong>partition clause</strong> specifies how the window function is broken down
+over groups. It plays an analogous role to <code>GROUP BY</code> for aggregate functions,
+and <code>group_by()</code> in <code>dplyr</code>. It is possible for different window functions to
+be partitioned into different groups, but not all databases support it, and
+neither does <code>dplyr</code>.</p></li>
+<li><p>The <strong>order clause</strong> controls the ordering (when it makes a difference).
+This is important for the ranking functions since it specifies which
+variables to rank by, but it’s also needed for cumulative functions and lead.
+Whenever you’re thinking about before and after in SQL, you must always tell
+it which variable defines the order. If the order clause is missing when
+needed, some databases fail with an error message while others return
+non-deterministic results.</p></li>
+<li><p>The <strong>frame clause</strong> defines which rows, or <strong>frame</strong>, that are passed
+to the window function, describing which rows (relative to the current row)
+should be included. The frame clause provides two offsets which determine
+the start and end of frame. There are three special values: <code>-Inf</code> means
+to include all preceeding rows (in SQL, “unbounded preceding”), <code>0</code> means the
+current row (“current row”), and <code>Inf</code> means all following rows (“unbounded
+following)”. The complete set of options is comprehensive, but fairly
+confusing, and is summarised visually below.</p>
 <pre class="r"><code>knitr::include_graphics(&quot;windows.png&quot;, dpi = 200)</code></pre>
 <p><img src="windows.png" /><!-- --></p>
-<p>Of the many possible specifications, there are only three that commonly used. They select between aggregation variants:</p>
+<p>Of the many possible specifications, there are only three that commonly
+used. They select between aggregation variants:</p>
 <ul>
 <li><p>Recycled: <code>BETWEEN UNBOUND PRECEEDING AND UNBOUND FOLLOWING</code></p></li>
 <li><p>Cumulative: <code>BETWEEN UNBOUND PRECEEDING AND CURRENT ROW</code></p></li>
 <li><p>Rolling: <code>BETWEEN 2 PRECEEDING AND 2 FOLLOWING</code></p></li>
 </ul>
-<p><code>dplyr</code> generates the frame clause based on whether your using a recycled aggregate or a cumulative aggregate.</p></li>
+<p><code>dplyr</code> generates the frame clause based on whether your using a recycled
+aggregate or a cumulative aggregate.</p></li>
 </ul>
 <p>To see how individual window functions are translated to SQL, we can again use <code>translate_sql()</code>:</p>
 <pre class="r"><code>translate_sql(mean(G))
-#&gt; &lt;SQL&gt; avg(&quot;G&quot;) OVER ()
+#&gt; Warning: Missing values are always removed in SQL.
+#&gt; Use `AVG(x, na.rm = TRUE)` to silence this warning
+#&gt; This warning is displayed only once per session.
+#&gt; &lt;SQL&gt; AVG(`G`) OVER ()
 translate_sql(rank(G))
-#&gt; &lt;SQL&gt; rank() OVER (ORDER BY &quot;G&quot;)
+#&gt; &lt;SQL&gt; RANK() OVER (ORDER BY `G`)
 translate_sql(ntile(G, 2))
-#&gt; &lt;SQL&gt; NTILE(2) OVER (ORDER BY &quot;G&quot;)
+#&gt; &lt;SQL&gt; NTILE(2) OVER (ORDER BY `G`)
 translate_sql(lag(G))
-#&gt; &lt;SQL&gt; LAG(&quot;G&quot;, 1, NULL) OVER ()</code></pre>
+#&gt; &lt;SQL&gt; LAG(`G`, 1, NULL) OVER ()</code></pre>
 <p>If the tbl has been grouped or arranged previously in the pipeline, then <code>dplyr</code> will use that information to set the “partition by” and “order by” clauses. For interactive exploration, you can achieve the same effect by setting the <code>vars_group</code> and <code>vars_order</code> arguments to <code>translate_sql()</code></p>
 <pre class="r"><code>translate_sql(cummean(G), vars_order = &quot;year&quot;)
-#&gt; &lt;SQL&gt; mean(&quot;G&quot;) OVER (ORDER BY &quot;year&quot; ROWS UNBOUNDED PRECEDING)
+#&gt; &lt;SQL&gt; AVG(`G`) OVER (ORDER BY `year` ROWS UNBOUNDED PRECEDING)
 translate_sql(rank(), vars_group = &quot;ID&quot;)
-#&gt; &lt;SQL&gt; rank() OVER (PARTITION BY &quot;ID&quot;)</code></pre>
+#&gt; &lt;SQL&gt; RANK() OVER (PARTITION BY `ID`)</code></pre>
 <p>There are some challenges when translating window functions between R and SQL, because <code>dplyr</code> tries to keep the window functions as similar as possible to both the existing R analogues and to the SQL functions. This means that there are three ways to control the order clause depending on which window function you’re using:</p>
 <ul>
-<li><p>For ranking functions, the ordering variable is the first argument: <code>rank(x)</code>, <code>ntile(y, 2)</code>. If omitted or <code>NULL</code>, will use the default ordering associated with the tbl (as set by <code>arrange()</code>).</p></li>
-<li><p>Accumulating aggregates only take a single argument (the vector to aggregate). To control ordering, use <code>order_by()</code>.</p></li>
-<li><p>Aggregates implemented in <code>dplyr</code> (<code>lead</code>, <code>lag</code>, <code>nth_value</code>, <code>first_value</code>, <code>last_value</code>) have an <code>order_by</code> argument. Supply it to override the default ordering.</p></li>
+<li><p>For ranking functions, the ordering variable is the first argument: <code>rank(x)</code>,
+<code>ntile(y, 2)</code>. If omitted or <code>NULL</code>, will use the default ordering associated
+with the tbl (as set by <code>arrange()</code>).</p></li>
+<li><p>Accumulating aggregates only take a single argument (the vector to aggregate).
+To control ordering, use <code>order_by()</code>.</p></li>
+<li><p>Aggregates implemented in <code>dplyr</code> (<code>lead</code>, <code>lag</code>, <code>nth_value</code>, <code>first_value</code>,
+<code>last_value</code>) have an <code>order_by</code> argument. Supply it to override the
+default ordering.</p></li>
 </ul>
 <p>The three options are illustrated in the snippet below:</p>
 <pre class="r"><code>mutate(players,
@@ -135,7 +168,7 @@ airports &lt;- copy_to(con, nycflights13::airports)</code></pre>
   select(contains(&quot;delay&quot;)) %&gt;%
   show_query()
 #&gt; &lt;SQL&gt;
-#&gt; SELECT `dep_delay` AS `dep_delay`, `arr_delay` AS `arr_delay`
+#&gt; SELECT `dep_delay`, `arr_delay`
 #&gt; FROM `nycflights13::flights`
 
 flights %&gt;%
@@ -144,9 +177,9 @@ flights %&gt;%
   show_query()
 #&gt; &lt;SQL&gt;
 #&gt; SELECT `distance`, `air_time`, `distance` / (`air_time` / 60.0) AS `speed`
-#&gt; FROM (SELECT `distance` AS `distance`, `air_time` AS `air_time`
-#&gt; FROM `nycflights13::flights`)</code></pre>
-<p>(As you can see here, the generated SQL isn’t always as minimal as you might generate by hand.)</p></li>
+#&gt; FROM `nycflights13::flights`</code></pre>
+<p>(As you can see here, the generated SQL isn’t always as minimal as you
+might generate by hand.)</p></li>
 <li><p><code>filter()</code> generates a <code>WHERE</code> clause:</p>
 <pre class="r"><code>flights %&gt;% 
   filter(month == 1, day == 1) %&gt;%
@@ -169,6 +202,9 @@ flights %&gt;%
   summarise(delay = mean(dep_delay)) %&gt;%
   show_query()
 #&gt; &lt;SQL&gt;
+#&gt; Warning: Missing values are always removed in SQL.
+#&gt; Use `mean(x, na.rm = TRUE)` to silence this warning
+#&gt; This warning is displayed only once per session.
 #&gt; SELECT `month`, `day`, AVG(`dep_delay`) AS `delay`
 #&gt; FROM `nycflights13::flights`
 #&gt; GROUP BY `month`, `day`</code></pre></li>
@@ -176,14 +212,14 @@ flights %&gt;%
 </div>
 <div id="dual-table-verbs" class="section level3">
 <h3>Dual table verbs</h3>
-<div style="white-space: pre-line;"><code>inner_join()</code> | <code>SELECT * FROM x JOIN y ON x.a = y.a</code>
-<code>left_join()</code> | <code>SELECT * FROM x LEFT JOIN y ON x.a = y.a</code>
-<code>right_join()</code> | <code>SELECT * FROM x RIGHT JOIN y ON x.a = y.a</code>
-<code>full_join()</code> | <code>SELECT * FROM x FULL JOIN y ON x.a = y.a</code>
-<code>semi_join()</code> | <code>SELECT * FROM x WHERE EXISTS (SELECT 1 FROM y WHERE x.a = y.a)</code>
-<code>anti_join()</code> | <code>SELECT * FROM x WHERE NOT EXISTS (SELECT 1 FROM y WHERE x.a = y.a)</code>
-<code>intersect(x, y)</code>| <code>SELECT * FROM x INTERSECT SELECT * FROM y</code>
-<code>union(x, y)</code> | <code>SELECT * FROM x UNION SELECT * FROM y</code>
+<div class="line-block"><code>inner_join()</code> | <code>SELECT * FROM x JOIN y ON x.a = y.a</code><br />
+<code>left_join()</code> | <code>SELECT * FROM x LEFT JOIN y ON x.a = y.a</code><br />
+<code>right_join()</code> | <code>SELECT * FROM x RIGHT JOIN y ON x.a = y.a</code><br />
+<code>full_join()</code> | <code>SELECT * FROM x FULL JOIN y ON x.a = y.a</code><br />
+<code>semi_join()</code> | <code>SELECT * FROM x WHERE EXISTS (SELECT 1 FROM y WHERE x.a = y.a)</code><br />
+<code>anti_join()</code> | <code>SELECT * FROM x WHERE NOT EXISTS (SELECT 1 FROM y WHERE x.a = y.a)</code><br />
+<code>intersect(x, y)</code>| <code>SELECT * FROM x INTERSECT SELECT * FROM y</code><br />
+<code>union(x, y)</code> | <code>SELECT * FROM x UNION SELECT * FROM y</code><br />
 <code>setdiff(x, y)</code> | <code>SELECT * FROM x EXCEPT SELECT * FROM y</code></div>
 <p><code>x</code> and <code>y</code> don’t have to be tables in the same database. If you specify <code>copy = TRUE</code>, <code>dplyr</code> will copy the <code>y</code> table into the same location as the <code>x</code> variable. This is useful if you’ve downloaded a summarised dataset and determined a subset of interest that you now want the full data for. You can use <code>semi_join(x, y, copy = TRUE)</code> to upload the indices of interest to a temporary table in the same database as <code>x</code>, and then perform a efficient semi join in the database.</p>
 <p>If you’re working with large data, it maybe also be helpful to set <code>auto_index = TRUE</code>. That will automatically add an index on the join variables to the temporary table.</p>
@@ -192,9 +228,17 @@ flights %&gt;%
 <h3>Behind the scenes</h3>
 <p>The verb level SQL translation is implemented on top of <code>tbl_lazy</code>, which basically tracks the operations you perform in a pipeline (see <code>lazy-ops.R</code>). Turning that into a SQL query takes place in three steps:</p>
 <ul>
-<li><p><code>sql_build()</code> recurses over the lazy op data structure building up query objects (<code>select_query()</code>, <code>join_query()</code>, <code>set_op_query()</code>, etc.) that represent the different subtypes of <code>SELECT</code> queries that we might generate.</p></li>
-<li><p><code>sql_optimise()</code> takes a pass over these SQL objects, looking for potential optimisations. Currently this only involves removing subqueries where possible.</p></li>
-<li><p><code>sql_render()</code> calls an SQL generation function (<code>sql_select()</code>, <code>sql_join()</code>, <code>sql_subquery()</code>, <code>sql_semijoin()</code>, etc.) to produce the actual SQL. Each of these functions is a generic, taking the connection as an argument, so that the details can be customised for different databases.</p></li>
+<li><p><code>sql_build()</code> recurses over the lazy op data structure building up query
+objects (<code>select_query()</code>, <code>join_query()</code>, <code>set_op_query()</code>, etc.)
+that represent the different subtypes of <code>SELECT</code> queries that we might
+generate.</p></li>
+<li><p><code>sql_optimise()</code> takes a pass over these SQL objects, looking for potential
+optimisations. Currently this only involves removing subqueries where
+possible.</p></li>
+<li><p><code>sql_render()</code> calls an SQL generation function (<code>sql_select()</code>, <code>sql_join()</code>,
+<code>sql_subquery()</code>, <code>sql_semijoin()</code>, etc.) to produce the actual SQL.
+Each of these functions is a generic, taking the connection as an argument,
+so that the details can be customised for different databases.</p></li>
 </ul>
 </div>
 </div>
