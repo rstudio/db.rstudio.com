@@ -56,14 +56,17 @@ dbGetQuery(con, paste0(&quot;SELECT * FROM airports WHERE faa = &#39;&quot;, air
 <p>All modern database engines provide a way to write <strong>parameterised queries</strong>, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit, the database can often optimise the query so it runs faster.</p>
 <p>Using a parameterised query with DBI requires three steps.</p>
 <ol style="list-style-type: decimal">
-<li><p>You create a query containing a <code>?</code> placeholder and send it to the database with <code>dbSendQuery()</code>:</p>
+<li><p>You create a query containing a <code>?</code> placeholder and send it to the database
+with <code>dbSendQuery()</code>:</p>
 <pre class="r"><code>airport &lt;- dbSendQuery(con, &quot;SELECT * FROM airports WHERE faa = ?&quot;)</code></pre></li>
-<li><p>Use <code>dbBind()</code> to execute the query with specific values, then <code>dbFetch()</code> to get the results:</p>
+<li><p>Use <code>dbBind()</code> to execute the query with specific values, then <code>dbFetch()</code>
+to get the results:</p>
 <pre class="r"><code>dbBind(airport, list(&quot;GPT&quot;))
 dbFetch(airport)</code></pre>
 <pre><code>##   faa            name      lat       lon alt tz dst
 ## 1 GPT Gulfport-Biloxi 30.40728 -89.07011  28 -6   A</code></pre></li>
-<li><p>Once you’re done using the parameterised query, clean it up by calling <code>dbClearResult()</code></p>
+<li><p>Once you’re done using the parameterised query, clean it up by calling
+<code>dbClearResult()</code></p>
 <pre class="r"><code>dbClearResult(airport)</code></pre></li>
 </ol>
 </div>

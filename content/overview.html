@@ -4,8 +4,7 @@ Title: Databases using R
 
 
 
-<div id="dplyr-as-a-database-interface" class="section level2">
-<h2><strong>dplyr</strong> as a database interface</h2>
+<p>##<strong>dplyr</strong> as a database interface</p>
 <p>The <code>dplyr</code> package simplifies data transformation. It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.</p>
 <p><code>dplyr</code> is able to <strong>interact with databases directly</strong> by translating the <code>dplyr</code> verbs into SQL queries. This convenient feature allows you to ‘speak’ directly with the database from R. Other advantages of this approach are:</p>
 <div>
@@ -17,7 +16,6 @@ Title: Databases using R
 <li><p><strong>Collect into R only a targeted dataset.</strong></p></li>
 <li><p><strong>All of your code is in R.</strong> Because<code>dplyr</code> is used to communicate with the database, there is no need to alternate between languages or tools to perform the data exploration.</p></li>
 </ol>
-</div>
 <div id="connect-to-a-database" class="section level2">
 <h2><strong>Connect to a database</strong></h2>
 <div>
@@ -35,15 +33,15 @@ Title: Databases using R
 <h2>SQL Translations for <code>dplyr</code></h2>
 <p>A complementary package called <code>dbplyr</code> contains the translations of the vendor-specific SQL for <code>dplyr</code> to use. As of today, we have translations for the following databases:</p>
 <ul>
-<li><img src="/logos/mssql.png", width = 50, height = 50> <a href="microsoft-sql-server">Microsoft SQL Server</a></li>
-<li><img src="/logos/oracle.png", width = 50, height = 50> <a href="oracle">Oracle</a></li>
-<li><img src="/logos/hive.png", width = 50, height = 50> <a href="hive">Apache Hive</a></li>
-<li><img src="/logos/impala.png", width = 50, height = 50> <a href="impala">Apache Impala</a></li>
-<li><img src="/logos/postgresql.png", width = 50, height = 50> <a href="postgresql">PostgreSQL</a></li>
+<li>&lt;img src=“/logos/mssql.png”, width = 50, height = 50&gt; <a href="microsoft-sql-server">Microsoft SQL Server</a></li>
+<li>&lt;img src=“/logos/oracle.png”, width = 50, height = 50&gt; <a href="oracle">Oracle</a></li>
+<li>&lt;img src=“/logos/hive.png”, width = 50, height = 50&gt; <a href="hive">Apache Hive</a></li>
+<li>&lt;img src=“/logos/impala.png”, width = 50, height = 50&gt; <a href="impala">Apache Impala</a></li>
+<li>&lt;img src=“/logos/postgresql.png”, width = 50, height = 50&gt; <a href="postgresql">PostgreSQL</a></li>
 </ul>
 <p>In the development version of <code>dbplyr</code>, we also have translations for:</p>
 <ul>
-<li><img src="/logos/redshift.png", width = 50, height = 50> <a href="redshift">Amazon Redshift</a></li>
+<li>&lt;img src=“/logos/redshift.png”, width = 50, height = 50&gt; <a href="redshift">Amazon Redshift</a></li>
 </ul>
 <p>Is the database you are interested in not listed here? You can still use <code>DBI</code> and <code>odbc</code> to connect and send SQL queries. If you would like to contribute a translation, please see the <a href="translation">SQL Translation</a> page in this website.</p>
 </div>

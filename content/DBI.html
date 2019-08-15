@@ -44,7 +44,9 @@ dbDisconnect(con)</code></pre>
 <p>There are four main <code>DBI</code> classes, three of which are each extended by individual database backends:</p>
 <ul>
 <li><p><code>DBIObject</code>: a common base class for all <code>DBI</code>.</p></li>
-<li><p><code>DBIDriver</code>: a base class representing overall DBMS properties. Typically generator functions instantiate the driver objects like <code>RSQLite()</code>, <code>RPostgreSQL()</code>, <code>RMySQL()</code> etc.</p></li>
+<li><p><code>DBIDriver</code>: a base class representing overall DBMS properties.
+Typically generator functions instantiate the driver objects like <code>RSQLite()</code>,
+<code>RPostgreSQL()</code>, <code>RMySQL()</code> etc.</p></li>
 <li><p><code>DBIConnection</code>: represents a connection to a specific database</p></li>
 <li><p><code>DBIResult</code>: the result of a DBMS query or statement.</p></li>
 </ul>

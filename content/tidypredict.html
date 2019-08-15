@@ -7,22 +7,22 @@ output: github_document
 
 <p>Run predictions inside the database. <code>tidypredict</code> parses a fitted R model object, and returns a formula in ‘Tidy Eval’ code that calculates the predictions.</p>
 <p><strong>It works with several databases back-ends</strong> because it leverages <code>dplyr</code> and <code>dbplyr</code> for the final SQL translation of the algorithm. It currently supports <code>lm()</code>, <code>glm()</code>, <code>randomForest()</code> and <code>ranger()</code> models.</p>
-<section id="installation" class="level2">
+<div id="installation" class="section level2">
 <h2>Installation</h2>
 <p>Install <code>tidypredict</code> from CRAN using:</p>
 <pre class="r"><code>install.packages(&quot;tidypredict&quot;)</code></pre>
 <p>Or install the development version using <code>devtools</code> as follows:</p>
 <pre class="r"><code>devtools::install_github(&quot;edgararuiz/tidypredict&quot;)</code></pre>
-</section>
-<section id="intro" class="level2">
+</div>
+<div id="intro" class="section level2">
 <h2>Intro</h2>
 <p><code>tidypredict</code> is able to parse an R model object, such as:</p>
 <pre class="r"><code>model &lt;- lm(mpg ~ wt + cyl, data = mtcars)</code></pre>
 <p>And then creates the SQL statement needed to calculate the fitted prediction:</p>
 <pre class="r"><code>tidypredict_sql(model, dbplyr::simulate_mssql())</code></pre>
-<pre><code>## &lt;SQL&gt; ((39.6862614802529) + ((`wt`) * (-3.19097213898374))) + ((`cyl`) * (-1.5077949682598))</code></pre>
-</section>
-<section id="supported-models" class="level2">
+<pre><code>## &lt;SQL&gt; 39.6862614802529 + (`wt` * -3.19097213898374) + (`cyl` * -1.5077949682598)</code></pre>
+</div>
+<div id="supported-models" class="section level2">
 <h2>Supported models</h2>
 <p>The following R models are currently supported. For more info please review the corresponding vignette:</p>
 <ul>
@@ -31,4 +31,4 @@ output: github_document
 <li><a href="http://tidypredict.netlify.com/articles/randomforest/">Random Forest</a> - <code>randomForest()</code></li>
 <li><a href="http://tidypredict.netlify.com/articles/ranger/">ranger</a> - <code>ranger()</code></li>
 </ul>
-</section>
+</div>
