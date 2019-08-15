@@ -3,7 +3,7 @@ title: PostgreSQL
 logo: "/logos/postgresqllarge.png"
 dplyr: "Yes"
 driver: "Yes"
-package: "RPostgreSQL"
+package: "RPostgres"
 aliases:
   - /postgresql
 ---
@@ -11,9 +11,9 @@ aliases:
 There are two options for connecting to a PostgreSQL database:
 
 - Using the `odbc` package with a database driver
-- Using the `RPostgreSQL`  package
+- Using the `RPostgres`  package
 
-## Using the `odbc`pacakge
+## Using the `odbc` package
 
 The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
 
@@ -46,10 +46,22 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ```
 
-## Using `RPostgreSQL`
+## Using the `RPostgres` package
 
-`RPostgreSQL` is an DBI-compliant interface to the PostgreSQL database.  The package acts as both the database driver and the DBI interface.
+`RPostgres` is an DBI-compliant interface to the postgres database. It is a ground-up rewrite using C++ and `Rcpp`.  This package acts as both the database driver and the DBI interface. The code, and additional information are available in its GitHub repository here: [RPostgres](https://github.com/r-dbi/RPostgres).  To connect use:
 
-The code, and additional information, are also accessible via the [Google Code project page](https://code.google.com/archive/p/rpostgresql/).  The official CRAN page is here: [RPostgreSQL: R Interface to the 'PostgreSQL' Database System](https://cran.r-project.org/web/packages/RPostgreSQL/)
+```r
+library(DBI)
+# Connect to the default postgres database
+con <- dbConnect(RPostgres::Postgres())
+```
 
+### Known Issues
 
+**Parameterized queries** - Using `?` to mark parameters in a query does not currently work with `RPostgres`,  instead use `$`.  For more information, see the following issue: [RPostgres/Issue/201](https://github.com/r-dbi/RPostgres/issues/201)
+
+```r
+airport <- dbSendQuery(con, "SELECT * FROM airports WHERE faa = $1 or faa = $2")
+dbBind(airport, list("GPT", "MSY"))
+dbFetch(airport)
+```

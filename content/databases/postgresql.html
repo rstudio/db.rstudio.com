@@ -3,7 +3,7 @@ title: PostgreSQL
 logo: "/logos/postgresqllarge.png"
 dplyr: "Yes"
 driver: "Yes"
-package: "RPostgreSQL"
+package: "RPostgres"
 aliases:
   - /postgresql
 ---
@@ -13,10 +13,10 @@ aliases:
 <p>There are two options for connecting to a PostgreSQL database:</p>
 <ul>
 <li>Using the <code>odbc</code> package with a database driver</li>
-<li>Using the <code>RPostgreSQL</code> package</li>
+<li>Using the <code>RPostgres</code> package</li>
 </ul>
-<div id="using-the-odbcpacakge" class="section level2">
-<h2>Using the <code>odbc</code>pacakge</h2>
+<div id="using-the-odbc-package" class="section level2">
+<h2>Using the <code>odbc</code> package</h2>
 <p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
 <div id="driver-options" class="section level3">
 <h3>Driver options</h3>
@@ -45,8 +45,17 @@ aliases:
                       Port     = 5432)</code></pre>
 </div>
 </div>
-<div id="using-rpostgresql" class="section level2">
-<h2>Using <code>RPostgreSQL</code></h2>
-<p><code>RPostgreSQL</code> is an DBI-compliant interface to the PostgreSQL database. The package acts as both the database driver and the DBI interface.</p>
-<p>The code, and additional information, are also accessible via the <a href="https://code.google.com/archive/p/rpostgresql/">Google Code project page</a>. The official CRAN page is here: <a href="https://cran.r-project.org/web/packages/RPostgreSQL/">RPostgreSQL: R Interface to the ‘PostgreSQL’ Database System</a></p>
+<div id="using-the-rpostgres-package" class="section level2">
+<h2>Using the <code>RPostgres</code> package</h2>
+<p><code>RPostgres</code> is an DBI-compliant interface to the postgres database. It is a ground-up rewrite using C++ and <code>Rcpp</code>. This package acts as both the database driver and the DBI interface. The code, and additional information are available in its GitHub repository here: <a href="https://github.com/r-dbi/RPostgres">RPostgres</a>. To connect use:</p>
+<pre class="r"><code>library(DBI)
+# Connect to the default postgres database
+con &lt;- dbConnect(RPostgres::Postgres())</code></pre>
+<div id="known-issues" class="section level3">
+<h3>Known Issues</h3>
+<p><strong>Parameterized queries</strong> - Using <code>?</code> to mark parameters in a query does not currently work with <code>RPostgres</code>, instead use <code>$</code>. For more information, see the following issue: <a href="https://github.com/r-dbi/RPostgres/issues/201">RPostgres/Issue/201</a></p>
+<pre class="r"><code>airport &lt;- dbSendQuery(con, &quot;SELECT * FROM airports WHERE faa = $1 or faa = $2&quot;)
+dbBind(airport, list(&quot;GPT&quot;, &quot;MSY&quot;))
+dbFetch(airport)</code></pre>
+</div>
 </div>
