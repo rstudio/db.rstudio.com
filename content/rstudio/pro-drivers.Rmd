@@ -6,28 +6,32 @@ RStudio makes it easy to access and analyze your data with R. RStudio Profession
 
 - Explore your databases using the RStudio IDE
 - Develop and deploy Shiny applications that depend on databases
-- Use databases with R in a production environment
+- Use databases with R in a Production environment
 
 If you are using RStudio Server Pro, RStudio Connect, or Shiny Server Pro, then you can download and use RStudio Professional Drivers at no additional charge.
-
 
 ## Coverage
 
 We connect you to some of the most popular databases available today, and we are committed to increasing the number of data connectors we support in the future.
 
-
 <div>
-  <img src="/rstudio/databases.png"   align="right" height="300" width="400">
+  <img src="/rstudio/databases.png"   align="right" height="450">
 </div>
 
 - Microsoft SQL Server
 - Oracle
+- Teradata
 - PostgreSQL
-- Amazon Redshift
 - Apache Hive
 - Apache Impala
+- Apache Cassandra
+- Amazon Athena
+- Amazon Redshift
+- MongoDB
+- Google BigQuery
+- IBM Netezza
 - Salesforce
-- Teradata
+- MySQL
 
 </br>
 
