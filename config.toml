@@ -71,26 +71,6 @@ googleAnalytics = "UA-20375833-20"
 	parent = "Packages"
 	url    = "/odbc/"
 
-
-[[menu.main]]
-  weight = 14
-	name   = "pool"
-	parent = "Packages"
-	url    = "/pool/"
-
-[[menu.main]]
-  weight = 15
-	name   = "dbplot"
-	parent = "Packages"
-	url    = "/dbplot/"
-
-[[menu.main]]
-  weight = 16
-	name   = "tidypredict"
-	parent = "Packages"
-	url    = "/tidypredict/"
-
-
 [[menu.main]]
   weight = 17
 	name   = "RStudio"
