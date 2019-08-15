@@ -1,50 +1,33 @@
 {{ partial "head" . }}
-
 <div class="single-page">
   {{ partial "nav" . }}
 </div>
-
 <div class="page documentation">
     <div class="side-menu" id="side-menu">
     {{ $currentNode := .}}
-    
-  
-
     {{  range .Site.Menus.main.ByWeight  }}
-    
-        <div class="side-menu__item__link">
-          <img class="side-menu__item__link__icon" src="/images/icons/block-retina.png" alt="" width = "100px">
+        <a href="{{.URL}}" class="side-menu__item__link">
           <p class="side-menu__item__link__text">{{ .Name }}</p>
-        </div>
-
+        </a>
         <ul class="side-menu__sub">
           {{ range .Children }}
-            <li class="side-menu__sub__item{{if $currentNode.IsMenuCurrent "main" . }} active{{end}}">
-              <a id="menu-link-{{.URL}}" class="side-menu__sub__item__text" href="{{.URL}}" data-url="{{.URL}}">{{ .Name }} </a>
+            <li class="side-menu__sub__item {{ if eq .URL $currentNode.Permalink }} active {{ end }}">
+              <a id="menu-link-{{.URL}}" class="side-menu__sub__item__text" href="{{.URL}}" data-url="{{.URL}}">{{ .Name }}</a>
             </li>
           {{ end }}
         </ul>
-          
-
     {{ end }}
-    
-    
     </div>
     <div class="content">
-
       <h1 class="content-header">{{ replace .Title "-" " "  }} </h1>
-
       <div class="markdowned">
       <div class="doc-page">
-    
       <div class="doc-page-index">
       <ul id="gumshoe-container" data-gumshoe>
       </ul>
       </div>
-  
       <div class="doc-page-body">  
           <table cellpadding="0">
-            
             <tr>
               <td width = "9%"></td>
               <td>Name</td>
@@ -52,47 +35,24 @@
               <td>Connect via R package</td>
               <td><a href = "/rstudio/pro-drivers/">RStudio Pro Driver available</a></td>
             </tr>
-            
             {{ range (.Paginator 20).Pages }}
               <tr>
-
                 <td>
                   {{if .Params.logo }}<img src =  "{{ .Params.logo }}" height = 45 width = 60>{{ end }}
                   {{if not .Params.logo }} <i class="fa fa-database fa-3x" aria-hidden="true"></i> {{ end }}
                 </td>
-                
-                
-                <td>
-                  <a  href = "{{ .URL }}">{{ .Title }} 
-                </td>
-
-                <td>
-                  {{ .Params.dplyr }} 
-                </td>
-                
-                <td>
-                  {{ .Params.package }} 
-                </td>
-                 
-                <td>
-                  {{ .Params.driver }} 
-                </td>
-
+                <td><a  href = "{{ .URL }}">{{ .Title }} </td>
+                <td>{{ .Params.dplyr }} </td>
+                <td>{{ .Params.package }}</td>
+                <td>{{ .Params.driver }} </td>
               </tr>
            {{ end }}
           </table>
       </div>
       </div>
       </div>
-      
       {{ partial "footer" .}}
-      
     </div>
 </div>
-
 </body>
 </html>
-
-
-
-

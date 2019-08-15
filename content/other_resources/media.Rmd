@@ -4,6 +4,12 @@ aliases:
   - /media
 ---
 
+## Modeling in Databases with R
+### Edgar Ruiz - RStudio
+*Event: July 2019 Webinar*
+
+<p><a href="https://resources.rstudio.com/webinars/modeling-in-databases-with-r?wvideo=5m5mrigclx"><img src="https://embedwistia-a.akamaihd.net/deliveries/5e1da9347665233d7ea7fe9d9848a6cf.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=71a5d4e0" width="400" height="225" style="width: 400px; height: 225px;"></a></p><p><a href="https://resources.rstudio.com/webinars/modeling-in-databases-with-r?wvideo=5m5mrigclx">Modeling in Databases with R</a></p>
+
 ## Databases using R: The latest 
 ### Edgar Ruiz - RStudio
 *Event: January 2019 RStudio Conference 2019*

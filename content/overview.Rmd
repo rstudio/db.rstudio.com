@@ -3,7 +3,7 @@ Title: Databases using R
 ---
 
 
-##**dplyr** as a database interface
+## **dplyr** as a database interface
 
 The `dplyr` package simplifies data transformation. It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.
 

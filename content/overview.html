@@ -4,7 +4,8 @@ Title: Databases using R
 
 
 
-<p>##<strong>dplyr</strong> as a database interface</p>
+<div id="dplyr-as-a-database-interface" class="section level2">
+<h2><strong>dplyr</strong> as a database interface</h2>
 <p>The <code>dplyr</code> package simplifies data transformation. It provides a consistent set of functions, called verbs, that can be used in succession and interchangeably to gain understanding of the data iteratively.</p>
 <p><code>dplyr</code> is able to <strong>interact with databases directly</strong> by translating the <code>dplyr</code> verbs into SQL queries. This convenient feature allows you to ‘speak’ directly with the database from R. Other advantages of this approach are:</p>
 <div>
@@ -16,6 +17,7 @@ Title: Databases using R
 <li><p><strong>Collect into R only a targeted dataset.</strong></p></li>
 <li><p><strong>All of your code is in R.</strong> Because<code>dplyr</code> is used to communicate with the database, there is no need to alternate between languages or tools to perform the data exploration.</p></li>
 </ol>
+</div>
 <div id="connect-to-a-database" class="section level2">
 <h2><strong>Connect to a database</strong></h2>
 <div>
