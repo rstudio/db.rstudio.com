@@ -31,9 +31,9 @@
             <tr>
               <td width = "8%"></td>
               <td>Name</td>
+              <td><a href = "/rstudio/pro-drivers/">RStudio Pro Driver</a></td>
               <td><a href = "/dplyr">dplyr support</a></td>
               <td>Connect via R package</td>
-              <td><a href = "/rstudio/pro-drivers/">RStudio Pro Driver</a></td>
             </tr>
             {{ range (.Paginator 100).Pages }}
               <tr>
@@ -43,14 +43,14 @@
                 </td>
                 <td><a  href = "{{ .URL }}">{{ .Title }} </td>
                 <td>
+                  {{if eq .Params.driver "Yes" }} <i class="fa fa-check fa-1x" aria-hidden="true"></i> {{ end }}
+                  {{if eq .Params.driver "No" }} <i class="fa fa-times fa-1x" aria-hidden="true"></i> {{ end }}
+                </td>
+                <td>
                   {{if eq .Params.dplyr "Yes" }} <i class="fa fa-check fa-1x" aria-hidden="true"></i> {{ end }}
                   {{if eq .Params.dplyr "No" }} <i class="fa fa-times fa-1x" aria-hidden="true"></i> {{ end }}
                 </td>
                 <td>{{ .Params.package }}</td>
-                <td>
-                  {{if eq .Params.driver "Yes" }} <i class="fa fa-check fa-1x" aria-hidden="true"></i> {{ end }}
-                  {{if eq .Params.driver "No" }} <i class="fa fa-times fa-1x" aria-hidden="true"></i> {{ end }}
-                </td>
               </tr>
            {{ end }}
           </table>
