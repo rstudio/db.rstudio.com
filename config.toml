@@ -169,22 +169,42 @@ googleAnalytics = "UA-20375833-20"
 	url    = "/databases/my-sql/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 39
+  weight = 40
 	name   = "MonetDB"
 	url    = "/databases/monetdb/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 40
+  weight = 41
 	name   = "SQLite"
 	url    = "/databases/sqlite/"
 	parent = "Databases"
-	[[menu.main]]
-  weight = 41
+[[menu.main]]
+  weight = 42
 	name   = "Big Query"
 	url    = "/databases/big-query/"
 	parent = "Databases"
 [[menu.main]]
-  weight = 42
+  weight = 43
+	name   = "Athena"
+	url    = "/databases/athena/"
+	parent = "Databases"
+[[menu.main]]
+  weight = 44
+	name   = "MongoDB"
+	url    = "/databases/mongodb/"
+	parent = "Databases"		
+[[menu.main]]
+  weight = 45
+	name   = "Netezza"
+	url    = "/databases/netezza/"
+	parent = "Databases"		
+[[menu.main]]
+  weight = 46
+	name   = "Cassandra"
+	url    = "/databases/cassandra/"
+	parent = "Databases"		
+[[menu.main]]
+  weight = 49
 	name   = "Other Databases"
 	url    = "/databases/other-databases/"
 	parent = "Databases"
