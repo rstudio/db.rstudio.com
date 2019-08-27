@@ -29,22 +29,28 @@
       <div class="doc-page-body">  
           <table cellpadding="0">
             <tr>
-              <td width = "9%"></td>
+              <td width = "8%"></td>
               <td>Name</td>
               <td><a href = "/dplyr">dplyr support</a></td>
               <td>Connect via R package</td>
-              <td><a href = "/rstudio/pro-drivers/">RStudio Pro Driver available</a></td>
+              <td><a href = "/rstudio/pro-drivers/">RStudio Pro Driver</a></td>
             </tr>
-            {{ range (.Paginator 20).Pages }}
+            {{ range (.Paginator 100).Pages }}
               <tr>
                 <td>
-                  {{if .Params.logo }}<img src =  "{{ .Params.logo }}" height = 45 width = 60>{{ end }}
-                  {{if not .Params.logo }} <i class="fa fa-database fa-3x" aria-hidden="true"></i> {{ end }}
+                  {{if .Params.logo }}<img src =  "{{ .Params.logo }}" width = 200>{{ end }}
+                  {{if not .Params.logo }} <i class="fa fa-database fa-1x" aria-hidden="true"></i> {{ end }}
                 </td>
                 <td><a  href = "{{ .URL }}">{{ .Title }} </td>
-                <td>{{ .Params.dplyr }} </td>
+                <td>
+                  {{if eq .Params.dplyr "Yes" }} <i class="fa fa-check fa-1x" aria-hidden="true"></i> {{ end }}
+                  {{if eq .Params.dplyr "No" }} <i class="fa fa-times fa-1x" aria-hidden="true"></i> {{ end }}
+                </td>
                 <td>{{ .Params.package }}</td>
-                <td>{{ .Params.driver }} </td>
+                <td>
+                  {{if eq .Params.driver "Yes" }} <i class="fa fa-check fa-1x" aria-hidden="true"></i> {{ end }}
+                  {{if eq .Params.driver "No" }} <i class="fa fa-times fa-1x" aria-hidden="true"></i> {{ end }}
+                </td>
               </tr>
            {{ end }}
           </table>

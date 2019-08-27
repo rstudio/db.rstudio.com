@@ -1,0 +1,43 @@
+---
+title: MongoDB
+logo: "/logos/mongodblarge.png"
+dplyr: "No"
+driver: "Yes"
+---
+
+
+
+<div id="driver-options" class="section level2">
+<h2>Driver Options</h2>
+<ul>
+<li><p><strong>MongoDB</strong> - Please refer to MongoDB’s website for instructions on how to download and setup their official driver: <a href="https://docs.mongodb.com/bi-connector/master/reference/odbc-driver/">MongoDB ODBC driver page</a></p></li>
+<li><p><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</p></li>
+</ul>
+</div>
+<div id="package-options" class="section level2">
+<h2>Package Options</h2>
+<p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
+</div>
+<div id="connection-settings" class="section level2">
+<h2>Connection Settings</h2>
+<p>There are settings needed to make a connection:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
+<li><strong>Server</strong> - Server path or name</li>
+<li><strong>Port</strong> - Should be set to <strong>27017</strong></li>
+<li><strong>Database</strong> - Name of the database you wish to connect to</li>
+<li><strong>AuthMechanism</strong> - See this article from MongoDB for more information: <a href="https://docs.mongodb.com/manual/core/authentication-mechanisms/#specify-authentication-mechanism">Authentication Mechanisms</a></li>
+<li><strong>UID</strong> - The user’s network ID or server local account</li>
+<li><strong>PWD</strong> - The account’s password</li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(
+      odbc::odbc(),
+      Driver        = &quot;[your driver&#39;s name]&quot;,
+      Server        = &quot;[your server&#39;s path or name]&quot;,
+      Port          = 27017,
+      Database      = &quot;[your database&#39;s name]&quot;,
+      AuthMechanism = &quot;SCRAM-SHA-1&quot;, # &lt;- Example, depends server&#39;s auth setup
+      UID           = rstudioapi::askForPassword(&quot;Database user&quot;),
+      PWD           = rstudioapi::askForPassword(&quot;Database password&quot;)
+      )</code></pre>
+</div>

@@ -1,0 +1,41 @@
+---
+title: Cassandra
+logo: "/logos/cassandralarge.png"
+dplyr: "No"
+driver: "Yes"
+---
+
+
+
+<div id="driver-options" class="section level2">
+<h2>Driver Options</h2>
+<ul>
+<li><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</li>
+</ul>
+</div>
+<div id="package-options" class="section level2">
+<h2>Package Options</h2>
+<p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
+</div>
+<div id="connection-settings" class="section level2">
+<h2>Connection Settings</h2>
+<p>There are settings needed to make a connection:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
+<li><strong>Host</strong> - A network path to the database server</li>
+<li><strong>Port</strong> - Should be set to <strong>9042</strong></li>
+<li><strong>Keyspace</strong> - Data replication namespace (not required)</li>
+<li><strong>AuthMec</strong> - Use 0 for no authentication, and 1 for user name/password</li>
+<li><strong>UID</strong> - The user’s network ID or server local account</li>
+<li><strong>PWD</strong> - The account’s password</li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+                      Driver   = &quot;[your driver&#39;s name]&quot;,
+                      Host     = &quot;[your server&#39;s path or name]&quot;,
+                      Port     = 9042,
+                      Keyspace = &quot;[your keypace&#39;s name]&quot;,
+                      AuthMech = 1,
+                      UID      = rstudioapi::askForPassword(&quot;Database user&quot;),
+                      PWD      = rstudioapi::askForPassword(&quot;Database password&quot;)
+                      )</code></pre>
+</div>
