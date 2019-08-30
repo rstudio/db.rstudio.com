@@ -1,4 +1,4 @@
-{{ partial "head" . }} 
+{{ partial "head" . }}
 
 <div class="single-page">
   {{ partial "nav" . }}
@@ -11,17 +11,37 @@
     
     </div>
     <div class="content">
-
+      
+      <div class = "blogpost-meta">
       <h1 class="content-header">{{ .Title }} {{ if .IsDraft }} (Draft){{ end }}</h1>
-
+      <div class="markdowned">
+      <p class="post-date">
+        {{ .Date.Format "2006-01-02" }}
+        {{ with .Params.author }}{{ . }}{{ end }}
+        <span class="categories">
+        &mdash;
+        {{ with .Params.categories }}
+        {{ range . }}
+        <a href="{{ relURL (print "/categories/" (urlize .) ".html") }}">{{ . }}</a>
+        {{ end }}
+        {{ end }}
+        </span>
+      </p>
+      </div>
+      </div>
+      
+      
       <div class="markdowned">
         {{ .Content }}
+        {{ partial "disqus.html" . }}
       </div>
       
       {{ partial "footer" .}}
       
     </div>
 </div>
+
+
 
 </body>
 </html>

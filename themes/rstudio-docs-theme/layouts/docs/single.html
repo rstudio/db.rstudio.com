@@ -12,7 +12,7 @@
     <ul class="side-menu-list" data-parenturl="{{.URL}}" style="display: none;">
       {{ range .Children }}
       <li class="side-menu__item{{if $currentNode.HasMenuCurrent "main" . }} active{{end}}{{if $currentNode.IsMenuCurrent "main" . }} active{{end}}">
-        
+       
         <a href="{{.URL}}" class="side-menu__item__link">
           <img class="side-menu__item__link__icon" src="/images/icons/block-retina.png" alt="">
           <p class="side-menu__item__link__text">{{ .Name }}</p>
@@ -21,7 +21,8 @@
         {{ if .HasChildren }}
         {{if $currentNode.HasMenuCurrent "main" . }}
         <ul class="side-menu__sub">{{ range .Children }}{{ if not (in .Parent "-examples") }}{{ if not (in .Parent "-reference") }}
-          <li class="side-menu__sub__item{{if $currentNode.IsMenuCurrent "main" . }} active{{end}}">
+          <span style="display:none">{{ $currentNode.Section }}</span>
+          <li class="side-menu__sub__item{{if $currentNode.IsMenuCurrent "main" . }} active{{end}} {{if (eq .Name "Reference") }}{{if (in $currentNode.URL "/reference/") }} active {{ end }}{{ end }}">
             <a id="menu-link-{{.URL}}" class="side-menu__sub__item__text" href="{{.URL}}" data-url="{{.URL}}">{{ .Name }}</a>
           </li>
           {{ end }}{{ end }}{{ end }}</ul>

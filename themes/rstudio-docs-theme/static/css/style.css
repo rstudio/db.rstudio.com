@@ -592,6 +592,22 @@ body {
     .page.documentation .content {
       padding-top: 60px; } }
 
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+/* Add some padding inside the card container */
+.card-content {
+  padding: 2px 16px;
+}
+
 .header {
   margin-top: 40px;
   font-weight: 200;
@@ -599,7 +615,7 @@ body {
   font-size: 26px; }
   @media all and (min-width: 641px) {
     .header {
-      font-size: 45px; } }
+      font-size: 39px; } }
 
 h1.header {
   margin-top: 10px;
@@ -1007,6 +1023,22 @@ h1.header {
     padding-right: 180px;
   }
   
+.blogpost-meta {
+  margin-bottom: 20px;
+}  
+
+.blogpost-meta .post-date {
+  margin-top: 0px;
+}
+
+.blogpost-meta .content-header {
+  margin-bottom: 10px;
+} 
+  
+.blogpost-meta h1 {
+  border-bottom: 1px solid #ddd;
+}
+  
 .markdowned .doc-page-index {
   display: none;
   padding: 62px 0 40px 0;
@@ -1015,11 +1047,13 @@ h1.header {
   bottom: 0;
   right: 0;
   overflow-y: scroll;
-  width: 220px; 
+  width: 200px; 
 }
+
 .markdowned .doc-page-index ul {
   list-style-type: none;
-  margin-left: 20px;
+  margin-right: 15px;
+  margin-left: 0;
 }
 .markdowned .doc-page-index li {
   margin-top: 0;
@@ -1043,28 +1077,34 @@ h1.header {
   text-decoration: none;
 }
 
-@media all and (min-width: 1201px) {
-  .markdowned .doc-page-index {
-    display: block; 
-  } 
-  
-  .markdowned .doc-page-body {
-    padding-right: 180px;
-  }
-}  
+.markdowned .no-toc .doc-page-index {
+  display: none;
+}
+
+.markdowned .no-toc .doc-page-body {
+  padding-right: 0;
+}
 
 @media all and (min-width: 1350px) {
 .markdowned .doc-page-index {
-  width: 250px;
-}    
- .markdowned .doc-page-body {
-    padding-right: 210px;
+  display: block; 
+} 
+.markdowned .no-toc .doc-page-index {
+  display: none;
+}
+.markdowned .no-toc .doc-page-index {
+  display: none;
+}
+.markdowned .doc-page-body {
+  padding-right: 210px;
+}
+.markdowned .no-toc .doc-page-body {
+  padding-right: 0;
 }
 .content {
-  max-width: 1050px;
+  max-width: 1070px;
 }
 }
-
 
 .markdowned h1 {
   font-size: 32px;
@@ -1116,15 +1156,16 @@ h1.header {
   margin-top: 0; }
 
 .markdowned h4 {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
   color: #142D3C;
   line-height: 1.8;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin: 32px 0 0 0;
+  margin: 15px 0 0 0;
+  margin-bottom: 10px;
   padding-top: 100px;
-  margin-top: -68px; }
+  margin-top: -85px; }
 
 .markdowned h4 + h5 {
   margin-top: 0; }
@@ -1214,17 +1255,14 @@ h1.header {
   font-family: 'Roboto Mono', monospace; }
 
 .markdowned p > code, .markdowned li > code {
-  background-color: #F7F8F9;
+
   padding: 0 5px; }
 
 .markdowned pre code {
   display: block;
   overflow-x: auto;
-  background: #F0F0F0;
-  color: #444;
   padding: 10px 10px 10px 10px;
   font-size: 14px;
-  background-color: #F7F8F9; 
 }
 
 /* TOC sytles */
@@ -1252,19 +1290,10 @@ pre:not([class]) code {
   border: 1px solid #eee;
 }
 
-.markdowned pre, .markdowned code {
-  background-color: #f8f8f8;
-  color: #333;
-}
+
 
 .markdowned code a, .markdowned pre a {
-  color: #375f84;
-  text-decoration: none;
-}
-
-.markdowned code a:hover, .markdowned pre a:hover {
-  color: #165ba8;
-}
+  text-decoration: none;}
 
 .markdowned pre code .fl { color: #1514b5; }
 .markdowned pre code .fu {color: #000000;  }                            /* function */
@@ -1272,13 +1301,10 @@ pre:not([class]) code {
 .markdowned pre code .kw {color: #264D66;}                              /* keyword */
 .markdowned pre code .co { color: #888888; } /* comment */
 
-
 .markdowned table {
   table-layout: fixed;
   margin: 20px 0;
   width: 100%; }
-
-
 
 .markdowned td, .markdowned th {
   text-align: left;
@@ -1298,6 +1324,10 @@ pre:not([class]) code {
   background-color: #F0F5FA; }
 
 /* some customizations for pkgdown ref-arguments tables */
+
+.markdowned .ref-index code {
+  word-break: break-word;
+}
 
 .markdowned .ref-arguments td > p,
 .markdowned .ref-index td > p{
@@ -1985,6 +2015,10 @@ pre + pre {
   height: 100%;
 }
 
+#disqus_thread {
+  margin-top: 40px;
+}
+
 #mobile-menu-container {
   display: none;
   position: fixed;
@@ -2281,31 +2315,6 @@ h4:hover .anchor-hover {
 .categories a {
   margin-left: 5px;
   
-}
-
-article .thumb {
-  display: block;
-  background-position: center;
-  background-size: cover;
-}
-
-article.single .thumb {
-  height: 8rem;
-}
-
-@media (max-width:  768px)  {
-article.single .thumb {
-  height: 12rem;
-}
-}
-
-
-article.li .thumb {
-  float: right;
-  width: 12rem;
-  height: 7.5rem;
-  margin-left: 1rem;
-  margin-bottom: 1rem;
 }
 
 .article-list { margin-top: 2em; }

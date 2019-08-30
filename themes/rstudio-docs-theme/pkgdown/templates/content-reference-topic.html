@@ -10,24 +10,6 @@ menu:
 {{/package}}
 ---
     
-    <div class="doc-page">
-    
-    <div class="doc-page-index">
-    <ul data-gumshoe>
-    {{#has_args}}
-    <li><a href="#arguments">Arguments</a></li>
-    {{/has_args}}
-    {{#sections}}
-    <li><a href="#{{slug}}">{{title}}</a></li>
-    {{/sections}}
-    {{#examples}}
-    <li><a href="#examples">Examples</a></li>
-    {{/examples}}
-    </ul>
-    </div>
-
-    <div class="doc-page-body">
-
     {{#description}}
     {{#contents}}
     {{{.}}}
@@ -68,8 +50,3 @@ menu:
     <h2 id="examples">Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">{{{.}}}</code></pre></div>
     {{/examples}}
-    
-    </div>
-    
-    </div>
-

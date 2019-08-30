@@ -4,41 +4,22 @@
   {{ partial "nav" . }}
 </div>
 
-{{ template "_internal/google_analytics.html" . }}
-
 <div class="page documentation">
     <div class="side-menu" id="side-menu">
-    {{ $currentNode := .}}
     
-  
-    {{  range .Site.Menus.main.ByWeight  }}
-
-        <a href="{{.URL}}" class="side-menu__item__link">
-          <img class="side-menu__item__link__icon" src="/images/icons/block-retina.png" alt="">
-          <p class="side-menu__item__link__text">{{ .Name }}</p>
-        </a>
-
-        <ul class="side-menu__sub">
-          {{ range .Children }}
-            <li class="side-menu__sub__item {{ if eq .URL $currentNode.Permalink }} active {{ end }}">
-              <a id="menu-link-{{.URL}}" class="side-menu__sub__item__text" href="{{.URL}}" data-url="{{.URL}}">{{ .Name }}</a>
-            </li>
-          {{ end }}
-        </ul>
-          
-
-    {{ end }}
+    
     
     </div>
     <div class="content">
+
       <h1 class="content-header">{{ .Title }}</h1>
 
       <div class="markdowned">
         <ul>
         {{ range $key, $value := .Data.Terms }}
         <li>
-          <a href="{{ (print "/" $.Data.Plural "/" (urlize $key) "") | relURL }}">
-            {{ humanize $key }}
+          <a href="{{ (print "/" $.Data.Plural "/" (urlize $key) ".html") | relURL }}">
+            {{ $key }}
           </a>
           ({{ len $value }})
         </li>
@@ -46,16 +27,12 @@
       </ul>
 
       </div>
-
-
-    </div>
       
       {{ partial "footer" .}}
       
-    
+    </div>
 </div>
 
 </body>
 </html>
-
 
