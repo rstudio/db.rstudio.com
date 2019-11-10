@@ -8,7 +8,7 @@ aliases:
   - /big-query
 ---
 
-`bigrquery` is a database interfac for R. This version is aimed at full compliance with the [DBI](/DBI) specification. For more information, visit `bigrquery`'s official site: [bigrquery.r-dbi.org](https://bigrquery.r-dbi.org/)
+`bigrquery` is a database interface for R. This version is aimed at full compliance with the [DBI](/DBI) specification. For more information, visit `bigrquery`'s official site: [bigrquery.r-dbi.org](https://bigrquery.r-dbi.org/)
 
 To install from CRAN:
 
