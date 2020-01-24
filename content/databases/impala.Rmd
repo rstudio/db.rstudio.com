@@ -42,7 +42,7 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ## Known issues
 
-### Switching form Impala to Hive
+### Switching from Impala to Hive
 
 If you create a table in Impala and then drop the Hive metadata, you will need to invalidate the Impala metadata.
 
