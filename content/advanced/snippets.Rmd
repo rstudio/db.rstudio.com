@@ -8,7 +8,7 @@ RStudio connections can be extended through:
 
 1. **Snippet Files** that provide support for new connections using R templates that enable users and system administrators to list and create new connections.
 2. **Packages** that do one or more of the following: 
-     + Implement the [Connections Contract](connections-contract.html) to manage and explore data in RStudio's Connections Pane and/or
+     + Implement the [Connections Contract](/contract) to manage and explore data in RStudio's Connections Pane and/or
      + Supply Snippet Files or a Shiny Application to extend RStudio's New Connection dialog.
 
 ## Snippet Files
