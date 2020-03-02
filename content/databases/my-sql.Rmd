@@ -27,7 +27,7 @@ The **`odbc`** package, in combination with a driver, provides `DBI` support and
 
 ### Connection Settings
 
-There are settings needed to make a connection:
+There are 5 settings needed to make a connection:
 
   - **Driver** - See the [Drivers](/drivers) section for setup information
   - **Server** - A network path to the database server
