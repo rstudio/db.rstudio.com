@@ -10,6 +10,42 @@ aliases:
 
 
 
+<p>There are two options for connecting to a MySQL database:</p>
+<ul>
+<li>Using the <code>odbc</code> package with a database driver</li>
+<li>Using the <code>RMariaDB</code> package</li>
+</ul>
+<div id="using-the-odbc-package" class="section level2">
+<h2>Using the <code>odbc</code> package</h2>
+<p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
+<div id="driver-options" class="section level3">
+<h3>Driver options</h3>
+<ul>
+<li><p><strong>MySQL</strong> - The official MySQL website provides a downloadable ODBC driver for MySQL: <a href="https://dev.mysql.com/downloads/connector/odbc/">MySQL Connector</a></p></li>
+<li><p><strong>MariaDB</strong> - MariaDB is an open source relational database built by the original developers of MySQL. MariaDB provides an ODBC connector that can be used as a drop-in replacement for a MySQL ODBC connector: <a href="https://downloads.mariadb.org/connector-odbc/+releases/">MariaDB Connector</a></p></li>
+<li><p><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for MySQL databases. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</p></li>
+</ul>
+</div>
+<div id="connection-settings" class="section level3">
+<h3>Connection Settings</h3>
+<p>There are 5 settings needed to make a connection:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
+<li><strong>Server</strong> - A network path to the database server</li>
+<li><strong>UID</strong> - User name used to access MySQL server</li>
+<li><strong>PWD</strong> - The password corresponding to the provided UID</li>
+<li><strong>Port</strong> - Should be set to <strong>3306</strong></li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+                      Driver   = &quot;[your driver&#39;s name]&quot;,
+                      Server   = &quot;[your server&#39;s path]&quot;,
+                      UID      = rstudioapi::askForPassword(&quot;Database user&quot;),
+                      PWD      = rstudioapi::askForPassword(&quot;Database password&quot;),
+                      Port     = 3306)</code></pre>
+</div>
+</div>
+<div id="using-the-rmariadb-package" class="section level2">
+<h2>Using the <code>RMariaDB</code> package</h2>
 <p><code>RMariaDB</code> is a database interface and MariaDB driver for R. This version is aimed at full compliance with the <a href="/DBI">DBI</a> specification, as a replacement for the old <code>RMySQL</code> package. For more information, visit <code>RMariaDB</code>’s official site: <a href="https://rmariadb.r-dbi.org/">rmariadb.r-dbi.org</a></p>
 <p>To install from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;RMariaDB&quot;)
@@ -22,3 +58,4 @@ remotes::install_github(&quot;r-dbi/RMariaDB&quot;)</code></pre>
 <pre class="r"><code>library(DBI)
 # Connect to my-db as defined in ~/.my.cnf
 con &lt;- dbConnect(RMariaDB::MariaDB(), group = &quot;my-db&quot;)</code></pre>
+</div>

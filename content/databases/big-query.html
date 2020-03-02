@@ -10,6 +10,41 @@ aliases:
 
 
 
+<p>There are two options for connecting to Google BigQuery:</p>
+<ul>
+<li>Using the <code>odbc</code> package with a database driver</li>
+<li>Using the <code>bigrquery</code> package</li>
+</ul>
+<div id="using-the-odbc-package" class="section level2">
+<h2>Using the <code>odbc</code> package</h2>
+<p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
+<div id="driver-options" class="section level3">
+<h3>Driver options</h3>
+<ul>
+<li><p><strong>BigQuery</strong> - The official BigQuery website provides instructions on how to download and setup their ODBC driver: <a href="https://cloud.google.com/bigquery/providers/simba-drivers">BigQuery Drivers</a></p></li>
+<li><p><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Google BigQuery. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</p></li>
+</ul>
+</div>
+<div id="connection-settings" class="section level3">
+<h3>Connection Settings</h3>
+<p>The easiest way to connect to BigQuery is through a <a href="https://cloud.google.com/iam/docs/service-accounts">Google service account</a>. There are 5 settings needed to make a connection using a Google service account:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
+<li><strong>Catalog</strong> - The name of the BigQuery project</li>
+<li><strong>Email</strong> - The Google service account email address</li>
+<li><strong>KeyFilePath</strong> - The full path to the <code>.pl2</code> or <code>.json</code> key file. See <a href="https://cloud.google.com/iam/docs/creating-managing-service-account-keys">here</a> for more details.</li>
+<li><strong>OAuthMechanism</strong> - Set to 0 to authenticate as a service account</li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+                      Driver         = &quot;[your driver&#39;s name]&quot;,
+                      Catalog        = &quot;[BigQuery project name]&quot;,
+                      Email          = &quot;[Google service account email]&quot;,
+                      KeyFilePath    = &quot;[Full path to key file]&quot;,
+                      OAuthMechanism = 0)</code></pre>
+</div>
+</div>
+<div id="using-the-bigrquery-package" class="section level2">
+<h2>Using the <code>bigrquery</code> package</h2>
 <p><code>bigrquery</code> is a database interface for R. This version is aimed at full compliance with the <a href="/DBI">DBI</a> specification. For more information, visit <code>bigrquery</code>’s official site: <a href="https://bigrquery.r-dbi.org/">bigrquery.r-dbi.org</a></p>
 <p>To install from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;bigrquery&quot;)
@@ -27,3 +62,4 @@ con &lt;- dbConnect(
   dataset = &quot;samples&quot;,
   billing = billing
   )</code></pre>
+</div>
