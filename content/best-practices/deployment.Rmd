@@ -103,7 +103,7 @@ this model assumes a 1-to-1 model instead of the 1-to-many distribution model
 facilitated by a service account.
 
 In these scenarios, it is most common to use Kerberos. RStudio Connect will need
-to be setup to run the application as the logged-in user. The [admin guide](http://docs.rstudio.com/connect/admin/process-management.html#process-management-runas-current)
+to be setup to run the application as the logged-in user. The [admin guide](https://docs.rstudio.com/connect/admin/process-management/#runas-current)
 contains more details.
 
 Deployment of this type of content is usually straightforward because the
@@ -125,7 +125,7 @@ con <- dbConnect(odbc::odbc(),
 
 For more information on data access, see this [article](https://support.rstudio.com/hc/en-us/articles/236020708-Strategies-for-connecting-Shiny-applications-to-databases). In all cases, the
 credentials should not be stored as plain text in either the configuration file
-or the R code. See [securing credentials](keyring.html) for more details.
+or the R code. See [securing credentials](/best-practices/managing-credentials/) for more details.
 
 ## Deploying with the `config` Package
 
@@ -187,7 +187,7 @@ used in Connect.
 
 ## Credentials inside Environment Variables in RStudio Connect
 
-Starting with version 1.6, RStudio Connect allows R [Environment Variables](http://docs.rstudio.com/connect/1.6.0/admin/security-auditing.html#application-environment-variables) to be saved at the application level.  The variables are encrypted on-disk, and in-memory. 
+Starting with version 1.6, RStudio Connect allows R [Environment Variables](https://docs.rstudio.com/connect/admin/security-and-auditing/#application-environment-variables) to be saved at the application level.  The variables are encrypted on-disk, and in-memory.
 
 The recommended approach would be to use an `.Renviron` file in your local session of R, which can be used to store the credentials, and then retrieved with `Sys.getenv()`.  Here are the steps:
 
