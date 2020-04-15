@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://db.rstudio.com/"
 languageCode = "en-us"
 title = "Databases using R"
 theme = "rstudio-docs-theme"
@@ -7,7 +7,7 @@ pluralizeListTitles =   "false"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 canonifyurls = true
 # Enable Google Analytics by entering your tracking id
-googleAnalytics = "UA-20375833-20"
+googleAnalytics = "UA-20375833-3"
 [params]
 	author = "RStudio"
 	description = ""
