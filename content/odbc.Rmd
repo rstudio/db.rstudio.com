@@ -8,56 +8,80 @@ aliases:
   <img src="/homepage/commercial.png" height="180" width="350" align="right">
 </div>
 
-The goal of the `odbc` package is to provide a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
+The `odbc` package provides a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
+
+<br>
 
 Usage
 -----
 
 All of the following examples assume you have already created a connection `con`. To find out how to connect to your specific database type, please visit the [Databases](/databases) page.
 
-### Table and Field information
+### Database information
 
-`dbListTables()` is used for listing all existing tables in a database.
+The `odbc` package gives you tools to explore objects and columns in the database.
 
-``` r
-dbListTables(con)
+```r
+# Top level objects
+odbcListObjects(con)
 
-# List tables beginning with f
-dbListTables(con, table_name = "f%")
+# Tables in a schema
+odbcListObjects(con, catalog="mydb", schema="dbo")
 
-# List all fields in the 'flights' database
-dbListFields(con, "flights")
+# Columns in a table
+odbcListColumns(con, catalog="mydb", schema="dbo", table="cars")
+
+# Database structure
+odbcListObjectTypes(con)
 ```
 
-### Reading
+You can also see other data sources and drivers on the system.
 
-`dbReadTable()` will read a full table into an R `data.frame()`.
+```r
+# All data sources
+odbcListDataSources()
 
-``` r
-data <- dbReadTable(con, "flights")
+# All drivers
+odbcListDrivers()
 ```
 
-### Writing
+### Reading and writing tables
 
-`dbWriteTable()` will write an R `data.frame()` to an SQL table.
-
-``` r
-data <- dbWriteTable(con, "iris", iris)
-```
-
-### Querying
-
-`dbGetQuery()` will submit a query and fetch the results. It is also possible to submit the query and fetch separately with `dbSendQuery()` and `dbFetch()`. The `n=` argument to `dbFetch()` can be used to fetch only the part of a query result (the next *n* rows).
+The `DBI` package has functions for reading and writing tables. `dbReadTable()` will read a SQL table into an R data frame. `dbWriteTable()` will write an R data frame to a SQL table.
 
 ``` r
-result <- dbSendQuery(con, "SELECT flight, tailnum, origin FROM flights ORDER BY origin")
-
-# Retrieve the first 100 results
-first_100 <- dbFetch(result, n = 100)
-
-# Retrieve the rest of the results
-rest <- dbFetch(result)
+data <- dbWriteTable(con, "cars", cars)
+data <- dbReadTable(con, "cars")
 ```
+
+You can specify tables outside the database with the `Id()` command.
+
+```r
+table_name <- Id(catalog = "mydb", schema = "dbo", table = "cars")
+dbReadTable(con, table_name)
+```
+
+### Queries and statements
+
+`dbGetQuery()` will submit a query and fetch the results. For large results, it is also possible to submit the query and fetch separately with `dbSendQuery()` and `dbFetch()`. The `n=` argument to `dbFetch()` can be used to fetch only the part of a query result (the next *n* rows).
+
+``` r
+# Return the results for an arbitrary query
+result <- dbGetQuery(con, "SELECT speed, dist FROM cars")
+
+# Fetch the first 100 records
+query <- dbSendQuery(con, "SELECT speed, dist FROM cars")
+result <- dbFetch(query, n = 10)
+dbClearResult(query)
+```
+
+You can execute arbitrary SQL statements with `dbExecute()`. Note: Many database API's distinguish between *direct* and *prepared* statements. If you want to force a direct statement (e.g. create a local temp table in Microsoft SQL Server), then pass `immdediate=TRUE`.
+
+```r
+dbExecute(con, "INSERT INTO cars (speed, dist) VALUES (88, 30)")
+dbExecute(con, "CREATE TABLE #cars_tmp (speed int, dist int)", immediate = TRUE)
+```
+<br>
 
 Benchmarks
 ----------

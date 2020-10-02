@@ -4,52 +4,67 @@ aliases:
   - /odbc
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <div>
 <p><img src="/homepage/commercial.png" height="180" width="350" align="right"></p>
 </div>
-<p>The goal of the <code>odbc</code> package is to provide a DBI-compliant interface to <a href="https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx">Open Database Connectivity</a> (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including <a href="https://www.microsoft.com/en-us/sql-server/">SQL Server</a>, <a href="https://www.oracle.com/database">Oracle</a>, <a href="https://www.mysql.com/">MySQL</a>, <a href="https://www.postgresql.org/">PostgreSQL</a>, <a href="https://sqlite.org/">SQLite</a> and others. The implementation builds on the <a href="http://nanodbc.lexicalunit.com/">nanodbc</a> C++ library.</p>
+<p>The <code>odbc</code> package provides a DBI-compliant interface to <a href="https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx">Open Database Connectivity</a> (ODBC) drivers. This allows for an efficient, easy to setup connection to any database with ODBC drivers available, including <a href="https://www.microsoft.com/en-us/sql-server/">SQL Server</a>, <a href="https://www.oracle.com/database">Oracle</a>, <a href="https://www.mysql.com/">MySQL</a>, <a href="https://www.postgresql.org/">PostgreSQL</a>, <a href="https://sqlite.org/">SQLite</a> and others. The implementation builds on the <a href="http://nanodbc.lexicalunit.com/">nanodbc</a> C++ library.</p>
+<p><br></p>
 <div id="usage" class="section level2">
 <h2>Usage</h2>
 <p>All of the following examples assume you have already created a connection <code>con</code>. To find out how to connect to your specific database type, please visit the <a href="/databases">Databases</a> page.</p>
-<div id="table-and-field-information" class="section level3">
-<h3>Table and Field information</h3>
-<p><code>dbListTables()</code> is used for listing all existing tables in a database.</p>
-<pre class="r"><code>dbListTables(con)
+<div id="database-information" class="section level3">
+<h3>Database information</h3>
+<p>The <code>odbc</code> package gives you tools to explore objects and columns in the database.</p>
+<pre class="r"><code># Top level objects
+odbcListObjects(con)
 
-# List tables beginning with f
-dbListTables(con, table_name = &quot;f%&quot;)
+# Tables in a schema
+odbcListObjects(con, catalog=&quot;mydb&quot;, schema=&quot;dbo&quot;)
 
-# List all fields in the &#39;flights&#39; database
-dbListFields(con, &quot;flights&quot;)</code></pre>
+# Columns in a table
+odbcListColumns(con, catalog=&quot;mydb&quot;, schema=&quot;dbo&quot;, table=&quot;cars&quot;)
+
+# Database structure
+odbcListObjectTypes(con)</code></pre>
+<p>You can also see other data sources and drivers on the system.</p>
+<pre class="r"><code># All data sources
+odbcListDataSources()
+
+# All drivers
+odbcListDrivers()</code></pre>
 </div>
-<div id="reading" class="section level3">
-<h3>Reading</h3>
-<p><code>dbReadTable()</code> will read a full table into an R <code>data.frame()</code>.</p>
-<pre class="r"><code>data &lt;- dbReadTable(con, &quot;flights&quot;)</code></pre>
+<div id="reading-and-writing-tables" class="section level3">
+<h3>Reading and writing tables</h3>
+<p>The <code>DBI</code> package has functions for reading and writing tables. <code>dbReadTable()</code> will read a SQL table into an R data frame. <code>dbWriteTable()</code> will write an R data frame to a SQL table.</p>
+<pre class="r"><code>data &lt;- dbWriteTable(con, &quot;cars&quot;, cars)
+data &lt;- dbReadTable(con, &quot;cars&quot;)</code></pre>
+<p>You can specify tables outside the database with the <code>Id()</code> command.</p>
+<pre class="r"><code>table_name &lt;- Id(catalog = &quot;mydb&quot;, schema = &quot;dbo&quot;, table = &quot;cars&quot;)
+dbReadTable(con, table_name)</code></pre>
 </div>
-<div id="writing" class="section level3">
-<h3>Writing</h3>
-<p><code>dbWriteTable()</code> will write an R <code>data.frame()</code> to an SQL table.</p>
-<pre class="r"><code>data &lt;- dbWriteTable(con, &quot;iris&quot;, iris)</code></pre>
-</div>
-<div id="querying" class="section level3">
-<h3>Querying</h3>
-<p><code>dbGetQuery()</code> will submit a query and fetch the results. It is also possible to submit the query and fetch separately with <code>dbSendQuery()</code> and <code>dbFetch()</code>. The <code>n=</code> argument to <code>dbFetch()</code> can be used to fetch only the part of a query result (the next <em>n</em> rows).</p>
-<pre class="r"><code>result &lt;- dbSendQuery(con, &quot;SELECT flight, tailnum, origin FROM flights ORDER BY origin&quot;)
+<div id="queries-and-statements" class="section level3">
+<h3>Queries and statements</h3>
+<p><code>dbGetQuery()</code> will submit a query and fetch the results. For large results, it is also possible to submit the query and fetch separately with <code>dbSendQuery()</code> and <code>dbFetch()</code>. The <code>n=</code> argument to <code>dbFetch()</code> can be used to fetch only the part of a query result (the next <em>n</em> rows).</p>
+<pre class="r"><code># Return the results for an arbitrary query
+result &lt;- dbGetQuery(con, &quot;SELECT speed, dist FROM cars&quot;)
 
-# Retrieve the first 100 results
-first_100 &lt;- dbFetch(result, n = 100)
-
-# Retrieve the rest of the results
-rest &lt;- dbFetch(result)</code></pre>
+# Fetch the first 100 records
+query &lt;- dbSendQuery(con, &quot;SELECT speed, dist FROM cars&quot;)
+result &lt;- dbFetch(query, n = 10)
+dbClearResult(query)</code></pre>
+<p>You can execute arbitrary SQL statements with <code>dbExecute()</code>. Note: Many database API’s distinguish between <em>direct</em> and <em>prepared</em> statements. If you want to force a direct statement (e.g. create a local temp table in Microsoft SQL Server), then pass <code>immdediate=TRUE</code>.</p>
+<pre class="r"><code>dbExecute(con, &quot;INSERT INTO cars (speed, dist) VALUES (88, 30)&quot;)
+dbExecute(con, &quot;CREATE TABLE #cars_tmp (speed int, dist int)&quot;, immediate = TRUE)</code></pre>
+<p><br></p>
 </div>
 </div>
 <div id="benchmarks" class="section level2">
 <h2>Benchmarks</h2>
 <p>The <em>odbc</em> package is often much faster than the existing <a href="https://cran.r-project.org/package=RODBC">RODBC</a> and DBI compatible <a href="https://cran.r-project.org/package=RODBCDBI">RODBCDBI</a> packages.</p>
-<div id="reading-1" class="section level3">
+<div id="reading" class="section level3">
 <h3>Reading</h3>
 <p>Reading a table from a PostgreSQL database with the ‘flights’ dataset (336,776 rows, 19 columns) of the package <a href="https://github.com/hadley/nycflights13">nytflights13</a>:</p>
 <pre class="r"><code># First using RODBC / RODBCDBI
@@ -96,7 +111,7 @@ gc(verbose = FALSE)
 #&gt; Ncells  712236 38.1    1770749  94.6  1770749  94.6
 #&gt; Vcells 8991012 68.6   27225095 207.8 33776265 257.7</code></pre>
 </div>
-<div id="writing-1" class="section level3">
+<div id="writing" class="section level3">
 <h3>Writing</h3>
 <p>Writing the same dataset to the database:</p>
 <pre class="r"><code>library(nycflights13)
