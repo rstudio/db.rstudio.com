@@ -1,7 +1,8 @@
 ---
-title: "Database Connection Pooling in R"
+title: "Pooling database connections in R"
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>The goal of the <code>pool</code> package is to abstract away the logic of connection management and the performance cost of fetching a new connection from a remote database. These concerns are especially prominent in interactive contexts, like Shiny apps (which connect to a remote database) or even at the R console. So, while this package is of most practical value to Shiny developers, there is no harm if it is used in other contexts. Since <code>pool</code> integrates with both <code>DBI</code> and <code>dplyr</code>, there are very few things that will be new to you, if you’re already using either of those packages. Essentially, you shouldn’t feel the difference, with the exception of creating and closing a Pool object (as opposed to connecting and disconnecting a DBIConnection object).</p>
@@ -32,7 +33,7 @@ ui &lt;- fluidPage(
 
 server &lt;- function(input, output, session) {
   output$tbl &lt;- renderTable({
-    pool %&gt;% tbl(&quot;City&quot;) %&gt;% filter(ID == input$ID) %&gt;% collect()
+    pool %&gt;% tbl(&quot;City&quot;) %&gt;% filter(ID == !!input$ID) %&gt;% collect()
   })
   output$popPlot &lt;- renderPlot({
     df &lt;- pool %&gt;% tbl(&quot;City&quot;) %&gt;% head(input$nrows) %&gt;% collect()
@@ -43,6 +44,8 @@ server &lt;- function(input, output, session) {
 }
 
 shinyApp(ui, server)</code></pre>
+<p>Note: if you prefer to connect using an ODBC driver and a data source name (DSN), you can use the <code>odbc</code> package along with the <code>dsn</code> argument.</p>
+<pre class="r"><code>pool &lt;- dbPool(odbc::odbc(), dsn = &quot;myDSN&quot;)</code></pre>
 </div>
 <div id="concept" class="section level2">
 <h2>Concept</h2>

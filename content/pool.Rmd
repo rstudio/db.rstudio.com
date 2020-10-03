@@ -1,5 +1,5 @@
 ---
-title: "Database Connection Pooling in R"
+title: "Pooling database connections in R"
 ---
 
 The goal of the `pool` package is to abstract away the logic of connection management and the performance cost of fetching a new connection from a remote database. These concerns are especially prominent in interactive contexts, like Shiny apps (which connect to a remote database) or even at the R console. So, while this package is of most practical value to Shiny developers, there is no harm if it is used in other contexts. Since `pool` integrates with both `DBI` and `dplyr`, there are very few things that will be new to you, if you're already using either of those packages. Essentially, you shouldn't feel the difference, with the exception of creating and closing a Pool object (as opposed to connecting and disconnecting a DBIConnection object).
@@ -32,7 +32,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   output$tbl <- renderTable({
-    pool %>% tbl("City") %>% filter(ID == input$ID) %>% collect()
+    pool %>% tbl("City") %>% filter(ID == !!input$ID) %>% collect()
   })
   output$popPlot <- renderPlot({
     df <- pool %>% tbl("City") %>% head(input$nrows) %>% collect()
@@ -44,6 +44,13 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+
+Note: if you prefer to connect using an ODBC driver and a data source name (DSN), you can use the `odbc` package along with the `dsn` argument.
+
+```r
+pool <- dbPool(odbc::odbc(), dsn = "myDSN")
+```
+
 ## Concept
 The `pool` package adds a new level of abstraction when connecting to a database: instead of directly fetching a connection from the database, you will create an object (called a pool) with a reference to that database. The pool holds a number of connections to the database. Some of these may be currently in-use and some of these may be idle, waiting for a query to request them. Each time you make a query, you are querying the pool, rather than the database. Under the hood, the pool will either give you an idle connection that it previously fetched from the database or, if it has no free connections, fetch one and give it to you. You never have to create or close connections directly: the pool knows when it should grow, shrink or keep steady. You only need to close the pool when you’re done.
 
