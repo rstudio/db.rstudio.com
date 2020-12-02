@@ -1,9 +1,10 @@
 ---
-title: Introduction to DBI
+title: Using DBI
 aliases:
   - /dbi
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p><code>DBI</code> separates the connectivity to the DBMS into a “front-end” and a “back-end”. Applications use only the exposed front-end API. The back-end facilities that communicate with specific DBMSs (SQLite, MySQL, PostgreSQL, MonetDB, etc.) are provided by <strong>drivers</strong> (other packages) that get invoked automatically through S4 methods.</p>
@@ -35,8 +36,8 @@ dbClearResult(res)
 dbDisconnect(con)</code></pre>
 <p>To install <code>DBI</code>:</p>
 <ul>
-<li>Get the released version from CRAN: <code>install.packages(&quot;DBI&quot;)</code></li>
-<li>Get the development version from GitHub: <code>devtools::install_github(&quot;rstats-db/DBI&quot;)</code></li>
+<li>Get the released version from CRAN: <code>install.packages("DBI")</code></li>
+<li>Get the development version from GitHub: <code>devtools::install_github("rstats-db/DBI")</code></li>
 </ul>
 <p>Discussions associated with <code>DBI</code> and related database packages take place on <a href="https://stat.ethz.ch/mailman/listinfo/r-sig-db">R-SIG-DB</a>.</p>
 <div id="class-structure" class="section level2">

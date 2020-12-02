@@ -1,9 +1,10 @@
 ---
-title: "Databases using dplyr"
+title: "Using dplyr with databases"
 aliases:
   - /dplyr
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>As well as working with local in-memory data stored in data frames, <code>dplyr</code> also works with remote on-disk data stored in databases. This is particularly useful in two scenarios:</p>
@@ -39,7 +40,7 @@ BigQuery.</p></li>
 <p>To work with a database in <code>dplyr</code>, you must first connect to it, using <code>DBI::dbConnect()</code>. We’re not going to go into the details of the <code>DBI</code> package here, but it’s the foundation upon which <code>dbplyr</code> is built. You’ll need to learn more about if you need to do things to the database that are beyond the scope of <code>dplyr</code>.</p>
 <pre class="r"><code>library(dplyr)
 con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code></pre>
-<p>The arguments to <code>DBI::dbConnect()</code> vary from database to database, but the first argument is always the database backend. It’s <code>RSQLite::SQLite()</code> for RSQLite, <code>RMySQL::MySQL()</code> for RMySQL, <code>RPostgreSQL::PostgreSQL()</code> for RPostgreSQL, <code>odbc::odbc()</code> for odbc, and <code>bigrquery::bigquery()</code> for BigQuery. SQLite only needs one other argument: the path to the database. Here we use the special string, <code>&quot;:memory:&quot;</code>, which causes SQLite to make a temporary in-memory database.</p>
+<p>The arguments to <code>DBI::dbConnect()</code> vary from database to database, but the first argument is always the database backend. It’s <code>RSQLite::SQLite()</code> for RSQLite, <code>RMySQL::MySQL()</code> for RMySQL, <code>RPostgreSQL::PostgreSQL()</code> for RPostgreSQL, <code>odbc::odbc()</code> for odbc, and <code>bigrquery::bigquery()</code> for BigQuery. SQLite only needs one other argument: the path to the database. Here we use the special string, <code>":memory:"</code>, which causes SQLite to make a temporary in-memory database.</p>
 <p>Most existing databases don’t live in a file, but instead live on another server. In real life that your code will look more like this:</p>
 <pre class="r"><code>con &lt;- DBI::dbConnect(RMySQL::MySQL(), 
   host = &quot;database.rstudio.com&quot;,
@@ -63,19 +64,18 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code><
 <p>When you print it out, you’ll notice that it mostly looks like a regular tibble:</p>
 <pre class="r"><code>flights_db 
 #&gt; # Source:   table&lt;flights&gt; [?? x 19]
-#&gt; # Database: sqlite 3.22.0 []
-#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time
-#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-#&gt; 1  2013     1     1      517            515         2      830
-#&gt; 2  2013     1     1      533            529         4      850
-#&gt; 3  2013     1     1      542            540         2      923
-#&gt; 4  2013     1     1      544            545        -1     1004
-#&gt; 5  2013     1     1      554            600        -6      812
-#&gt; 6  2013     1     1      554            558        -4      740
-#&gt; # … with more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
-#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
-#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
-#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dbl&gt;</code></pre>
+#&gt; # Database: sqlite 3.30.1 []
+#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+#&gt; 1  2013     1     1      517            515         2      830            819
+#&gt; 2  2013     1     1      533            529         4      850            830
+#&gt; 3  2013     1     1      542            540         2      923            850
+#&gt; 4  2013     1     1      544            545        -1     1004           1022
+#&gt; 5  2013     1     1      554            600        -6      812            837
+#&gt; 6  2013     1     1      554            558        -4      740            728
+#&gt; # … with more rows, and 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;,
+#&gt; #   flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+#&gt; #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dbl&gt;</code></pre>
 <p>The main difference is that you can see that it’s a remote source in a SQLite database.</p>
 </div>
 <div id="generating-queries" class="section level2">
@@ -84,7 +84,7 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code><
 <p>Most of the time you don’t need to know anything about SQL, and you can continue to use the <code>dplyr</code> verbs that you’re already familiar with:</p>
 <pre class="r"><code>flights_db %&gt;% select(year:day, dep_delay, arr_delay)
 #&gt; # Source:   lazy query [?? x 5]
-#&gt; # Database: sqlite 3.22.0 []
+#&gt; # Database: sqlite 3.30.1 []
 #&gt;    year month   day dep_delay arr_delay
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 #&gt; 1  2013     1     1         2        11
@@ -97,19 +97,18 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code><
 
 flights_db %&gt;% filter(dep_delay &gt; 240)
 #&gt; # Source:   lazy query [?? x 19]
-#&gt; # Database: sqlite 3.22.0 []
-#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time
-#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-#&gt; 1  2013     1     1      848           1835       853     1001
-#&gt; 2  2013     1     1     1815           1325       290     2120
-#&gt; 3  2013     1     1     1842           1422       260     1958
-#&gt; 4  2013     1     1     2115           1700       255     2330
-#&gt; 5  2013     1     1     2205           1720       285       46
-#&gt; 6  2013     1     1     2343           1724       379      314
-#&gt; # … with more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
-#&gt; #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
-#&gt; #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
-#&gt; #   minute &lt;dbl&gt;, time_hour &lt;dbl&gt;
+#&gt; # Database: sqlite 3.30.1 []
+#&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+#&gt; 1  2013     1     1      848           1835       853     1001           1950
+#&gt; 2  2013     1     1     1815           1325       290     2120           1542
+#&gt; 3  2013     1     1     1842           1422       260     1958           1535
+#&gt; 4  2013     1     1     2115           1700       255     2330           1920
+#&gt; 5  2013     1     1     2205           1720       285       46           2040
+#&gt; 6  2013     1     1     2343           1724       379      314           1938
+#&gt; # … with more rows, and 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;,
+#&gt; #   flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+#&gt; #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dbl&gt;
 
 flights_db %&gt;% 
   group_by(dest) %&gt;%
@@ -118,7 +117,7 @@ flights_db %&gt;%
 #&gt; Use `mean(x, na.rm = TRUE)` to silence this warning
 #&gt; This warning is displayed only once per session.
 #&gt; # Source:   lazy query [?? x 2]
-#&gt; # Database: sqlite 3.22.0 []
+#&gt; # Database: sqlite 3.30.1 []
 #&gt;   dest  delay
 #&gt;   &lt;chr&gt; &lt;dbl&gt;
 #&gt; 1 ABQ   2006.
@@ -147,7 +146,7 @@ everything you want to do and then sends it to the database in one step.</p></li
 <p>Surprisingly, this sequence of operations never touches the database. It’s not until you ask for the data (e.g., by printing <code>tailnum_delay</code>) that <code>dplyr</code> generates the SQL and requests the results from the database. Even then it tries to do as little work as possible and only pulls down a few rows.</p>
 <pre class="r"><code>tailnum_delay_db
 #&gt; # Source:     lazy query [?? x 3]
-#&gt; # Database:   sqlite 3.22.0 []
+#&gt; # Database:   sqlite 3.30.1 []
 #&gt; # Ordered by: desc(delay)
 #&gt;   tailnum delay     n
 #&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;int&gt;
@@ -168,7 +167,7 @@ everything you want to do and then sends it to the database in one step.</p></li
 #&gt; GROUP BY `tailnum`)
 #&gt; ORDER BY `delay` DESC)
 #&gt; WHERE (`n` &gt; 100.0)</code></pre>
-<p>If you’re familiar with SQL, this probably isn’t exactly what you’d write by hand, but it does the job. You can learn more about the SQL translation in <code>vignette(&quot;sql-translation&quot;)</code>.</p>
+<p>If you’re familiar with SQL, this probably isn’t exactly what you’d write by hand, but it does the job. You can learn more about the SQL translation in <code>vignette("sql-translation")</code>.</p>
 <p>Typically, you’ll iterate a few times before you figure out what data you need from the database. Once you’ve figured it out, use <code>collect()</code> to pull all the data down into a local tibble:</p>
 <pre class="r"><code>tailnum_delay &lt;- tailnum_delay_db %&gt;% collect()
 tailnum_delay

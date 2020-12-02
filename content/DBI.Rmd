@@ -1,5 +1,5 @@
 ---
-title: Introduction to DBI
+title: Using DBI
 aliases:
   - /dbi
 ---

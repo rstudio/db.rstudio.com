@@ -39,35 +39,40 @@ googleAnalytics = "UA-20375833-3"
   parent = "Getting Started"
 [[menu.main]]
   weight = 10
-	name   = "Packages"
+	name   = "R Packages"
 [[menu.main]]
   weight = 11
-	name   = "dplyr"
-	parent = "Packages"
-	url    = "/dplyr/"
+	name   = "odbc"
+	parent = "R Packages"
+	url    = "/odbc/"
 [[menu.main]]
   weight = 12
 	name   = "DBI"
-	parent = "Packages"
+	parent = "R Packages"
 	url    = "/dbi/"
 [[menu.main]]
   weight = 13
-	name   = "odbc"
-	parent = "Packages"
-	url    = "/odbc/"
+	name   = "dplyr"
+	parent = "R Packages"
+	url    = "/dplyr/"
+[[menu.main]]
+  weight = 14
+	name   = "pool"
+	parent = "R Packages"
+	url    = "/pool/"
 [[menu.main]]
   weight = 17
-	name   = "RStudio"
+	name   = "RStudio IDE"
 	url    = "/rstudio/connections/"
 [[menu.main]]
   weight = 18
 	name   = "Connections Pane"
-	parent = "RStudio"
+	parent = "RStudio IDE"
 	url    = "/rstudio/connections/"	
 [[menu.main]]
   weight = 19
 	name   = "Professional Drivers"
-	parent = "RStudio"
+	parent = "RStudio IDE"
 	url    = "/rstudio/pro-drivers/"
 [[menu.main]]
   weight = 20

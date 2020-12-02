@@ -1,5 +1,5 @@
 ---
-title: "Databases using dplyr"
+title: "Using dplyr with databases"
 aliases:
   - /dplyr
 ---
