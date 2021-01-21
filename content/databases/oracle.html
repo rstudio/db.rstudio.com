@@ -7,6 +7,7 @@ aliases:
   - /oracle
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <div id="driver-options" class="section level2">
@@ -49,9 +50,9 @@ aliases:
 <ul>
 <li><strong>RJDBC</strong> support - Even though it is not considered an issue, we have found a workaround. The approach is to point the current JDBC connection to the Oracle translation inside <code>dbplyr</code>:</li>
 </ul>
-<pre class="r"><code>sql_translate_env.JDBCConnection &lt;- dbplyr:::sql_translate_env.Oracle
-sql_select.JDBCConnection &lt;- dbplyr:::sql_select.Oracle
-sql_subquery.JDBCConnection &lt;- dbplyr:::sql_subquery.Oracle</code></pre>
+<pre class="r"><code>sql_translation.JDBCConnection &lt;- dbplyr:::sql_translation.Oracle
+sql_select.JDBCConnection &lt;- dbplyr:::sql_query_select.Oracle
+sql_subquery.JDBCConnection &lt;- dbplyr:::sql_query_wrap.Oracle</code></pre>
 <p>Please refer to the <a href="https://github.com/tidyverse/dplyr/issues/">Issues section in <code>dplyr</code></a> to find out the latest regarding bugs and resolutions.</p>
 </div>
 </div>
