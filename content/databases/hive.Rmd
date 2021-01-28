@@ -40,5 +40,13 @@ con <- DBI::dbConnect(odbc::odbc(),
 
 ```
 
+### Known Issues
 
+- It may be necessary to prevent Hive from returning the table prefix in column names. This can be done by setting [`hive.resultset.use.unique.column.names`](https://stackoverflow.com/questions/31705985/is-it-possible-to-stop-hive-from-printing-the-database-when-printing-column-head) to `false` when establishing a connection to Hive. See [tidyverse/dbplyr#573](https://github.com/tidyverse/dbplyr/issues/573) for more context.
+
+```{r, eval = FALSE}
+con <- DBI::dbConnect(odbc::odbc().
+                      ...,
+                      SSP_hive.resultset.use.unique.column.names = FALSE)
+```
 

@@ -7,6 +7,7 @@ aliases:
   - /hive
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <div id="driver-options" class="section level2">
@@ -38,4 +39,13 @@ aliases:
                       UID    = rstudioapi::askForPassword(&quot;Database user&quot;),
                       PWD    = rstudioapi::askForPassword(&quot;Database password&quot;),
                       Port   = 10000)</code></pre>
+<div id="known-issues" class="section level3">
+<h3>Known Issues</h3>
+<ul>
+<li>It may be necessary to prevent Hive from returning the table prefix in column names. This can be done by setting <a href="https://stackoverflow.com/questions/31705985/is-it-possible-to-stop-hive-from-printing-the-database-when-printing-column-head"><code>hive.resultset.use.unique.column.names</code></a> to <code>false</code> when establishing a connection to Hive. See <a href="https://github.com/tidyverse/dbplyr/issues/573">tidyverse/dbplyr#573</a> for more context.</li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc().
+                      ...,
+                      SSP_hive.resultset.use.unique.column.names = FALSE)</code></pre>
+</div>
 </div>
