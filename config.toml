@@ -209,6 +209,11 @@ googleAnalytics = "UA-20375833-3"
 	url    = "/databases/cassandra/"
 	parent = "Databases"		
 [[menu.main]]
+  weight = 47
+	name   = "Snowflake"
+	url    = "/databases/snowflake/"
+	parent = "Databases"		
+[[menu.main]]
   weight = 49
 	name   = "Other Databases"
 	url    = "/databases/other-databases/"
