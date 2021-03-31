@@ -17,19 +17,7 @@ The **`odbc`** package, in combination with a driver, provides `DBI` support and
 
 ## Connection Settings
 
-There are six settings needed to make a connection:
-
-
-con <- dbConnect(
-  odbc(),
-  Driver = "/opt/snowflake/snowflakeodbc/lib/universal/libSnowflake.dylib",
-  Server = "wda27782.us-east-1.snowflakecomputing.com",
-  UID = rstudioapi::askForPassword(),
-  PWD = rstudioapi::askForPassword(),
-  Database = "PRO_DRIVERS",
-  Warehouse = "COMPUTE_WH",
-  Schema = "PUBLIC"
-)
+There are seven settings needed to make a connection:
 
   - **Driver** - See the [Drivers](/drivers) section for setup information 
   - **Server** - The URL to the database server
