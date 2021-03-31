@@ -1,0 +1,42 @@
+---
+title: Snowflake
+dplyr: "Yes"
+driver: "Yes"
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="driver-options" class="section level2">
+<h2>Driver Options</h2>
+<ul>
+<li><p><strong>Snowflake</strong> - Download the ODBC driver directly from Snowflake’s site: <a href="https://docs.snowflake.com/en/user-guide/odbc.html">Configure an ODBC Connection</a></p></li>
+<li><p><strong>RStudio Professional Drivers</strong> - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Redshift databases. RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the <a href="https://www.rstudio.com/products/drivers/">RStudio Professional Drivers</a> for more information.</p></li>
+</ul>
+</div>
+<div id="package-options" class="section level2">
+<h2>Package Options</h2>
+<p>The <strong><code>odbc</code></strong> package, in combination with a driver, provides <code>DBI</code> support and an ODBC connection.</p>
+</div>
+<div id="connection-settings" class="section level2">
+<h2>Connection Settings</h2>
+<p>There are seven settings needed to make a connection:</p>
+<ul>
+<li><strong>Driver</strong> - See the <a href="/drivers">Drivers</a> section for setup information</li>
+<li><strong>Server</strong> - The URL to the database server</li>
+<li><strong>UID</strong> - The user’s account ID</li>
+<li><strong>PWD</strong> - The account’s password</li>
+<li><strong>Database</strong> - The database name within the server</li>
+<li><strong>Warehouse</strong> - The warehouse name within the database</li>
+<li><strong>Schema</strong> - The schema name within the warehouse</li>
+</ul>
+<pre class="r"><code>con &lt;- DBI::dbConnect(odbc::odbc(),
+                      Driver       = &quot;[your driver&#39;s name]&quot;,
+                      Server       = &quot;[your server&#39;s path]&quot;,
+                      UID          = rstudioapi::askForPassword(&quot;Database user&quot;),
+                      PWD          = rstudioapi::askForPassword(&quot;Database password&quot;),
+                      Database     = &quot;[your database&#39;s name]&quot;,
+                      Warehouse    = &quot;[your warehouse&#39;s name]&quot;,
+                      Schema       = &quot;[your schema&#39;s name]&quot;
+                      )</code></pre>
+</div>
