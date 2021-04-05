@@ -43,13 +43,6 @@ If you are interested in creating your own package that connects `DBI` to a data
 
 ## SQL Translations for `dplyr`
 
-A complementary package called `dbplyr` contains the translations of the vendor-specific SQL for `dplyr` to use. As of today, we have translations for the following databases:
-
-  - [Microsoft SQL Server](microsoft-sql-server)
-  - [Oracle](oracle)
-  - [Apache Hive](hive)
-  - [Apache Impala](impala)
-  - [PostgreSQL](postgresql)
-  - [Amazon Redshift](redshift)
+A complementary package called `dbplyr` contains the translations of the vendor-specific SQL for `dplyr` to use. A list of known supported databases are available in our [Databases](/databases) page.
 
 Is the database you are interested in not listed here? You can still use `DBI` and `odbc` to connect and send SQL queries.  If you would like to contribute a translation, please see the [SQL Translation](translation) page in this website.
