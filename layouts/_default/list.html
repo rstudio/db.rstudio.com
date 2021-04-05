@@ -42,10 +42,6 @@
       <div class="markdowned">
       {{ .Content }}
       </div>
-     
-      {{ range first 5 (where .Paginator.Pages "Section" "post") }}
-      {{ partial "blog-article" . }}
-      {{ end }}
       
       </main>
         

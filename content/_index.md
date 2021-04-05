@@ -29,5 +29,3 @@ This website is the main channel to provide support in this area.  RStudio is al
 </br>
 
 <hr>
-
-# Latest Announcements 
