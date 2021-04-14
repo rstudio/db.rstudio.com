@@ -2,6 +2,7 @@
 title: Database Queries With R
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>There are many ways to query data with R. This article shows you three of the most common ways:</p>
@@ -20,8 +21,8 @@ title: Database Queries With R
 </ul>
 <p>RStudio also made recent improvements to its products so they work better with databases.</p>
 <ul>
-<li><a href="/connections">RStudio IDE (v1.1)</a>. With the latest version of the RStudio IDE, you can connect to, explore, and view data in a variety of databases. The IDE has a wizard for setting up new connections, and a tab for exploring established connections. These new features are extensible and will work with any R package that has a <a href="/advanced/contract/">connections contract</a>.</li>
-<li><a href="/rstudio/pro-drivers/">RStudio Professional Drivers</a>. If you are using RStudio professional products, you can download RStudio Professional Drivers for no additional cost. The examples below use the Oracle ODBC driver. If you are using open-source tools, you can bring your own driver or use community packages – many open-source drivers and community packages exist for connecting to a variety of databases.</li>
+<li><a href="/connections">RStudio IDE (v1.1 and newer)</a>. With the latest versions of the RStudio IDE, you can connect to, explore, and view data in a variety of databases. The IDE has a wizard for setting up new connections, and a tab for exploring established connections. These new features are extensible and will work with any R package that has a <a href="/advanced/contract/">connections contract</a>.</li>
+<li><a href="/rstudio/pro-drivers/">RStudio Professional Drivers</a>. If you are using RStudio Desktop Pro or other RStudio professional products, you can download RStudio Professional Drivers for no additional cost on the same machine where these products are installed. The examples below use the Oracle ODBC driver. If you are using open-source tools, you can bring your own driver or use community packages – many open-source drivers and community packages exist for connecting to a variety of databases.</li>
 </ul>
 <p>Using databases with R is a broad subject and there is more work to be done. An earlier blog post discussed <a href="https://blog.rstudio.com/2017/06/27/dbplyr-1-1-0/">our vision</a>.</p>
 </div>
@@ -62,7 +63,7 @@ GROUP BY &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;</code></pre>
 </div>
 <div id="query-using-an-r-notebooks" class="section level3">
 <h3>3. Query using an R Notebooks</h3>
-<p>Did you know that you can run SQL code in an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a> code chunk? To use SQL, open an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a> in the RStudio IDE under the <strong>File &gt; New File</strong> menu. Start a new code chunk with <code>{sql}</code>, and specify your connection with the <code>connection=con</code> code chunk option. If you want to send the query output to an R dataframe, use <code>output.var = &quot;mydataframe&quot;</code> in the code chunk options. When you specify <code>output.var</code>, you will be able to use the output in subsequent R code chunks. In this example, we use the output in <code>ggplot2</code>.</p>
+<p>Did you know that you can run SQL code in an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a> code chunk? To use SQL, open an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a> in the RStudio IDE under the <strong>File &gt; New File</strong> menu. Start a new code chunk with <code>{sql}</code>, and specify your connection with the <code>connection=con</code> code chunk option. If you want to send the query output to an R dataframe, use <code>output.var = "mydataframe"</code> in the code chunk options. When you specify <code>output.var</code>, you will be able to use the output in subsequent R code chunks. In this example, we use the output in <code>ggplot2</code>.</p>
 <pre><code>```{sql, connection=con, output.var = &quot;mydataframe&quot;}
 SELECT &quot;month_idx&quot;, &quot;year&quot;, &quot;month&quot;, SUM(CASE WHEN (&quot;term_deposit&quot; = &#39;yes&#39;) THEN (1.0) ELSE (0.0) END) AS &quot;subscribe&quot;,
 COUNT(*) AS &quot;total&quot;
