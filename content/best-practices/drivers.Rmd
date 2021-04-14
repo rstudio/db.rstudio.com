@@ -4,8 +4,13 @@ aliases:
   - /drivers
 ---
 
-For Unix and MacOS, ODBC drivers should be compiled against
-[unixODBC](http://www.unixodbc.org/). Drivers compiled against [iODBC](http://www.iodbc.org/) _may_ also work, but are not fully supported.
+## Using RStudio Professional Drivers
+
+When working with databases on RStudio Desktop Pro and other RStudio professional products, it is strongly recommended to use the [RStudio Professional Drivers](../../rstudio/pro-drivers). Not only these come with full support, but also they simplify the installation and configuration process is most cases, not requiring many of the steps detailed below.
+
+## Using other drivers
+
+For Linux and MacOS, ODBC drivers should be compiled against [unixODBC](http://www.unixodbc.org/). Drivers compiled against [iODBC](http://www.iodbc.org/) _may_ also work, but are not fully supported.
 
 After installation of the driver manager and driver, you will have to
 register the driver in a [odbcinst.ini](#dsn-configuration-files) file for it to appear in `odbc::odbcListDrivers()`.

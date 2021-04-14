@@ -2,7 +2,7 @@
 title: MySQL
 logo: "/logos/mysqllarge.png"
 dplyr: "Yes"
-driver: "No"
+driver: "Yes"
 package: "RMariaDB"
 aliases:
   - /my-sql

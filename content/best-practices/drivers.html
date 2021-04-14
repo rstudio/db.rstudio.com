@@ -4,12 +4,19 @@ aliases:
   - /drivers
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
-<p>For Unix and MacOS, ODBC drivers should be compiled against
-<a href="http://www.unixodbc.org/">unixODBC</a>. Drivers compiled against <a href="http://www.iodbc.org/">iODBC</a> <em>may</em> also work, but are not fully supported.</p>
+<div id="using-rstudio-professional-drivers" class="section level2">
+<h2>Using RStudio Professional Drivers</h2>
+<p>When working with databases on RStudio Desktop Pro and other RStudio professional products, it is strongly recommended to use the <a href="../../rstudio/pro-drivers">RStudio Professional Drivers</a>. Not only these come with full support, but also they simplify the installation and configuration process is most cases, not requiring many of the steps detailed below.</p>
+</div>
+<div id="using-other-drivers" class="section level2">
+<h2>Using other drivers</h2>
+<p>For Linux and MacOS, ODBC drivers should be compiled against <a href="http://www.unixodbc.org/">unixODBC</a>. Drivers compiled against <a href="http://www.iodbc.org/">iODBC</a> <em>may</em> also work, but are not fully supported.</p>
 <p>After installation of the driver manager and driver, you will have to
 register the driver in a <a href="#dsn-configuration-files">odbcinst.ini</a> file for it to appear in <code>odbc::odbcListDrivers()</code>.</p>
+</div>
 <div id="microsoft-windows" class="section level2">
 <h2>Microsoft Windows</h2>
 <div id="database-drivers" class="section level3">
@@ -31,7 +38,7 @@ application is used to manage ODBC data sources on Windows.</p>
 <h3>Installation</h3>
 <ol style="list-style-type: decimal">
 <li><p>Install <a href="http://brew.sh/">homebrew</a> to install database drivers easily on MacOS</p></li>
-<li>Install UnixODBC, which is required for all databases</li>
+<li><p>Install UnixODBC, which is required for all databases</p></li>
 </ol>
 <pre class="shell"><code>  # Install the unixODBC library
   brew install unixodbc</code></pre>
