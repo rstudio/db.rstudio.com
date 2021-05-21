@@ -23,7 +23,7 @@ The **`odbc`** package, in combination with a driver, provides `DBI` support and
 
 - **MariaDB** - MariaDB is an open source relational database built by the original developers of MySQL. MariaDB provides an ODBC connector that can be used as a drop-in replacement for a MySQL ODBC connector: [MariaDB Connector](https://downloads.mariadb.org/connector-odbc/+releases/)
 
-- **RStudio Professional Drivers** - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for MySQL databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information.
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for MySQL databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information.
 
 ### Connection Settings
 
