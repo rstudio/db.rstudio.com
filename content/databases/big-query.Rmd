@@ -21,7 +21,7 @@ The **`odbc`** package, in combination with a driver, provides `DBI` support and
 
 - **BigQuery** - The official BigQuery website provides instructions on how to download and setup their ODBC driver: [BigQuery Drivers](https://cloud.google.com/bigquery/providers/simba-drivers)
 
-- **RStudio Professional Drivers** - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Google BigQuery.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Google BigQuery.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
 
 ### Connection Settings
 
