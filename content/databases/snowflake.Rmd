@@ -10,7 +10,7 @@ driver: "Yes"
 
 - **Snowflake** - Download the ODBC driver directly from Snowflake's site: [Configure an ODBC Connection](https://docs.snowflake.com/en/user-guide/odbc.html)
 
-- **RStudio Professional Drivers** - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Redshift databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+- **RStudio Professional Drivers** - RStudio Workbench, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Redshift databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
 
 ## Package Options
 

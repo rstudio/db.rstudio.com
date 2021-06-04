@@ -9,7 +9,7 @@ driver: "Yes"
 
 - **Amazon Athena** - Please refer to the Athena's website for instructions on how to download and setup their official driver: [Athena ODBC page](https://docs.aws.amazon.com/athena/latest/ug/connect-with-odbc.html)
 
-- **RStudio Professional Drivers** - RStudio Server Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+- **RStudio Professional Drivers** - RStudio Workbench, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
 
 ## Package Options
 

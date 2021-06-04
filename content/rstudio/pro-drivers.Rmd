@@ -8,7 +8,7 @@ RStudio makes it easy to access and analyze your data with R. RStudio Profession
 - Develop and deploy Shiny applications that depend on databases
 - Use databases with R in a Production environment
 
-If you are using RStudio Desktop Pro, RStudio Server Pro, RStudio Connect, or Shiny Server Pro, then you can download and use RStudio Professional Drivers at no additional charge in the same machine were these one products is installed.
+If you are using RStudio Desktop Pro, RStudio Workbench, RStudio Connect, or Shiny Server Pro, then you can download and use RStudio Professional Drivers at no additional charge in the same machine were these one products is installed.
 
 ## Coverage
 
