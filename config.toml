@@ -29,11 +29,16 @@ googleAnalytics = "UA-20375833-3"
   url = "/getting-started/"
 [[menu.main]]
   weight = 2
+  name = "Overview"
+  url = "/overview/"
+  parent = "Getting Started"
+[[menu.main]]
+  weight = 3
   name = "Connect to a Database"
   url = "/getting-started/connect-to-database"
   parent = "Getting Started"
 [[menu.main]]
-  weight = 3
+  weight = 4
   name = "Database Queries"
   url = "/getting-started/database-queries"
   parent = "Getting Started"
