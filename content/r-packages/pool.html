@@ -56,7 +56,9 @@ shinyApp(ui, server)</code></pre>
 <p>When you’re connecting to a database, it is important to manage your connections: when to open them (taking into account that this is a potentially long process for remote databases), how to keep track of them, and when to close them. This is always true, but it becomes especially relevant for Shiny apps, where not following best practices can lead to <em>many</em> slowdowns (from inadvertantly opening too many connections) and/or <em>many</em> leaked connections (i.e. forgetting to close connections once you no longer need them). Over time, leaked connections could accumulate and substantially slow down your app, as well as overwhelming the database itself.</p>
 <p>Oversimplifying a bit, we can think of connection management in Shiny as a spectrum from the extreme of just having one connection per app (potentially serving several sessions of the app) to the extreme of opening (and closing) one connection for each query you make. Neither of these approaches is great. You can expand either of the arrows below to see the source code for each extreme, but that is not essential to understading the problems described below.</p>
 <details>
-<p><summary><code>oneConnectionPerApp.R</code></summary></p>
+<summary>
+<code>oneConnectionPerApp.R</code>
+</summary>
 <pre class="r"><code>library(shiny)
 library(dplyr)
 library(DBI)
@@ -94,7 +96,9 @@ server &lt;- function(input, output, session) {
 shinyApp(ui, server)</code></pre>
 </details>
 <details>
-<p><summary><code>oneConnectionPerQuery.R</code></summary></p>
+<summary>
+<code>oneConnectionPerQuery.R</code>
+</summary>
 <pre class="r"><code>library(shiny)
 library(dplyr)
 library(DBI)

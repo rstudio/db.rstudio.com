@@ -64,7 +64,7 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code><
 <p>When you print it out, you’ll notice that it mostly looks like a regular tibble:</p>
 <pre class="r"><code>flights_db 
 #&gt; # Source:   table&lt;flights&gt; [?? x 19]
-#&gt; # Database: sqlite 3.30.1 []
+#&gt; # Database: sqlite 3.34.1 []
 #&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
 #&gt; 1  2013     1     1      517            515         2      830            819
@@ -84,7 +84,7 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code><
 <p>Most of the time you don’t need to know anything about SQL, and you can continue to use the <code>dplyr</code> verbs that you’re already familiar with:</p>
 <pre class="r"><code>flights_db %&gt;% select(year:day, dep_delay, arr_delay)
 #&gt; # Source:   lazy query [?? x 5]
-#&gt; # Database: sqlite 3.30.1 []
+#&gt; # Database: sqlite 3.34.1 []
 #&gt;    year month   day dep_delay arr_delay
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 #&gt; 1  2013     1     1         2        11
@@ -97,7 +97,7 @@ con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = &quot;:dbname:&quot;)</code><
 
 flights_db %&gt;% filter(dep_delay &gt; 240)
 #&gt; # Source:   lazy query [?? x 19]
-#&gt; # Database: sqlite 3.30.1 []
+#&gt; # Database: sqlite 3.34.1 []
 #&gt;    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 #&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
 #&gt; 1  2013     1     1      848           1835       853     1001           1950
@@ -117,7 +117,7 @@ flights_db %&gt;%
 #&gt; Use `mean(x, na.rm = TRUE)` to silence this warning
 #&gt; This warning is displayed only once per session.
 #&gt; # Source:   lazy query [?? x 2]
-#&gt; # Database: sqlite 3.30.1 []
+#&gt; # Database: sqlite 3.34.1 []
 #&gt;   dest  delay
 #&gt;   &lt;chr&gt; &lt;dbl&gt;
 #&gt; 1 ABQ   2006.
@@ -145,41 +145,45 @@ everything you want to do and then sends it to the database in one step.</p></li
   filter(n &gt; 100)</code></pre>
 <p>Surprisingly, this sequence of operations never touches the database. It’s not until you ask for the data (e.g., by printing <code>tailnum_delay</code>) that <code>dplyr</code> generates the SQL and requests the results from the database. Even then it tries to do as little work as possible and only pulls down a few rows.</p>
 <pre class="r"><code>tailnum_delay_db
+#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT
+#&gt; ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
 #&gt; # Source:     lazy query [?? x 3]
-#&gt; # Database:   sqlite 3.30.1 []
+#&gt; # Database:   sqlite 3.34.1 []
 #&gt; # Ordered by: desc(delay)
 #&gt;   tailnum delay     n
 #&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;int&gt;
-#&gt; 1 N11119   30.3   148
-#&gt; 2 N16919   29.9   251
-#&gt; 3 N14998   27.9   230
-#&gt; 4 N15910   27.6   280
-#&gt; 5 N13123   26.0   121
-#&gt; 6 N11192   25.9   154
+#&gt; 1 &lt;NA&gt;    NA     2512
+#&gt; 2 N0EGMQ   9.98   371
+#&gt; 3 N10156  12.7    153
+#&gt; 4 N10575  20.7    289
+#&gt; 5 N11106  14.9    129
+#&gt; 6 N11107  15.0    148
 #&gt; # … with more rows</code></pre>
 <p>Behind the scenes, <code>dplyr</code> is translating your R code into SQL. You can see the SQL it’s generating with <code>show_query()</code>:</p>
 <pre class="r"><code>tailnum_delay_db %&gt;% show_query()
+#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT
+#&gt; ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
 #&gt; &lt;SQL&gt;
 #&gt; SELECT *
-#&gt; FROM (SELECT *
-#&gt; FROM (SELECT `tailnum`, AVG(`arr_delay`) AS `delay`, COUNT() AS `n`
+#&gt; FROM (SELECT `tailnum`, AVG(`arr_delay`) AS `delay`, COUNT(*) AS `n`
 #&gt; FROM `flights`
 #&gt; GROUP BY `tailnum`)
-#&gt; ORDER BY `delay` DESC)
 #&gt; WHERE (`n` &gt; 100.0)</code></pre>
 <p>If you’re familiar with SQL, this probably isn’t exactly what you’d write by hand, but it does the job. You can learn more about the SQL translation in <code>vignette("sql-translation")</code>.</p>
 <p>Typically, you’ll iterate a few times before you figure out what data you need from the database. Once you’ve figured it out, use <code>collect()</code> to pull all the data down into a local tibble:</p>
 <pre class="r"><code>tailnum_delay &lt;- tailnum_delay_db %&gt;% collect()
+#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT
+#&gt; ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
 tailnum_delay
 #&gt; # A tibble: 1,201 x 3
 #&gt;   tailnum delay     n
 #&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;int&gt;
-#&gt; 1 N11119   30.3   148
-#&gt; 2 N16919   29.9   251
-#&gt; 3 N14998   27.9   230
-#&gt; 4 N15910   27.6   280
-#&gt; 5 N13123   26.0   121
-#&gt; 6 N11192   25.9   154
+#&gt; 1 &lt;NA&gt;    NA     2512
+#&gt; 2 N0EGMQ   9.98   371
+#&gt; 3 N10156  12.7    153
+#&gt; 4 N10575  20.7    289
+#&gt; 5 N11106  14.9    129
+#&gt; 6 N11107  15.0    148
 #&gt; # … with 1,195 more rows</code></pre>
 <p><code>collect()</code> requires that database does some work, so it may take a long time to complete. Otherwise, <code>dplyr</code> tries to prevent you from accidentally performing expensive query operations:</p>
 <ul>
