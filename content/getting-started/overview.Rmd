@@ -1,5 +1,5 @@
 ---
-Title: Databases using R
+Title: Overview
 ---
 
 
@@ -46,3 +46,36 @@ If you are interested in creating your own package that connects `DBI` to a data
 A complementary package called `dbplyr` contains the translations of the vendor-specific SQL for `dplyr` to use. A list of known supported databases are available in our [Databases](/databases) page.
 
 Is the database you are interested in not listed here? You can still use `DBI` and `odbc` to connect and send SQL queries.  If you would like to contribute a translation, please see the [SQL Translation](translation) page in this website.
+
+## Example
+
+The same dplyr syntax used with data in R will also work with data in a database. In the example below, data from the `nycflights13` package are loaded into a SQLite database then queried from R. The results from the query are then collected into R and visualized with ggplot2. The process is the same if you are using an enterprise data warehouse &mdash; like Microsoft SQL Server or Snowflake's data cloud.
+
+``` r
+library(DBI)
+library(dplyr)
+library(ggplot2)
+
+# SQLite database
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+copy_to(con, nycflights13::flights, "FLIGHTS")
+
+# ODBC databases (requires a live database connection)
+#con <- dbConnect(odbc::odbc(), "SQL Server")
+#con <- dbConnect(odbc::odbc(), "Snowflake")
+
+# Query, collect results, and visualize
+tbl(con, "FLIGHTS") %>%
+  filter(distance > 75) %>%
+  group_by(origin, hour) %>%
+  summarise(delay = mean(dep_delay, na.rm = TRUE)) %>%
+  collect() %>%
+  ggplot(aes(hour, delay, color = origin)) + geom_line()
+```
+
+
+<div>
+  <img src="/homepage/snowflake-flights.png" align="center">
+</div>
+
+

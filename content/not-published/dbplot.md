@@ -308,5 +308,3 @@ spark_flights %>%
 ``` r
 spark_disconnect(sc)
 ```
-
-    ## NULL

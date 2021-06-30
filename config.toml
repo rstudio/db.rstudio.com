@@ -29,51 +29,57 @@ googleAnalytics = "UA-20375833-3"
   url = "/getting-started/"
 [[menu.main]]
   weight = 2
+  name = "Overview"
+  url = "/getting-started/overview"
+  parent = "Getting Started"
+[[menu.main]]
+  weight = 3
   name = "Connect to a Database"
   url = "/getting-started/connect-to-database"
   parent = "Getting Started"
 [[menu.main]]
-  weight = 3
+  weight = 4
   name = "Database Queries"
   url = "/getting-started/database-queries"
   parent = "Getting Started"
 [[menu.main]]
   weight = 10
 	name   = "R Packages"
+  url = "/r-packages/"
 [[menu.main]]
   weight = 11
 	name   = "odbc"
+	url    = "/r-packages/odbc/"
 	parent = "R Packages"
-	url    = "/odbc/"
 [[menu.main]]
   weight = 12
 	name   = "DBI"
+	url    = "/r-packages/dbi/"
 	parent = "R Packages"
-	url    = "/dbi/"
 [[menu.main]]
   weight = 13
 	name   = "dplyr"
+	url    = "/r-packages/dplyr/"
 	parent = "R Packages"
-	url    = "/dplyr/"
 [[menu.main]]
   weight = 14
 	name   = "pool"
+	url    = "/r-packages/pool/"
 	parent = "R Packages"
-	url    = "/pool/"
 [[menu.main]]
   weight = 17
 	name   = "RStudio IDE"
-	url    = "/rstudio/connections/"
+	url    = "/RStudio-IDE/"
 [[menu.main]]
   weight = 18
 	name   = "Connections Pane"
+	url    = "/RStudio-IDE/connections/"	
 	parent = "RStudio IDE"
-	url    = "/rstudio/connections/"	
 [[menu.main]]
   weight = 19
 	name   = "Professional Drivers"
+	url    = "/RStudio-IDE/pro-drivers/"
 	parent = "RStudio IDE"
-	url    = "/rstudio/pro-drivers/"
 [[menu.main]]
   weight = 20
 	name   = "Best Practices"
@@ -245,12 +251,12 @@ googleAnalytics = "UA-20375833-3"
 [[menu.main]]
   weight = 60
 	name   = "Other Resources"
-	url    = "/other_resources/media/"
+	url    = "/other-resources/"
 [[menu.main]]
   weight = 61
 	name   = "Media"
 	parent   = "Other Resources"
-	url    = "/other_resources/media/"
+	url    = "/other-resources/media/"
 [social]
 	twitter = "rstudio"
 	github  = "rstudio"

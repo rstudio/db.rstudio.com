@@ -1,5 +1,5 @@
 ---
-Title: Databases using R
+Title: Overview
 ---
 
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
@@ -36,4 +36,30 @@ Title: Databases using R
 <h2>SQL Translations for <code>dplyr</code></h2>
 <p>A complementary package called <code>dbplyr</code> contains the translations of the vendor-specific SQL for <code>dplyr</code> to use. A list of known supported databases are available in our <a href="/databases">Databases</a> page.</p>
 <p>Is the database you are interested in not listed here? You can still use <code>DBI</code> and <code>odbc</code> to connect and send SQL queries. If you would like to contribute a translation, please see the <a href="translation">SQL Translation</a> page in this website.</p>
+</div>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>The same dplyr syntax used with data in R will also work with data in a database. In the example below, data from the <code>nycflights13</code> package are loaded into a SQLite database then queried from R. The results from the query are then collected into R and visualized with ggplot2. The process is the same if you are using an enterprise data warehouse — like Microsoft SQL Server or Snowflake’s data cloud.</p>
+<pre class="r"><code>library(DBI)
+library(dplyr)
+library(ggplot2)
+
+# SQLite database
+con &lt;- dbConnect(RSQLite::SQLite(), &quot;:memory:&quot;)
+copy_to(con, nycflights13::flights, &quot;FLIGHTS&quot;)
+
+# ODBC databases (requires a live database connection)
+#con &lt;- dbConnect(odbc::odbc(), &quot;SQL Server&quot;)
+#con &lt;- dbConnect(odbc::odbc(), &quot;Snowflake&quot;)
+
+# Query, collect results, and visualize
+tbl(con, &quot;FLIGHTS&quot;) %&gt;%
+  filter(distance &gt; 75) %&gt;%
+  group_by(origin, hour) %&gt;%
+  summarise(delay = mean(dep_delay, na.rm = TRUE)) %&gt;%
+  collect() %&gt;%
+  ggplot(aes(hour, delay, color = origin)) + geom_line()</code></pre>
+<div>
+<p><img src="/homepage/snowflake-flights.png" align="center"></p>
+</div>
 </div>
