@@ -68,18 +68,18 @@ googleAnalytics = "UA-20375833-3"
 	parent = "R Packages"
 [[menu.main]]
   weight = 17
-	name   = "RStudio IDE"
-	url    = "/RStudio-IDE/"
+	name   = "Tooling"
+	url    = "/tooling/"
 [[menu.main]]
   weight = 18
 	name   = "Connections Pane"
-	url    = "/RStudio-IDE/connections/"	
-	parent = "RStudio IDE"
+	url    = "/tooling/connections/"	
+	parent = "Tooling"
 [[menu.main]]
   weight = 19
 	name   = "Professional Drivers"
-	url    = "/RStudio-IDE/pro-drivers/"
-	parent = "RStudio IDE"
+	url    = "/tooling/pro-drivers/"
+	parent = "Tooling"
 [[menu.main]]
   weight = 20
 	name   = "Best Practices"
