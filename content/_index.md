@@ -22,7 +22,7 @@ Build and/or document how to use packages such as: [dplyr](/dplyr), [DBI](/dbi),
 This website is the main channel to provide support in this area.  RStudio is also working through other delivery channels, such as upcoming webinars and in-person training during our RStudio conferences.
 
 <p align = "right">
-  <a href="overview" class="more" title="Read More...">Read more &rarr;</a>
+  <a href="/getting-started/overview" class="more" title="Read More...">Read more &rarr;</a>
 </p>
 
 
