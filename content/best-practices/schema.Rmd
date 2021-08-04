@@ -3,6 +3,11 @@ title: Schema selection
 aliases:
   - /schema
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.height = 4, fig.width = 7, fig.align = 'center', cache = TRUE, eval = FALSE)
+```
+
 ```{r, include = FALSE}
 library(dplyr)
 library(dbplyr)
