@@ -1,0 +1,44 @@
+---
+title: MongoDB
+logo: "/logos/mongodblarge.png"
+dplyr: "No"
+driver: "Yes"
+---
+
+## Driver Options
+
+- **MongoDB** - Please refer to MongoDB's website for instructions on how to download and setup their official driver: [MongoDB ODBC driver page](https://docs.mongodb.com/bi-connector/master/reference/odbc-driver/)
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Server** - Server path or name
+  - **Port** - Should be set to **27017**
+  - **Database** - Name of the database you wish to connect to
+  - **AuthMechanism** - See this article from MongoDB for more information: [Authentication Mechanisms](https://docs.mongodb.com/manual/core/authentication-mechanisms/#specify-authentication-mechanism) 
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+
+```{r,eval=FALSE}
+con <- DBI::dbConnect(
+      odbc::odbc(),
+      Driver        = "[your driver's name]",
+      Server        = "[your server's path or name]",
+      Port          = 27017,
+      Database      = "[your database's name]",
+      AuthMechanism = "SCRAM-SHA-1", # <- Example, depends server's auth setup
+      UID           = rstudioapi::askForPassword("Database user"),
+      PWD           = rstudioapi::askForPassword("Database password")
+      )
+```
+
+
+

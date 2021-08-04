@@ -1,0 +1,40 @@
+---
+title: Teradata
+logo: "/logos/teradatalarge.png"
+dplyr: "Yes"
+driver: "Yes"
+---
+
+## Driver Options
+
+- **Teradata Downloads** - Download and install the driver made available by Teradata in their [Connectivity page](https://downloads.teradata.com/download/connectivity)
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Host** - A network path to the database server
+  - **DBCName** - IP address or Alias of the server
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = "[your driver's name]",
+                      Host   = "[your server's path]",
+                      DBCName = "[IP Address or Alias]"
+                      UID    = rstudioapi::askForPassword("Database user"),
+                      PWD    = rstudioapi::askForPassword("Database password"))
+
+```
+
+
+

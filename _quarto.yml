@@ -1,0 +1,6 @@
+project:
+  type: site
+  output-dir: _site
+  
+site:
+  title: "db.rstudio.com"

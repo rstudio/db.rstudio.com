@@ -1,0 +1,124 @@
+---
+title: Schema selection
+aliases:
+  - /schema
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.height = 4, fig.width = 7, fig.align = 'center', cache = TRUE, eval = FALSE)
+```
+
+```{r, include = FALSE}
+library(dplyr)
+library(dbplyr)
+library(DBI)
+```
+
+## Overview
+
+It is common for enterprise databases to use multiple schemata to partition the data, it is either separated by business domain or some other context.
+
+This is especially true for Data warehouses.  It is rare when the default schema is going to have all of the data needed for an analysis.  
+
+For analyses using `dplyr`, the `in_schema()` function should cover most of the cases when the non-default schema needs to be accessed. 
+
+## An example
+
+The following ODBC connection opens a session with the **datawarehouse** database:
+```{r}
+con <- DBI::dbConnect(odbc::odbc(), "datawarehouse")
+```
+
+The database contains several schemata. The default schema is **dbo**.  So to it is very straightforward to access it via `dplyr`. The difficulty occurs when attempting to access a table not in that schema, such as tables in the **production** schema.
+
+![](connection.PNG)
+
+
+This is how to access a table inside the **dbo** schema, using `dplyr`:
+```{r}
+library(dplyr)
+library(dbplyr)
+
+tbl(con, "mtcars") %>%
+  head()
+```
+
+The same approach does not work for accessing the **flights** table, which resides in the **production** schema:
+```{r, eval = FALSE}
+tbl(con, "flights")
+```
+
+```
+Error: <SQL> 'SELECT * FROM "flights" AS "zzz2" WHERE (0 = 1)' nanodbc/nanodbc.cpp:
+1587: 42S02: [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid object name 
+'flights'.
+```
+
+## Using `in_schema()`
+
+The `in_schema()` function works by passing it inside the `tbl()` function.  The schema and table are passed as quoted names:
+```{r}
+tbl(con, in_schema("production", "flights")) %>%
+  head()
+```
+
+### Ideal use
+
+For interactive use, we would avoid using the `tbl()` command at the top of every `dplyr` piped code set. So it is better to load the table pointer into a variable:
+```{r}
+db_flights <- tbl(con, in_schema("production", "flights"))
+```
+
+An additional advantage of loading a variable with the table reference is that the field auto-completion is activated.  This happens because the `vars` attribute, from the `tbl()` output, is loaded in the variable.
+
+The operations that follow become more natural for a `dplyr` user
+```{r}
+db_flights %>%
+  group_by(month) %>%
+  summarise(
+    canceled= sum(cancelled, na.rm = TRUE),
+    total = n()) %>%
+  arrange(month)
+```
+
+## Writing data 
+
+
+The `copy_to()` command defaults to creating and populating **temporary** tables.  So when used with `in_schema()`, the most likely result is that the command will be ignored, and a table called "[schema].[table]" is created.
+```{r, eval = FALSE}
+copy_to(con, iris, in_schema("production", "iris"))
+```
+
+```
+Created a temporary table named: ##production.iris
+```
+
+Each enterprise grade database has its own way to manage of temporary tables. So the best course of action is to relay on the those mechanisms, and just request a temporary table.
+
+```{r, cache = TRUE}
+db_iris <- copy_to(con, iris)
+
+head(db_iris)
+```
+
+In this particular case, the `iris` dataset was copied to the **tempdb** database, but in a mirror schema called **production**
+
+### Write non-temporary tables
+
+The best way to create a permanent table, inside a specific schema, is to use the `DBI` package.  The `dbWriteTable()` and `SQL()` commands should accomplish the task: 
+
+```{r, eval = FALSE}
+library(DBI)
+
+dbWriteTable(con, SQL("production.iris"), iris)
+```
+
+![](after-iris.PNG)
+
+
+
+
+```{r, include = FALSE}
+DBI::dbDisconnect(con)
+```
+

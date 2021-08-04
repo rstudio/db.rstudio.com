@@ -1,0 +1,62 @@
+---
+title: Apache Impala
+logo: "/logos/impalalarge.png"
+dplyr: "Yes"
+driver: "Yes"
+aliases:
+  - /impala
+---
+
+## Driver Options
+
+- **Hadoop vendor** - Download and install the driver made available by the Hadoop cluster provider (Cloudera, MapR, etc.).  To locate the driver please consult the vendor's website. 
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are six settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Host** - A network path to the database server
+  - **Schema** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **Port** - Should be set to **21050**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = "[your driver's name]",
+                      Host   = "[your server's path]",
+                      Schema = "[your schema's name]",
+                      UID    = rstudioapi::askForPassword("Database user"),
+                      PWD    = rstudioapi::askForPassword("Database password"),
+                      Port   = 21050)
+
+```
+
+## Known issues
+
+### Switching from Impala to Hive
+
+If you create a table in Impala and then drop the Hive metadata, you will need to invalidate the Impala metadata.
+
+```r
+impala_con <- dbConnect(odbc::odbc(), "Impala")
+dbWriteTable(impala_con, "mtcars", mtcars)
+hive_con <- dbConnect(odbc::odbc(), "Hive")
+dbRemoveTable(hive_con, "mtcars")
+
+dbReadTable(impala_con, "mtcars") # succeeds
+dbExistsTable(impala_con, "mtcars") # fails
+
+dbGetQuery(odbcCon, "INVALIDATE METADATA mtcars")
+dbExistsTable(impala_con, "mtcars") # succeeds
+```
+
+This happens because dropping the Hive metadata does not drop the Impala metadata. More information can be found in the Cloudera documentation [here](https://www.cloudera.com/documentation/enterprise/5-2-x/topics/impala_hadoop.html).

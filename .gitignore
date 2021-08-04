@@ -8,3 +8,5 @@ blogdown
 config.yml
 derby.log
 log4j.spark.log
+
+/.quarto/

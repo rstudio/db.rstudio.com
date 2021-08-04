@@ -1,0 +1,67 @@
+---
+title: PostgreSQL
+logo: "/logos/postgresqllarge.png"
+dplyr: "Yes"
+driver: "Yes"
+package: "RPostgres"
+aliases:
+  - /postgresql
+---
+
+There are two options for connecting to a PostgreSQL database:
+
+- Using the `odbc` package with a database driver
+- Using the `RPostgres`  package
+
+## Using the `odbc` package
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+### Driver options
+
+- **PostgreSQL** - The official PostgreSQL website provides instructions on how to download and setup their driver: [psqlODBC - PostgreSQL ODBC driver](https://odbc.postgresql.org/)
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for PostgreSQL databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+### Connection Settings
+
+There are six settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Server** - A network path to the database server
+  - **Database** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **Port** - Should be set to **5432**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver   = "[your driver's name]",
+                      Server   = "[your server's path]",
+                      Database = "[your database's name]",
+                      UID      = rstudioapi::askForPassword("Database user"),
+                      PWD      = rstudioapi::askForPassword("Database password"),
+                      Port     = 5432)
+
+```
+
+## Using the `RPostgres` package
+
+`RPostgres` is an DBI-compliant interface to the postgres database. It is a ground-up rewrite using C++ and `Rcpp`.  This package acts as both the database driver and the DBI interface. The code, and additional information are available in its GitHub repository here: [RPostgres](https://github.com/r-dbi/RPostgres).  To connect use:
+
+```r
+library(DBI)
+# Connect to the default postgres database
+con <- dbConnect(RPostgres::Postgres())
+```
+
+### Known Issues
+
+**Parameterized queries** - Using `?` to mark parameters in a query does not currently work with `RPostgres`,  instead use `$`.  For more information, see the following issue: [RPostgres/Issue/201](https://github.com/r-dbi/RPostgres/issues/201)
+
+```r
+airport <- dbSendQuery(con, "SELECT * FROM airports WHERE faa = $1 or faa = $2")
+dbBind(airport, list("GPT", "MSY"))
+dbFetch(airport)
+```

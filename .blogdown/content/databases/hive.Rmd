@@ -1,0 +1,52 @@
+---
+title: Apache Hive
+logo: "/logos/hivelarge.png"
+dplyr: "Yes"
+driver: "Yes"
+aliases:
+  - /hive
+---
+
+## Driver Options
+
+- **Hadoop vendor** - Download and install the driver made available by the Hadoop cluster provider (Cloudera, Hortonworks, etc.).  To locate the driver please consult the vendor's website. 
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Hive.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are six settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Host** - A network path to the database server
+  - **Schema** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **Port** - Should be set to **10000**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = "[your driver's name]",
+                      Host   = "[your server's path]",
+                      Schema = "[your schema's name]",
+                      UID    = rstudioapi::askForPassword("Database user"),
+                      PWD    = rstudioapi::askForPassword("Database password"),
+                      Port   = 10000)
+
+```
+
+### Known Issues
+
+- It may be necessary to prevent Hive from returning the table prefix in column names. This can be done by setting [`hive.resultset.use.unique.column.names`](https://stackoverflow.com/questions/31705985/is-it-possible-to-stop-hive-from-printing-the-database-when-printing-column-head) to `false` when establishing a connection to Hive. See [tidyverse/dbplyr#573](https://github.com/tidyverse/dbplyr/issues/573) for more context.
+
+```{r, eval = FALSE}
+con <- DBI::dbConnect(odbc::odbc().
+                      ...,
+                      SSP_hive.resultset.use.unique.column.names = FALSE)
+```
+

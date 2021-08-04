@@ -1,0 +1,40 @@
+---
+title: Netezza
+logo: "/logos/netezzalarge.png"
+dplyr: "No"
+driver: "Yes"
+---
+
+## Driver Options
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Hive.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are six settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Server** - The database server's IP address
+  - **Port** - Should be set to **5480**
+  - **Database** - The name of the database to default to
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = "[your driver's name]",
+                      Server   = "[your server's path]",
+                      Port = "5480",
+                      Database = "[your database's name]",
+                      UID    = rstudioapi::askForPassword("Database user"),
+                      PWD    = rstudioapi::askForPassword("Database password")
+                      )
+```
+
+
+

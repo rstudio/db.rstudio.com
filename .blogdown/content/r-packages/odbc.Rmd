@@ -1,0 +1,147 @@
+---
+title: Using an ODBC driver
+aliases:
+  - /odbc
+---
+
+The `odbc` package provides a DBI-compliant interface to [Open Database Connectivity](https://msdn.microsoft.com/en-us/library/ms710252(v=vs.85).aspx) (ODBC) drivers. It allows for an efficient, easy way to setup connection to any database using an ODBC driver, including [SQL Server](https://www.microsoft.com/en-us/sql-server/), [Oracle](https://www.oracle.com/database), [MySQL](https://www.mysql.com/), [PostgreSQL](https://www.postgresql.org/), [SQLite](https://sqlite.org/) and others. The implementation builds on the [nanodbc](http://nanodbc.lexicalunit.com/) C++ library.
+
+<div>
+  <center><img src="/homepage/connection_chain.png"></center>
+</div>
+
+ODBC drivers can typically be downloaded from your database vendor, or they can be [downloaded from RStudio](https://rstudio.com/products/drivers/) when used with RStudio professional products. The `odbc` package works with the `DBI` 
+
+<br>
+
+## Using
+
+All of the following examples assume you have already created a connection called `con`. To find out how to connect to your specific database type, please visit the [Databases](/databases) page.
+
+### Database information
+
+The `odbc` package gives you tools to explore objects and columns in the database.
+
+``` r
+# Top level objects
+odbcListObjects(con)
+
+# Tables in a schema
+odbcListObjects(con, catalog="mydb", schema="dbo")
+
+# Columns in a table
+odbcListColumns(con, catalog="mydb", schema="dbo", table="cars")
+
+# Database structure
+odbcListObjectTypes(con)
+```
+
+You can also see other data sources and drivers on the system.
+
+``` r
+# All data sources
+odbcListDataSources()
+
+# All drivers
+odbcListDrivers()
+```
+
+### Reading and writing tables
+
+The `DBI` package has functions for reading and writing tables. `dbWriteTable()` will write an R data frame to a SQL table. `dbReadTable()` will read a SQL table into an R data frame.
+
+``` r
+dbWriteTable(con, "cars", cars)
+dbReadTable(con, "cars")
+```
+
+You can specify tables outside the database with the `Id()` command.
+
+``` r
+table_id <- Id(catalog = "mydb", schema = "dbo", table = "cars")
+dbReadTable(con, table_id)
+```
+
+### Queries and statements
+
+For interactive queries, use `dbGetQuery()` to submit a query and fetch the results. To fetch the results separately, use `dbSendQuery()` and `dbFetch()`. The `n=` argument in `dbFetch()` can be used to fetch partial results.
+
+``` r
+# Return the results for an arbitrary query
+dbGetQuery(con, "SELECT speed, dist FROM cars")
+
+# Fetch the first 100 records
+query <- dbSendQuery(con, "SELECT speed, dist FROM cars")
+dbFetch(query, n = 10)
+dbClearResult(query)
+```
+
+You can execute arbitrary SQL statements with `dbExecute()`. Note: many database API's distinguish between *direct* and *prepared* statements. If you want to force a direct statement (for example, if you want to create a local temp table in Microsoft SQL Server), then pass `immdediate=TRUE`.
+
+``` r
+dbExecute(con, "INSERT INTO cars (speed, dist) VALUES (88, 30)")
+dbExecute(con, "CREATE TABLE #cars_tmp (speed int, dist int)", immediate = TRUE)
+```
+
+<br>
+
+## `odbc` Performance Benchmarks
+
+The *odbc* package is often much faster than the existing [RODBC](https://cran.r-project.org/package=RODBC) and DBI compatible [RODBCDBI](https://cran.r-project.org/package=RODBCDBI) packages. The tests below were carried out on PostgreSQL and Microsoft SQL Server using the [nycflights13::flights](https://github.com/hadley/nycflights13) dataset (336,776 rows, 19 columns).
+
+#### PostgreSQL Results
+
+| Package  | Function | User   | System | Elapsed |
+|----------|----------|--------|--------|---------|
+| odbc     | Reading  | 5.119  | 0.290  | 6.771   |
+| RODBCDBI | Reading  | 19.203 | 1.356  | 21.724  |
+| odbc     | Writing  | 7.802  | 3.703  | 26.016  |
+| RODBCDBI | Writing  | 6.693  | 3.786  | 48.423  |
+
+``` r
+library(DBI)
+library(RODBCDBI)
+library(tibble)
+
+odbc <- dbConnect(odbc::odbc(), dsn = "PostgreSQL")
+rodbc <- dbConnect(RODBCDBI::ODBC(), dsn = "PostgreSQL")
+
+# odbc Reading
+system.time(odbc_result <- dbReadTable(odbc, "flights"))
+
+# RODBCDBI Reading
+system.time(rodbc_result <- dbReadTable(rodbc, "flights"))
+
+# odbc Reading
+system.time(dbWriteTable(odbc, "flights3", as.data.frame(flights)))
+
+# RODBCDBI Writing (note: rodbc does not support writing timestamps natively)
+system.time(dbWriteTable(rodbc, "flights2", as.data.frame(flights[, names(flights) != "time_hour"])))
+```
+
+#### Microsoft SQL Server Results
+
+| Package    | Function | User    | System | Elapsed |
+|------------|----------|---------|--------|---------|
+| odbc       | Reading  | 2.187   | 0.108  | 2.298   |
+| RSQLServer | Reading  | 5.101   | 1.289  | 3.584   |
+| odbc       | Writing  | 12.336  | 0.412  | 21.802  |
+| RSQLServer | Writing  | 645.219 | 12.287 | 820.806 |
+
+``` r
+library("RSQLServer")
+rsqlserver <- dbConnect(RSQLServer::SQLServer(), server = "SQLServer")
+odbc <- dbConnect(odbc::odbc(), dsn = "PostgreSQL")
+
+# odbc Reading
+system.time(dbReadTable(odbc, "flights", as.data.frame(flights)))
+
+# RSQLServer Reading
+system.time(dbReadTable(rsqlserver, "flights", as.data.frame(flights)))
+
+# odbc Writing
+system.time(dbWriteTable(odbc, "flights3", as.data.frame(flights)))
+
+# RSQLServer Writing
+system.time(dbWriteTable(rsqlserver, "flights2", as.data.frame(flights)))
+```

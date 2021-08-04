@@ -1,0 +1,36 @@
+---
+title: Selecting a database interface
+---
+
+## `DBI` support is key
+
+Connecting to a database with a method that supports the [DBI](/dbi) package provides the following advantages:
+
+- A consistent set of functions that work across all connections
+- Makes using [dplyr](/dplyr) as a front-end possible
+
+Mostly based on how difficult is to setup, the order of preference of connection methods is:
+
+
+1. Native database driver implemented in **database package** (e.g. [RPostgresSQL](/databases/postgresql)). To see the list of known database packages check out the [Databases](/databases) page.
+1. **ODBC** as implemented in [odbc](/odbc) package
+1. **JDBC** as implemented in [RJDBC](http://www.rforge.net/RJDBC/) package
+
+If there is a need to connect to several databases in one or several R projects, then it would be preferable to use **ODBC** for all connections because it increases consistency.
+
+Additionally, using the [odbc](/odbc) package inside the RStudio IDE will enable the use of the [Connections Pane](/rstudio/connections/)
+
+## FAQ
+
+### Do I need to replace all of my existing JDBC connections, in favor of ODBC connections?
+
+Not necessarily, if there are existing R jobs that successfully run on a regular basis then there's no need to introduce risk, in other words *if it ain't broke, don't fix it*.  
+
+For new projects, if using ODBC is still not a viable option, then using an R package that implements a `DBI` back-end for the JDBC connection will be advisable, like `RJDBC`.  There are other packages that implement both a DBI back-end for a JDBC connection and a `dplyr` translation, such as [implyr](https://github.com/ianmcook/implyr) for Impala connections. 
+
+### Currently, I use `RODBC`, should I consider switching to `odbc`?
+
+For new projects, yes.  Switching will enable `dplyr` interactivity, and the Connections Pane inside the RStudio IDE (see the previous section for more info).
+
+Existing projects may need to be individually vetted to see if the possible increase in performance that the `odbc` package may provide is worth making coding changes.  
+

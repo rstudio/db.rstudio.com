@@ -1,0 +1,323 @@
+---
+title: Enterprise-ready dashboards
+---
+
+![](/best-practices/dashboards/main.png)
+
+## Design principles
+
+A few principles to keep in mind when developing an enterprise level dashboard:
+
+- **Push as much of the calculations of the dashboard back to the database** - The time it takes for a dashboard to load, and respond, will become the most important aspect of its design.  For dashboards, the expected time to load and response is a few seconds.  
+
+- **Give the end-user with "train of thought" paths** -  These paths are commonly provided by way of a drill down from within the dashboard.  These paths allows the end-user to quickly answer questions they currently have.
+
+- **Make data driven inputs** - It is easy to "hard code" the values that will be available in an input, such as a drop down.  This may become a problem later on if the possible values change over time.  An ancillary principle is to always use a look up table to obtain the list of values, when available.  It is not ideal to obtain a list of possible values by grouping and summarizing a large column. 
+
+- **Secure the database credentials** - Most often, a service account is made available for reports and dashboards that have access to a database.  In that case, it is important to know how to properly safeguard the credentials of the service account. 
+
+## Example
+
+<div>
+  <a href = "https://edgarruiz.shinyapps.io/db-dashboard/">
+  <figure>
+    <img src="/best-practices/dashboards/dashboard.png" align="center" height="300" width="600">
+    <figcaption>Click to see the live dashboard</figcaption>
+  </figure>
+  </a>
+</div>
+<br/>
+
+A working example of the dashboard that will be used as the base of this article is available on GitHub. The project repository contains the code and all the supporting files:
+
+- Visit the repository: https://github.com/sol-eng/db-dashboard
+
+- Download a zipped file with all of the files from the repository: https://github.com/sol-eng/db-dashboard/archive/master.zip
+
+
+A live version of the app can be found in shinyapps.io: [DB Dashboard](https://edgarruiz.shinyapps.io/db-dashboard/) 
+
+## Use `shinydashboard`
+
+The [shinydashboard](https://rstudio.github.io/shinydashboard/) package has three important advantages:
+
+  1. **Provides an out-of-the-box framework to create dashboards in Shiny.**  This saves a lot of time, because the developer does not have to create the dashboard features manually using "base" Shiny.
+  
+  2. **Has a dashboard-firendly tag structure.** This allows the developer to get started quickly. Inside the `dashboardPage()`tag, the `dashboardHeader()`, `dashboardSidebar()` and `dashboardBody()` can be added to easily lay out a new dashboard.
+  
+  3. **It is mobile-ready.** Without any additional code, the dashboard layout will adapt to a smaller screen automatically.
+  
+Another option for creating dashboard with R is [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/).  It will support all but one of the features discussed in this article: dynamic tabs, which are the basis of the technique used in the example to drive the drill throughs. 
+
+### Quick example
+
+If you are new to `shinydashboard`, please feel free to copy and paste the following code to see a very simple dashboard in your environment:
+
+```r
+library(shinydashboard)
+library(shiny)
+ui <- dashboardPage(
+  dashboardHeader(title = "Quick Example"),
+  dashboardSidebar(textInput("text", "Text")),
+  dashboardBody(
+    valueBox(100, "Basic example"),
+    tableOutput("mtcars")
+  )
+)
+server <- function(input, output) {
+  output$mtcars <- renderTable(head(mtcars))
+}
+shinyApp(ui, server)
+```
+
+## Connection strings and credentials
+
+In many cases, the app is developed against one database, and run in production against a different database.  This can present a challenge if the connection string is "hard coded".
+
+This site provides a couple of articles to help with addressing credentials and portability of code:
+
+- [Securing Deployed Content](/best-practices/deployment/)
+- [Making Scripts Portable](/best-practices/portable-code/)
+
+
+## Populate Shiny inputs using `purrr`
+
+The usual preference is for the values displayed in a user input, such as drop down, to be "human readable".  The actual value of the selection should be a unique identifier so that dependent queries return the correct information.
+
+This section examines two cases and ways to format the list of options to be in a format that Shiny can use. 
+
+### Drop down populated from database
+
+Ideally, a look up table is available in the database so that the query is simple to execute. 
+
+To separate the keys from the values, the `map()` function in the `purrr` package can be used.  In the example below, all of the records in the airlines table are collected, and a list of names is created, `map()` is then used to insert the carrier codes into each name node.
+
+```r
+airline_list <- tbl(con, "airlines") %>%
+  collect  %>%
+  split(.$name) %>%    # Field that will be used for the labels
+  map(~.$carrier)      # Field that will be used for keys
+```
+
+The `selectInput()` drop-down menu is able to read the resulting `airline_list` list variable.
+
+```r
+  dashboardSidebar(
+    selectInput(
+      inputId = "airline",
+      label = "Airline:",
+      choices = airline_list,
+      selected = "DL",
+      selectize = FALSE
+    )
+```
+
+### List populated from a vector
+
+There are times when the possible values are static, and small enough, so that they all fit in a vector.
+
+A common example is the month name.  A given table store the month number, and that number is what needs to be used as the filter value  The values presented to the end-user will be the month name, but when a selection is made, the month number is what will be passed to Shiny.
+
+For that, a function called `set_names()` can be used to add the caption that will be displayed in the input in a way that is "Shiny friendly"
+
+```r
+month_list <- as.list(1:12) %>%
+  set_names(month.name)
+  
+month_list$`All Year` <- 99  
+```
+The `selectInput()` list menu is able to read the resulting `month_list` list variable.
+
+```r
+  selectInput(
+    inputId = "month",
+    label = "Month:",
+    choices = month_list,
+    selected = 99,
+    size = 13,
+    selectize = FALSE
+  )
+```
+
+
+## Create a base query using `dplyr`
+
+In most cases, all of the plots and tables in a dashboard share a common base query.  For example, they will all show the same month's data.  Using `dplyr` to build the base query has the following advantages:
+
+- Simplifies the code because it prevents the repetition of filters and joins.
+- `dplyr` "laziness" allows for the base query to be built with out it being executed until it is used to get the data for a given plot or table.
+- Abstracts the translation of the SQL syntax.  The dashboard will work with no, or minimal, changes if the database vendor changes.
+- The modular nature of this approach allows to just add a few simple, and easy to understand, `dplyr` steps to get the slice or aggregation of the data needed to be displayed on the plot or table.
+
+Because the base query will more likely have to be assembled based on the current input selection, then a Shiny `reactive()` function is necessary to be used instead of a regular `function()`.  This is because the `input$...` variables can only be evaluated inside a Shiny reactive function.
+
+```r
+  base_flights <- reactive({
+    res <- flights %>%
+      filter(carrier == input$airline) %>%
+      left_join(airlines, by = "carrier") %>%
+      rename(airline = name) %>%
+      left_join(airports, by = c("origin" = "faa")) %>%
+      rename(origin_name = name) %>%
+      select(-lat, -lon, -alt, -tz, -dst) %>%
+      left_join(airports, by = c("dest" = "faa")) %>%
+      rename(dest_name = name)
+    if (input$month != 99) res <- filter(res, month == input$month)
+    res
+  })
+```
+
+Then, the Shiny `output` function starts with the base query (`base_flights`), and finishing `dplyr` steps, in the form of verbs, are appended, and piped directly to the plotting or display function.  It is important to note that before sending the resulting data set to Shiny, either a `collect()` or `pull()` function needs to be used.
+
+
+```r
+  output$per_day <- renderValueBox({
+    base_flights() %>%      #------ Base query 
+      group_by(day, month) %>%  #-- Finishing steps   
+      tally() %>%                  
+      summarise(avg = mean(n)) %>%
+      pull() %>%
+      round() %>%
+      prettyNum(big.mark = ",") %>% 
+      valueBox(             # -- Pipe right into a Value Box
+        subtitle = "Average Flights per day",
+        color = "blue"
+      )
+  })
+```
+## Using `r2d3` for interactivity and drill-down
+
+A "drill-down" is a great way to provide the end-user with "train of thought" paths.
+
+In a Shiny app or dashboard, there's the R object that contains the plot or table needs a way to pass to Shiny the value what was that was clicked on.  The best way to do this, is by using Shiny's JavaScript inside a given plot. This activates a reactive function inside the app.
+
+The visualization packages called [htmlwidgets](http://www.htmlwidgets.org/) are widely used. They are a set of packages are wrappers on top of D3/JavaScript plots. There may be times when the available `htmlwidgets` package falls short, either by not integrating with Shiny, or by not providing the exact visualization that is needed for the dashboard.
+
+This article, the package [r2d3](https://rstudio.github.io/r2d3/index.html) will be used.  This package allows us to custom build D3 visualizations from the ground up, for maximum flexibility and best integration with Shiny. A more in-depth article on how to integrate Shiny with `r2d3` is available here: [Using r2d3 with Shiny](https://rstudio.github.io/r2d3/articles/shiny.html).
+
+### Two ready-to-use `r2d3` plots
+
+The example dashboard used in this article contains two D3 scripts that are "Shiny-ready".  One is a column plot and the other a bar plot.  They have been developed in a way that you can easily copy the entire script and use it in your own dashboard.  
+
+- [col_plot.js](https://github.com/sol-eng/db-dashboard/blob/master/col_plot.js) -  Requires a `data.frame` or `tibble` with the following names and type of data:
+    - `x` - Expects the category's value.  For example, if it represents a month, then it would contain the month's number.
+    - `y` - Expects the value of the height of the column.
+    - `label` - Expects the category's caption.  It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month's name.
+
+- [bar_plot.js](https://github.com/sol-eng/db-dashboard/blob/master/bar_plot.js) -  -  Requires a `data.frame` or `tibble` with the following names and type of data:
+    - `x` - Expects the value of the width of the bar.
+    - `y` - Expects the category's value.  For example, if it represents a month, then it would contain the month's number.
+    - `label` - Expects the category's caption.  It is what will be displayed to the end-user. For example, if it represents a month, then it would contain the month's name.
+
+Thanks to `r2d3`, the plots can easily be rendered.  This code snippet shows how simple is to combine the technique of using a base query, and then pipe the finishing transformations directly into the `r2d3()` function.  
+
+```r
+  output$top_airports <- renderD3({
+    # The following code runs inside the database
+    base_flights() %>%
+      group_by(dest, dest_name) %>%
+      tally() %>%
+      collect() %>%
+      arrange(desc(n)) %>%
+      head(10) %>%
+      arrange(dest_name) %>%
+      mutate(dest_name = str_sub(dest_name, 1, 30)) %>%
+      rename(
+        x = dest,              # Make sure to rename the 
+        y = n,                 # variables to what the 
+        label = dest_name      #  D3 script expects
+      ) %>%
+      r2d3("bar_plot.js")
+  })
+```
+
+## Handling a click event from the plot
+
+The ideal outcome of a click event is that it activates a Shiny `input`.  This allows the app to execute a reactive function when the click, or any other event recognized by the plot, is triggered. 
+
+The D3 plots, available in the example's GitHub repository, already contain the necessary Shiny JS code to trigger a reactive function when clicked on:
+
+- **col_plot.js** - Creates a `input$col_clicked` inside the Shiny app.
+
+- **bar_plot.js** - Creates a `input$bar_clicked` inside the Shiny app.
+
+Inside the app, include an `observeEvent()` function that will capture the value returned by the D3 plot:
+
+```
+  observeEvent(input$bar_clicked, {
+  # ----- Function's code --------
+  })
+```
+
+**Troubleshooting tip** - If the nothing happens when a bar is clicked on, please confirm that the installed `shiny` package version is 1.1.0 or above.
+
+
+## Create the drill-down report
+
+### Using `appendTab()` to create the drill-down report
+
+The plan is to display a new drill-down report every time the end user clicks on a bar.  To prevent pulling the same data unnecessarily, the code will be "smart" enough to simply switch the focus to an existing tab if the same bar has been clicked on before.  This switch also prevent unnecessary trips to the database.
+
+The new, and really cool, `appendTab()` function is used to dynamically create a new Shiny tab with a data table from the [DT](https://rstudio.github.io/DT/) package that contains the first 100 rows of the selection.  A simple vector, called `tab_list`, is used to track all existing detail tabs. The `updateTabsetPanel()` function is used to switch to the newly or previously created tab.
+
+The `observeEvent()` function is the one that "catches" the event executed by the D3 code. It monitors the `bar_clicked` Shiny input.  
+
+```r
+  observeEvent(input$bar_clicked, {
+    airport <- input$bar_clicked
+    month <- input$month
+    tab_title <- paste(
+      input$airline, "-", airport,
+      if (month != 99) {
+        paste("-", month.name[as.integer(month)])
+      }
+    )
+    if (!(tab_title %in% tab_list)) {
+      appendTab(
+        inputId = "tabs",
+        tabPanel(
+          tab_title,
+          DT::renderDataTable(
+            # This function return a data.frame with
+            # the top 100 records of that airport
+            get_details(airport = airport) 
+          )
+        )
+      )
+
+      tab_list <<- c(tab_list, tab_title)
+    }
+    updateTabsetPanel(session, "tabs", selected = tab_title)
+  })
+```
+  
+### Remove all tabs using `removeTab()` and `purrr`
+
+Creating new tabs dynamically can clutter the dashboard. So a simple `actionLink()` button can be added to the `dashboardSidebar()` in order to remove all tabs except the main dashboard tab.
+  
+```r
+# This code runs in ui
+  dashboardSidebar(
+       actionLink("remove", "Remove detail tabs"))
+```
+The `observeEvent()` function is used once more to catch when the link is clicked.  The `walk()` command from `purrr` is then used to iterate through each tab title in the `tab_list` vector and proceeds to execute the Shiny `removeTab()` command for each name. After that, the tab list variable is reset.  Because of environment scoping, make sure to use double less than ( `<<-` ) when resetting the variable, so it knows to reset the variable defined outside of the `observeEvent()` function.
+
+```r
+# This code runs in server
+  observeEvent(input$remove,{
+    # Use purrr's walk command to cycle through each
+    # panel tabs and remove them
+    tab_list %>%
+      walk(~removeTab("tabs", .x))
+    tab_list <<- NULL
+  })
+  
+```
+
+## Full example
+
+There are two versions of the app available in the GitHub repository:
+
+- [local_app.R](https://github.com/sol-eng/db-dashboard/blob/master/local/local_app.R) - Example that works without a database connection.  
+
+- [db_app.R](https://github.com/sol-eng/db-dashboard/blob/master/database/db_app.R) - Full example, it shows how it connects to a database.

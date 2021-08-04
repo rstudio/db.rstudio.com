@@ -1,0 +1,16 @@
+---
+title: Databases using R - ODSC West - Materials
+author: ''
+date: '2017-11-04'
+slug: databases-using-r-odsc-west-materials
+categories: 
+  - education
+tags: 
+  - talk
+  - presentation
+  - demo
+thumbnail: "images/favicon.png"
+  
+---
+
+Materials from the **Databases using R** presentation at ODSC West. Link: https://github.com/edgararuiz/odsc-2017

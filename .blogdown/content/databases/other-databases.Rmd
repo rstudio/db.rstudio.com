@@ -1,0 +1,19 @@
+---
+title: Other Databases
+aliases:
+  - /other-databases
+---
+
+Databases that have a `dplyr` translation are listed in this section.  If the database you are interested in is not listed yet, you can still take advantage of the packages and information found in this site.
+
+## odbc & DBI
+
+Using an ODBC driver, you can still take advantage of the `odbc` and `DBI` packages to connect and query the database.  
+
+## Best Practices
+
+The **Best Practices** section offers advice that, in most cases, is independent from being on a `dplyr`-integrated database.
+
+## Contribute
+
+If you would like to take it a step further, consider contributing a translation to the `dbplyr` package. For more information, please see the [SQL Translation](/translation) page in this website.

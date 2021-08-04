@@ -1,0 +1,31 @@
+---
+title: "dbplyr 1.2.0 Now on CRAN"
+date: 2018-01-10T16:15:14-06:00
+categories: 
+  - tools
+summary: We are very excited to announce that dbplyr 1.2.0 is now available on CRAN!  The full announcement was posted in [tidyverse.org](https://www.tidyverse.org/articles/2018/01/dbplyr-1-2/).
+  
+---
+
+We are very excited to announce that dbplyr 1.2.0 is now available on CRAN!  The full announcement was posted in [tidyverse.org](https://www.tidyverse.org/articles/2018/01/dbplyr-1-2/). Here are the highlights:
+
+- New custom translation for **Microsoft Access** and [Teradata](http://db.rstudio.com/databases/teradata/) 
+
+- [Amazon Redshift](http://db.rstudio.com/databases/redshift/) connections now point to the PostgreSQL translation.
+
+- Adds support for **two new database R packages**.  These new packages are fully [DBI](http://db.rstudio.com/dbi/)-compliant and tested with [DBItest](https://cran.r-project.org/web/packages/DBItest/index.html). We recommend to use these instead of older packages:
+    1. [RMariaDB](https://cran.r-project.org/web/packages/RMariaDB/index.html), use in favor of RMySQL
+    1. [RPostgres](https://cran.r-project.org/web/packages/RPostgres/index.html), use in favor of RPostgreSQL
+
+- [ROracle](https://cran.r-project.org/web/packages/ROracle/index.html) connections now point to the [Oracle](http://db.rstudio.com/databases/oracle/) translation.
+- Cache query results using `copy_to`. This feature is very useful because after cached, the results of a long running query can be iteratively analyzed without having to wait for the same base query to run over and over.
+
+- stringr functions: `str_length()`, `str_to_upper()`, `str_to_lower()`, `str_replace_all()`, `str_detect()`, and  `str_trim()` are now supported.
+
+- `in_schema()` should now work in more places, particularly in `copy_to()` 
+
+- For those who need to extract the resulting SQL query from dplyr code, there is now a new function called `remote_query()`.  Unlike `show_query()`, `remote_query()` returns a character object, and unlike `sql_render()`, the new function automatically detects the type of database attached to the given dplyr code and translates accordingly.  There are four additional functions that provide a standard API to get metadata about a remote `tbl`, these are: `remote_name()`, `remote_con()`, `remote_src()`, and  `remote_query_plan()`.  
+
+- Adds support for temporary tables in Microsoft SQL Server.  Additionally, the issue of certain operators working only in `mutate()` or only in `filter()` has been resolved.
+
+-  Two new functions for developers: `sql_aggregate()` and `win_aggregate()`.  They are for generating SQL and windowed SQL functions for aggregates. 

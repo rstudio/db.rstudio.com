@@ -1,0 +1,61 @@
+---
+title: Oracle
+logo: "/logos/oraclelarge.png"
+dplyr: "Yes"
+driver: "Yes"
+aliases:
+  - /oracle
+---
+
+## Driver Options
+Connections to Oracle require the [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client.html) to be installed.
+
+- **Oracle** - Please refer to Oracle's website for instructions on how to download and setup their official driver: [Oracle ODBC driver page](http://www.oracle.com/technetwork/database/windows/index-098976.html )
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Oracle databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+There are packages that either connect via ODBC but do not provide support for `DBI`, or offer `DBI` support but connect via JDBC.  The **`odbc`** package, in combination with a driver, satisfies both requirements.
+
+Another package that provides both ODBC connectivity and `DBI` support is `ROracle`.  The current version of `dbplyr` in CRAN does not yet fully support a connection coming from `ROracle`, but we are working on it.
+
+## Connection Settings
+
+There are six settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for more setup information 
+  - **Host** - A network path to the database server
+  - **SVC** - The name of the schema
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **Port** - Should be set to **1521**
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver = "[your driver's name]",
+                      Host   = "[your server's path]",
+                      SVC    = "[your schema's name]",
+                      UID    = rstudioapi::askForPassword("Database user"),
+                      PWD    = rstudioapi::askForPassword("Database password"),
+                      Port   = 1521)
+
+```
+
+## `dplyr` Translation
+
+### Known Issues
+
+This section will be updated as new issues are found, and when fixes are applied in the development version of the [dbplyr](https://github.com/tidyverse/dplyr) package.  The issue will be fully removed when the fix is part of of the package’s version in CRAN.
+
+- **RJDBC** support - Even though it is not considered an issue, we have found a workaround.  The approach is to point the current JDBC connection to the Oracle translation inside `dbplyr`: 
+
+```r
+sql_translation.JDBCConnection <- dbplyr:::sql_translation.Oracle
+sql_select.JDBCConnection <- dbplyr:::sql_query_select.Oracle
+sql_subquery.JDBCConnection <- dbplyr:::sql_query_wrap.Oracle
+```
+
+Please refer to the [Issues section in `dplyr`](https://github.com/tidyverse/dplyr/issues/) to find out the latest regarding bugs and resolutions.
+

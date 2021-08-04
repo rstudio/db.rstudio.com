@@ -1,0 +1,46 @@
+---
+title: "Connect to a Database"
+output: html_document
+---
+
+This article is geared toward those who need to connect to an existing database using an ODBC driver.  To review other options, such as using a database R package or JDBC, please refer to the [Selecting a database interface](/best-practices/select-interface/) page. If the intent is to learn with a local and small database, refer to the example in the [dplyr](/dplyr) page.
+
+1. Install the [DBI](/dbi) and [odbc](/odbc) package:
+
+    ```r
+    install.packages("DBI")
+    install.packages("odbc")
+    ```
+    
+2. Verify that `odbc` recognizes the installed drivers using `odbcListDrivers()`.  Here is an example result:
+
+    ```r
+    library(odbc)
+    sort(unique(odbcListDrivers()[[1]]))
+    ```
+    ```
+    [1] "Devart ODBC Driver for PostgreSQL"    
+    [2] "MapR Drill ODBC Driver"               
+    [3] "ODBC Driver 13 for SQL Server"        
+    [4] "Simba Athena ODBC Driver"             
+    [5] "Simba ODBC Driver for Google BigQuery"
+    [6] "SQL Server"                           
+    ```
+    
+3. Determine if a DSN is going to be used to connect to the database.  This would be typically something that the Database Administrator, or the technical owner of the database, would setup and provide the R developer a name (known as an alias).  Use `dbConnect()` to open a database connection in this manner: 
+        
+    ```r
+    con <- dbConnect(odbc(), "DSN name")
+    ```
+
+4. If no DSN is available, then the connection needs to usually pass the server address, database name, and the credentials to be used.  There may be other settings unique to a given database that will also need to be passed.  In the following example, the *Trusted_Connection* setting is unique to a MS SQL connection:
+
+    ```r
+    con <- dbConnect(odbc(), 
+                     Driver = "SQL Server", 
+                     Server = "localhost\\SQLEXPRESS", 
+                     Database = "datawarehouse", 
+                     Trusted_Connection = "True")
+    ```
+
+    For information specific to how to connect to a specific database vendor, visit the [Databases](/databases) page for a list of the database types we have information available for.

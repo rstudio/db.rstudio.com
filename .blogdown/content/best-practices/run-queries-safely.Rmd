@@ -1,0 +1,186 @@
+---
+title: "Run Queries Safely"
+aliases:
+  - /run-queries-safely
+categories: 
+ - site
+  
+---
+
+```{r, include = FALSE, cache = FALSE}
+library(dplyr)
+library(DBI)
+library(dbplyr)
+library(glue)
+
+con <- DBI::dbConnect(RSQLite::SQLite(), path = ":memory:")
+
+db_airports <- nycflights13::airports %>%
+  select(-tzone)
+
+copy_to(con,  db_airports, "airports",
+  temporary = FALSE
+)
+
+```
+
+We will review four options to run SQL commands safely using the [DBI](/dbi/) package:
+
+- [Parameterised queries](#parameterized-queries)
+- [Using `glue_sql`](#using-glue_sql)
+- [Interpolation by "hand"](#interpolation-by-hand)
+- [Manual escaping](#manual-escaping)
+
+## SQL Injection Attack
+
+The `dbGetQuery()` command allows us to write queries and retrieve the results.  The query has to be written using the SQL syntax that matches to the database type. 
+
+For example, here is a database that contains the *airports* data from NYC Flights data:
+
+```{r, echo = TRUE, cache = FALSE}
+dbGetQuery(con, "SELECT * FROM airports LIMIT 5")
+```
+
+Often you need to write queries that depend on user input. For example, you might want to allow the user to pick an airport to focus their analysis on. To do this, it's tempting to create the SQL string yourself by pasting strings together:
+
+```{r, echo = TRUE, cache = FALSE}
+airport_code <- "GPT"
+dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
+```
+
+Here `airport_code` is created in the script, in real-life it might be an input typed into a Shiny app.
+
+The problem with creating SQL strings with `paste0()` is that a careful attacker can create inputs that return more rows than you want:
+
+```{r, echo = TRUE, cache = FALSE}
+airport_code <- "GPT' or faa = 'MSY"
+dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
+```
+
+Or take **destructive actions on your database**:
+
+```{r, eval = FALSE}
+airport_code <- "GPT'; DROP TABLE 'airports"
+dbGetQuery(con, paste0("SELECT * FROM airports WHERE faa = '", airport_code ,"'"))
+```
+
+This is called __SQL injection attack__.
+
+There are three ways to avoid this problem:
+
+* Use a parameterised query with `dbSendQuery()` and `dbBind()`
+* Use the `sqlInterpolate()` function to safely combine a SQL string with data
+* Manually escape the inputs using `dbQuoteString()`
+
+These are ordered by the level of safety they provide: if you can use `dbSendQuery()` and `dbBind()`, you should.
+
+## Parameterized queries
+
+All modern database engines provide a way to write __parameterised queries__, queries that contain some placeholder that allows you to re-run the query multiple times with different inputs. This protects you from SQL injection attacks, and as an added benefit, the database can often optimise the query so it runs faster.
+
+Using a parameterised query with DBI requires three steps. 
+
+1.  You create a query containing a `?` placeholder and send it to the database
+    with `dbSendQuery()`:
+    
+    ```{r}
+    airport <- dbSendQuery(con, "SELECT * FROM airports WHERE faa = ?")
+    
+    ```
+
+2.  Use `dbBind()` to execute the query with specific values, then `dbFetch()`
+    to get the results:
+
+    ```{r}
+    dbBind(airport, list("GPT"))
+    dbFetch(airport)
+    ```
+
+3.  Once you're done using the parameterised query, clean it up by calling 
+    `dbClearResult()`
+    
+    ```{r}
+    dbClearResult(airport)
+    ```
+
+## Using `glue_sql()`
+
+Parameterized queries are generally the safest and most efficient way to pass user defined values in a query, however not every database driver supports them. The function `glue_sql()`, part of the the `glue` package, is able to handle the SQL quoting and variable placement.
+
+```{r}
+library(glue)
+
+airport_sql <- glue_sql("SELECT * FROM airports WHERE faa = ?")
+airport <- dbSendQuery(con, airport_sql)
+
+dbBind(airport, list("GPT"))
+dbFetch(airport)
+dbClearResult(airport)
+
+```
+
+If you place an astersk `*` at the end of a glue expression the values will be collapsed with commas. This is useful for the SQL IN Operator for instance.
+
+```{r}
+airport_sql <- glue_sql("SELECT * FROM airports WHERE faa IN ({airports*})", 
+                        airports = c("GPT", "MSY"),
+                        .con = con
+                        )
+
+airport <- dbSendQuery(con, airport_sql)
+
+dbFetch(airport)
+dbClearResult(airport)
+
+```
+
+## Interpolation by "hand"
+
+While all modern databases support parameterised queries, they are not always supported in individual database drivers. If you find that `dbBind()` doesn't work with the database connector you are using, you can fall back on `sqlInterpolate()`, which will safely do the interpolation for you.
+
+```{r, echo = TRUE, cache = FALSE}
+
+airport_code <- "GPT"
+
+sql <- sqlInterpolate(con, 
+  "SELECT * FROM airports  where faa = ?code", 
+  code = airport_code
+)
+sql
+
+dbGetQuery(con, sql)
+```
+
+The query returns no records if we try the same SQL injection attack:
+
+```{r, echo = TRUE, cache = FALSE}
+
+airport_code <- "GPT' or faa = 'MSY"
+
+sql <- sqlInterpolate(con, 
+  "SELECT * FROM airports  where faa = ?code", 
+  code = airport_code
+)
+sql
+
+dbGetQuery(con, sql)
+```
+
+## Manual escaping
+
+Sometimes you can't create the SQL you want using either of the previous methods. If you're in this unhappy situation, first make absolutely sure that you haven't missed an existing DBI helper function that does what you need. You need to be extremely careful when doing the escaping yourself, and it's better to rely on existing code that multiple people have carefully reviewed.
+
+However, if there's no other way around it, you can use `dbQuoteString()` to add the quotes for you. This method will automatically take care of dangerous characters in the same way as `sqlInterpolate()` (*better*) and `dbBind()` (*best*).
+
+```{r, echo = TRUE, cache = FALSE}
+
+airport_code <- "GPT' or faa = 'MSY"
+
+sql <- paste0("SELECT * FROM airports WHERE faa = ", dbQuoteString(con, airport_code))
+
+sql
+dbGetQuery(con, sql)
+
+```
+
+You may also need `dbQuoteIdentifier()` if you are creating tables or relying on user input to choose which column to filter on.

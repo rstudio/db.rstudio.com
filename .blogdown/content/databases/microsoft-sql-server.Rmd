@@ -1,0 +1,71 @@
+---
+title: Microsoft SQL Server
+logo: "/logos/sqlserverlarge.png"
+dplyr: "Yes"
+driver: "Yes"
+aliases:
+  - /microsoft-sql-server
+---
+
+## Driver Options
+
+- **Microsoft Windows**  - The ODBC database drivers are usually pre-installed with the Windows operating systems. 
+
+- **Linux and Apple MacOS** - This is the link to the Microsoft Docs site that outlines how to install the driver based on your specific Operating System: [Installing the Microsoft ODBC Driver for SQL Server on Linux and macOS](https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) 
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Microsoft SQL Server databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+There are several that either connect via ODBC but do not provide support for `DBI`, or offer `DBI` support but connect via JDBC.  The **`odbc`** package, in combination with a driver, satisfies both requirements.
+
+## Connection Settings
+
+There are six settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for more information 
+  - **Server** - A network path to the database server
+  - **Database** - The name of the database
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **Port** - Should be set to **1433**
+
+```r
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver   = "[your driver's name]",
+                      Server   = "[your server's path]",
+                      Database = "[your database's name]",
+                      UID      = rstudioapi::askForPassword("Database user"),
+                      PWD      = rstudioapi::askForPassword("Database password"),
+                      Port     = 1433)
+```
+
+### MS SQL Express
+
+The following code shows how to connect to a local MS SQL Express instance:
+
+```r
+con <- DBI::dbConnect(odbc::odbc(), 
+                      Driver = "SQL Server", 
+                      Server = "localhost\\SQLEXPRESS", 
+                      Database = "master", 
+                      Trusted_Connection = "True")
+
+```
+
+## `dplyr` translation
+
+### Known Issues
+
+This section will be updated as new issues are found, and when fixes are applied in the development version of the [dbplyr](https://github.com/tidyverse/dplyr) package.  The issue will be fully removed when the fix is part of of the package's version in CRAN.
+
+- **RJDBC** support - Even though it is not considered an issue, we have found a workaround.  The approach is to point the current JDBC connection to the MS SQL translation inside `dbplyr`: 
+```r
+  sql_translate_env.JDBCConnection <- dbplyr:::`sql_translate_env.Microsoft SQL Server`
+  sql_select.JDBCConnection <- dbplyr:::`sql_select.Microsoft SQL Server`
+```
+
+Please refer to the [Issues section in `dplyr`](https://github.com/tidyverse/dplyr/issues/) to find out the latest regarding bugs and resolutions.
+
+
+

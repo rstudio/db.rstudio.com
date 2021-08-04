@@ -1,0 +1,60 @@
+---
+title: Salesforce
+logo: "/logos/salesforcelarge.png"
+dplyr: "No"
+driver: "Yes"
+---
+
+## Driver Options
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Salesforce.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are four settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **UID** - The user's network ID or server local account
+  - **PWD** - The account's password
+  - **SecurityToken** - The account's password
+
+```r
+con <- DBI::dbConnect(odbc::odbc(),
+                    Driver        = "[your driver's name]",
+                    UID           = rstudioapi::askForPassword("Database user"),
+                    PWD           = rstudioapi::askForPassword("Database password"),
+                    SecurityToken = rstudioapi::askForPassword("Security token"))
+```
+
+A preferred method is to use the `config` package cache the credentials:
+
+```r
+username <- config::get("sf_user")
+password <- config::get("sf_password")
+token    <- config::get("sf_token")
+
+con <- DBI::dbConnect(odbc::odbc(), 
+                      Driver="Salesforce", 
+                      UID = username, 
+                      PWD = password, 
+                      SecurityToken = token)
+```
+
+The `config.yml` file for the connection above would be something like this:
+
+```
+default:
+  sf_user: "[User name]"
+  sf_password: "[Password]"
+  sf_token: "[User's token]"
+```
+## `dplyr` translation
+
+`dplyr` currently does not support the translation of Salesforce queries.
+
+
+

@@ -1,0 +1,36 @@
+---
+title: Introducing Drivers Webinar - Materials
+author: ''
+date: '2017-11-30'
+slug: introducing-drivers
+categories:
+  - education
+tags: 
+  - webinar
+  - examples
+  - demo
+  - presentation
+summary: "RStudio makes it easy to access and analyze your data with R. RStudio Professional Drivers are ODBC data connectors that help you connect to some of the most popular databases. Link: https://github.com/rstudio/webinars/tree/master/51-introducing-drivers"
+---
+
+### Description:
+
+RStudio makes it easy to access and analyze your data with R. RStudio Professional Drivers are ODBC data connectors that help you connect to some of the most popular databases. Link: https://github.com/rstudio/webinars/tree/master/51-introducing-drivers
+
+These drivers will help you:
+
+- Explore your databases using the RStudio IDE
+- Develop and deploy Shiny applications that depend on databases
+- Use databases with R in a production environment
+
+This webinar will introduce you to our standards-based, supported, professional ODBC drivers. These are the drivers to use when you run R or Shiny with your production systems. It will also cover some of the most popular databases available today that we connect to including:
+
+- Microsoft SQL Server
+- Oracle
+- PostgreSQL
+- Amazon Redshift
+- Apache Hive
+- Apache Impala
+- Salesforce
+
+

@@ -1,0 +1,76 @@
+---
+title: "RStudio Connections"
+aliases:
+  - /snippets
+---
+
+RStudio connections can be extended through:
+
+1. **Snippet Files** that provide support for new connections using R templates that enable users and system administrators to list and create new connections.
+2. **Packages** that do one or more of the following: 
+     + Implement the [Connections Contract](/contract) to manage and explore data in RStudio's Connections Pane and/or
+     + Supply Snippet Files or a Shiny Application to extend RStudio's New Connection dialog.
+
+## Snippet Files
+
+A Connection Snippet File is an R code snippet with additional metadata which is intended to initialize a connection. This file can be as simple as:
+
+```r
+library(readr)
+data <- read_csv(readr_example("mtcars.csv"))
+```
+
+Once this file is saved under `/etc/rstudio/connections/` as `Motor Trend Cars.R`, RStudio will make this connection as available as:
+
+<img src="resources/connections/basic-connection-selection.png" width="300" style="display: inline-block"/><img src="resources/connections/basic-connection-interface.png" width="300" style="display: inline-block"/>
+
+The path is configurable through the `connections-path` environment variable and multiple connection files can be specified.
+
+In order to parameterize this connection, one can create fields using using the `${Position:Label=Default}` syntax:
+
+- **Position:** The row position starting at zero.
+- **Label:** The label assigned to this field.
+- **Default:** An optional default value.
+
+For example, we can filter out this dataframe to produce the following connection interface:
+
+```r
+library(readr)
+data <- read_csv(readr_example("mtcars.csv"))
+data[data$mpg == ${0:Miles per Gallon=21.4} | data$cyl == ${1:Cylinders=6}, ]
+```
+
+<img src="resources/connections/fields-connection-interface.png" width="300" style="display: inline-block;margin: 0 auto;"/>
+
+In order to create a `;` separated list of values, one can use the syntax `${Position:Label=Default:Key}`. Semicolon-separated list are common in database connections and therefore, natively supported in snippet files, for instance:
+
+```r
+"${2:Letters=ABC:LettersKey}${3:Numbers=123:NumbersKey}"
+```
+
+<img src="resources/connections/keyvalue-connection-interface.png" width="300" style="display: inline-block;margin: 0 auto;"/>
+
+There are a couple escape characters supported: `$colon$` to escape `:` and `$equal` to escape `=`.
+
+## R Packages
+
+### Package Structure
+
+A package supporting connections defines the following components:
+
+- **Connections File: ** A DCF file must be created under `inst/rstudio/connections.dcf` to enumerate each connection supported in the package.
+- **Snippet Files:** Snippet files are stored under `inst/rstudio/connections/`.
+
+As a quick start, the [Rstudio Connections Example](https://github.com/rstudio/rstudio-connections-example) GitHub repo contains a working example of this structure.
+
+### Connections Contract
+
+You can integrate with RStudio's Connection Pane to allow users to explore connections created with your R package by using the [Connections Contract](/contract).
+
+### Snippet Files
+
+Snippet Files are specified under the `/inst/rstudio/connections` and follow the same syntax mentioned in the "Snippet Files" section.
+
+### Shiny Application
+
+For advanced connection interfaces, a shiny application can be specified. See [sparklyr](https://github.com/rstudio/sparklyr/blob/master/R/connection_shinyapp.R) for a working application.

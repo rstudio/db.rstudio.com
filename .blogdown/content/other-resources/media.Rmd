@@ -1,0 +1,75 @@
+---
+title: Media
+aliases:
+  - /media
+---
+
+## Modeling in Databases with R
+### Edgar Ruiz - RStudio
+*Event: July 2019 Webinar*
+
+<p><a href="https://resources.rstudio.com/webinars/modeling-in-databases-with-r?wvideo=5m5mrigclx"><img src="https://embedwistia-a.akamaihd.net/deliveries/5e1da9347665233d7ea7fe9d9848a6cf.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=71a5d4e0" width="400" height="225" style="width: 400px; height: 225px;"></a></p><p><a href="https://resources.rstudio.com/webinars/modeling-in-databases-with-r?wvideo=5m5mrigclx">Modeling in Databases with R</a></p>
+
+## Databases using R: The latest 
+### Edgar Ruiz - RStudio
+*Event: January 2019 RStudio Conference 2019*
+
+<p><a href="https://resources.rstudio.com/rstudio-conf-2019/databases-using-r-the-latest?wvideo=lylyope6ph"><img src="https://embedwistia-a.akamaihd.net/deliveries/8b959ef3c1fdec79c208d26f6ecea600419f3907.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=4287c7e0" width="400" height="225" style="width: 400px; height: 225px;"></a></p><p><a href="https://resources.rstudio.com/rstudio-conf-2019/databases-using-r-the-latest?wvideo=lylyope6ph">Databases using R The latest - Edgar Ruiz</a></p>
+
+## Best Practices for working with R & Databases
+### Edgar Ruiz - RStudio
+*Event: March 2018 Webinar*
+
+<p><a href="https://resources.rstudio.com/webinars/best-practices-for-working-with-databases-march-2018-edgar-ruiz?wvideo=vffitvywy6"><img src="https://embedwistia-a.akamaihd.net/deliveries/29b87d8ee942cd844acf0481b9376c52ecda91a2.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=71a5d4e0" width="400" height="225" style="width: 400px; height: 225px;"></a></p><p><a href="https://resources.rstudio.com/webinars/best-practices-for-working-with-databases-march-2018-edgar-ruiz?wvideo=vffitvywy6">Best practices for working with databases (March 2018)- Edgar Ruiz</a></p>
+
+## Connecting to open source databases
+### Kirill Muller
+*Event: rstudio::conf2018*
+
+<p><a href="https://resources.rstudio.com/rstudio-conf-2018/connecting-to-open-source-databases-kirill-muller?wvideo=yf1vdwugk5"><img src="https://embedwistia-a.akamaihd.net/deliveries/6cc6be1f7e21a6ecd6640c0068ecd86a94c235d0.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=4287c7e0" width="400" height="225" style="width: 400px; height: 225px;"></a></p><p><a href="https://resources.rstudio.com/rstudio-conf-2018/connecting-to-open-source-databases-kirill-muller?wvideo=yf1vdwugk5">Connecting to open source databases – Kirill Muller</a></p>
+
+## Best practices for working with databases
+### by Edgar Ruiz - RStudio
+*Event: rstudio::conf2018*
+
+<p><a href="https://resources.rstudio.com/rstudio-conf-2018/best-practices-for-working-with-databases-edgar-ruiz?wvideo=a4ps6daf64"><img src="https://embedwistia-a.akamaihd.net/deliveries/63eeb1098ce60b58117d8ce172b0adf1650d64c7.jpg?image_play_button_size=2x&amp;image_crop_resized=960x540&amp;image_play_button=1&amp;image_play_button_color=4287c7e0" width="400" height="225" style="width: 400px; height: 225px;"></a></p><p><a href="https://resources.rstudio.com/rstudio-conf-2018/best-practices-for-working-with-databases-edgar-ruiz?wvideo=a4ps6daf64">Best practices for working with databases – Edgar Ruiz</a></p>
+
+## odbc - A modern database interface
+### by Jim Hester - RStudio
+
+*Event: useR!2017*
+
+
+<div>
+<iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/odbc-A-modern-database-interface/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe></iframe>
+</div>
+
+
+## Interacting with databases from Shiny 
+### by Barbara Borges Ribeiro - RStudio
+
+*Event: useR!2017*
+
+
+<div>
+  <iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Interacting-with-databases-from-Shiny/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>
+
+## implyr: A dplyr backend for Apache Impala
+### by Ian Cook - Cloudera
+
+*Event: useR!2017*
+
+
+<div>
+  <iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/implyr-A-dplyr-Backend-for-a-Apache-Impala/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>
+
+## Improving DBI
+### by Kirill Müller
+
+*Event: useR!2017*
+
+<div>
+<iframe src="https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Improving-DBI/player" width="500" height="400" allowFullScreen frameBorder="0"></iframe>
+</div>

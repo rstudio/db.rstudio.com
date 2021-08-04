@@ -1,0 +1,188 @@
+---
+title: "Making scripts portable"
+aliases:
+  - /portable_code
+---
+
+
+When we share R scripts, RNotebooks or other kind of content with others, and want the code to also execute in their environment, then we need to take steps to make the code portable. There are two primary considerations when sharing content that contain database connections:
+
+  1. Ensuring the connection details for the development and deployment environments are in sync 
+  2. Managing database credentials
+
+There are many different ways to meet these two requirements. The following
+examples show common deployment strategies:
+
+# Managing Connections During Deployment
+
+## Deploying with DSNs
+
+One way to manage ODBC connections is through Data Source Names. DSNs define the details for
+a connection including the server IP address, the database name, and often
+access credentials. DSNs are typically defined by an administrator, and are
+accessible across the server. It also possible to have user-specific or
+project-specific DSNs.
+
+Deploying content that uses a DSN is easy. The R code would look like:
+
+```r
+library(DBI)
+library(odbc)
+
+con <- dbConnect(odbc::odbc(), "My DSN Name")
+```
+
+`My DSN Name` would correspond to an entry in an odbc.ini file. For example, the
+DSN name "PostgresSQL2" would be used to reference the corresponding entry in
+this hypothetical odic.ini file:
+
+```ini
+[PostgreSQL2]
+Driver = /etc/lib/driver/libpsql.so
+Database = mydb.company.com
+Port = 5432
+UID = service
+PWD = serviceAcc0unt
+
+[SalesWarehouse]
+Driver = /etc/lib/drivers/oraclesqlib.so
+...
+```
+
+The key is to ensure that the DSN in the development environment and the DSN in the
+deployment environment refer to the same database. It is possible that the two
+DSNs will use different credentials or even different drivers, but the queries
+submitted to the connection should work in both environments.
+
+Be careful: it is easy for DSNs to differ between the development and deployment
+environment. In some cases, the differences will lead to an error. For example,
+if the DSN used locally does not exist on the server, the deployment will likely
+fail. In other cases, it is possible that the DSNs will be similar enough for
+deployment to succeed, but different enough for other parts of the code to fail.
+
+When in doubt, be sure to ask your administrator to compare the odbc.ini and
+odbcinst.ini files used locally and on the deployed server.
+
+## Deploying with the `config` Package
+
+An alternative to relying on DSNs is to use the [config](https://github.com/rstudio/config) package. The `config`
+package allows the connection code in R to reference an external file that
+defines values based on the environment. This process makes it easy to specify
+values to use for a connection locally and values to use after deployment.
+
+For example:
+
+R code:
+
+```r
+library(DBI)
+library(odbc)
+library(config)
+
+dw <- get("datawarehouse")
+
+con <- dbConnect(
+   Driver = dw$driver,
+   Server = dw$server,
+   UID    = dw$uid,
+   PWD    = dw$pwd,
+   Port   = dw$port,
+   Database = dw$database
+)
+```
+
+config.yml:
+
+```ini
+default:
+  datawarehouse:
+    driver: 'Postgres' 
+    server: 'mydb-test.company.com'
+    uid: 'local-account'
+    pwd: 'my-password'  // not recommended, see alternatives below
+    port: 5432
+    database: 'regional-sales-sample'
+    
+rsconnect:
+  datawarehouse:
+    driver: 'PostgresPro'
+    server: 'mydb-prod.company.com'
+    uid: 'service-account'
+    pwd: 'service-password' // not recommended, see alternatives below
+    port: 5432
+    database: 'regional-sales-full'
+```
+
+The `config` package determines the active configuration by looking at the
+`R_CONFIG_ACTIVE` environment variable. By default, RStudio Connect sets
+`R_CONFIG_ACTIVE` to the value  `rsconnect`. In the config file above, the
+default datawarehouse values would be used locally and the datawarehouse values
+defined in the `rsconnect` section would be used on RStudio Connect.
+Administrators can optionally customize the name of the active configuration
+used in Connect.
+
+## Deploying with the `config` Package and Credentials
+
+In the previous example, the credentials used locally and after deployment were
+stored in plain text in the configuration file. There are many ways to avoid
+plain text storage. It is common for the method used to access credentials
+locally to vary from the method used for deployed content. For example, the
+following config uses keyring to access credentials locally, but accesses an
+environment variable on the deployed server.
+
+config.yml:
+
+```ini
+default:
+  datawarehouse:
+    driver: 'Postgres' 
+    server: 'mydb-test.company.com'
+    uid: !expr keyring::key_get("db-credentials")[1,2]'
+    pwd: !expr keyring::key_get("db-credentials")[1,2]'
+    port: 5432
+    database: 'regional-sales-sample'
+    
+rsconnect:
+  datawarehouse:
+    driver: 'PostgresPro'
+    server: 'mydb-prod.company.com'
+    uid: !expr Sys.getenv("DBUSER")
+    pwd: !expr Sys.getenv("DBPWD")
+    port: 5432
+    database: 'regional-sales-full'
+```
+
+## Deploying with Different DSNs
+
+The `config` package provides a very flexible way to specify connections. It is
+even possible to use the `config` package with DSNs! For example, if the local DSN
+entry was named "DatawarehouseTest" and the DSN on the production server was
+named "DatawarehouseProd":
+
+R code:
+
+```r
+library(DBI)
+library(odbc)
+library(config)
+
+dsn <- get("datawarehouse")
+
+con <- dbConnect(odbc::odbc(), dsn)
+
+```
+
+config.yml
+
+```ini
+default:
+  datawarehouse: 'DatawarehouseTest'
+
+rsconnect:
+  datawarehouse: 'DatawarehouseProd'
+```
+
+In all cases, it is important that the R code (whether a R Markdown document or
+a Shiny application) be able to run successfully in both the development and
+deployment environment without changes. It is not possible to change hard-coded
+values prior to deployment.

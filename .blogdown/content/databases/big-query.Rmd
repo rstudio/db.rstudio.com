@@ -1,0 +1,76 @@
+---
+title: Google BigQuery
+logo: "/logos/bigquerylarge.png"
+dplyr: "Yes"
+driver: "Yes"
+package: bigrquery
+aliases:
+  - /big-query
+---
+
+There are two options for connecting to Google BigQuery:
+
+- Using the `odbc` package with a database driver
+- Using the `bigrquery` package
+
+## Using the `odbc` package
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+### Driver options
+
+- **BigQuery** - The official BigQuery website provides instructions on how to download and setup their ODBC driver: [BigQuery Drivers](https://cloud.google.com/bigquery/providers/simba-drivers)
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Google BigQuery.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+### Connection Settings
+
+The easiest way to connect to BigQuery is through a [Google service account](https://cloud.google.com/iam/docs/service-accounts). There are 5 settings needed to make a connection using a Google service account:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information
+  - **Catalog** - The name of the BigQuery project
+  - **Email** - The Google service account email address
+  - **KeyFilePath** - The full path to the `.pl2` or `.json` key file. See [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) for more details.
+  - **OAuthMechanism** - Set to 0 to authenticate as a service account
+  
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver         = "[your driver's name]",
+                      Catalog        = "[BigQuery project name]",
+                      Email          = "[Google service account email]",
+                      KeyFilePath    = "[Full path to key file]",
+                      OAuthMechanism = 0)
+
+```
+
+## Using the `bigrquery` package
+
+`bigrquery` is a database interface for R. This version is aimed at full compliance with the [DBI](/DBI) specification. For more information, visit `bigrquery`'s official site: [bigrquery.r-dbi.org](https://bigrquery.r-dbi.org/)
+
+To install from CRAN:
+
+```r
+install.packages("bigrquery")
+The development version from github:
+```
+To install the development version:
+
+```r
+# install.packages("remotes")
+remotes::install_github("r-dbi/DBI")
+remotes::install_github("r-dbi/bigrquery")
+```
+
+To connect: 
+
+```r
+library(DBI)
+
+con <- dbConnect(
+  bigrquery::bigquery(),
+  project = "publicdata",
+  dataset = "samples",
+  billing = billing
+  )
+```

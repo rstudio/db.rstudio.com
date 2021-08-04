@@ -1,0 +1,43 @@
+---
+title: Snowflake
+logo: "/logos/snowflakelarge.png"
+dplyr: "Yes"
+driver: "Yes"
+---
+
+
+## Driver Options
+
+- **Snowflake** - Download the ODBC driver directly from Snowflake's site: [Configure an ODBC Connection](https://docs.snowflake.com/en/user-guide/odbc.html)
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Redshift databases.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are seven settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **Server** - The URL to the database server
+  - **UID** - The user's account ID 
+  - **PWD** - The account's password
+  - **Database** - The database name within the server
+  - **Warehouse** - The warehouse name within the database
+  - **Schema** - The schema name within the warehouse
+
+```{r,eval=FALSE}
+
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver       = "[your driver's name]",
+                      Server       = "[your server's path]",
+                      UID          = rstudioapi::askForPassword("Database user"),
+                      PWD          = rstudioapi::askForPassword("Database password"),
+                      Database     = "[your database's name]",
+                      Warehouse    = "[your warehouse's name]",
+                      Schema       = "[your schema's name]"
+                      )
+
+```

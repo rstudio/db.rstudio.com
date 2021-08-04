@@ -1,0 +1,44 @@
+---
+title: Athena
+logo: "/logos/amazonathenalarge.png"
+dplyr: "No"
+driver: "Yes"
+---
+
+## Driver Options
+
+- **Amazon Athena** - Please refer to the Athena's website for instructions on how to download and setup their official driver: [Athena ODBC page](https://docs.aws.amazon.com/athena/latest/ug/connect-with-odbc.html)
+
+- **RStudio Professional Drivers** - RStudio Workbench (formerly RStudio Server Pro), RStudio Desktop Pro, RStudio Connect, or Shiny Server Pro users can download and use RStudio Professional Drivers at no additional charge. These drivers include an ODBC connector for Apache Impala.  RStudio delivers standards-based, supported, professional ODBC drivers. Use RStudio Professional Drivers when you run R or Shiny with your production systems. See the [RStudio Professional Drivers](https://www.rstudio.com/products/drivers/) for more information. 
+
+## Package Options
+
+The **`odbc`** package, in combination with a driver, provides `DBI` support and an ODBC connection.
+
+## Connection Settings
+
+There are settings needed to make a connection:
+
+  - **Driver** - See the [Drivers](/drivers) section for setup information 
+  - **S3OutputLocation** - S3 bucket for Athena output
+  - **AwsRegion** - AWS region where the service is available
+  - **AuthenticationType** - Use **IAM Credentials** if using the AWS Access Key and Secret as for credentials
+  - **Schema** - Default Schema name to use when interacting with the database
+  - **UID** - The AWS Access Key that will be used to connect
+  - **PWD** - The AWS Secret that will be used to connect
+
+```{r,eval=FALSE}
+con <- DBI::dbConnect(
+  odbc::odbc(),
+  Driver             = "[your driver's name]",
+  S3OutputLocation   = "[your S3 bucket]",
+  AwsRegion          = "[your AWS region bucket]",
+  AuthenticationType = "IAM Credentials",
+  Schema             = "[your schema's name]",
+  UID                = rstudioapi::askForPassword("AWS Access Key"),
+  PWD                = rstudioapi::askForPassword("AWS Secret Key")
+  )
+```
+
+
+
