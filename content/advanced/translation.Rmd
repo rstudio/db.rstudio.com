@@ -129,10 +129,6 @@ Things get a little trickier with window functions, because SQL's window functio
   following)". The complete set of options is comprehensive, but fairly 
   confusing, and is summarised visually below.
 
-    ```{r}
-    knitr::include_graphics("windows.png", dpi = 200)
-    ```
-
     Of the many possible specifications, there are only three that commonly
     used. They select between aggregation variants:
 
