@@ -4,13 +4,13 @@
 **RStudio** makes it as easy to work with databases in R. This work focuses on **three key areas**:
 
 <div>
-  <img src="/homepage/connection.png"   align="right" height="300" width="350">
+<img src="/homepage/connection.png" align="right" height="300" width="350">
 </div>
 
 ### 1. RStudio products
 
-- The new RStudio [Connections Pane](/connections) makes it possible to easily connect to a variety of data sources, and **explore the objects and data** inside the connection 
-- To RStudio commercial customers, we offer [RStudio Professional ODBC Drivers](/rstudio/pro-drivers), these are data connectors that help you connect to some of the most popular databases.
+- The RStudio [Connections Pane](/connections) makes it possible to easily connect to a variety of data sources, and **explore the objects and data** inside the connection 
+- To RStudio commercial customers, we offer [RStudio Professional ODBC Drivers](/tooling/pro-drivers). These are data connectors that help you connect to some of the most popular databases.
 
 ### 2. R packages
 

@@ -18,7 +18,7 @@ Mostly based on how difficult is to setup, the order of preference of connection
 
 If there is a need to connect to several databases in one or several R projects, then it would be preferable to use **ODBC** for all connections because it increases consistency.
 
-Additionally, using the [odbc](/odbc) package inside the RStudio IDE will enable the use of the [Connections Pane](/rstudio/connections/)
+Additionally, using the [odbc](/odbc) package inside the RStudio IDE will enable the use of the [Connections Pane](/tooling/connections/)
 
 ## FAQ
 

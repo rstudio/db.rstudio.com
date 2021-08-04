@@ -27,7 +27,7 @@ In **RStudio**, there are two ways to connect to a database:
 The **New Connection** interface will list the following:
 
 <div>
-  <img src="/ide/existing.png" height="300" width="350" align="left">
+  <img src="/ide/existing.PNG" height="300" width="350" align="left">
 </div>
 
 
