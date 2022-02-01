@@ -12,9 +12,10 @@
 - The RStudio [Connections Pane](/connections) makes it possible to easily connect to a variety of data sources, and **explore the objects and data** inside the connection 
 - To RStudio commercial customers, we offer [RStudio Professional ODBC Drivers](/tooling/pro-drivers). These are data connectors that help you connect to some of the most popular databases.
 
+
 ### 2. R packages
 
-Build and/or document how to use packages such as: [dplyr](/dplyr), [DBI](/dbi), [odbc](/odbc), [keyring](/best-practices/managing-credentials/) and [pool](/pool)
+Build and/or document how to use packages such as: [dplyr](/dplyr), [DBI](/dbi), [odbc](/odbc), [keyring](/best-practices/managing-credentials/) and [pool](/r-packages/pool)
 
 
 ### 3. Education
