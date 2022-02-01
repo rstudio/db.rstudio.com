@@ -261,3 +261,8 @@ googleAnalytics = "UA-20375833-3"
 	twitter = "rstudio"
 	github  = "rstudio"
 	email   = "info@rstudio.com"
+	
+[markup]
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
