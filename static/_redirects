@@ -1,2 +1,4 @@
 http://db.posit.co/* https://db.rstudio.com/:splat 302!
 https://db.posit.co/* https://db.rstudio.com/:splat 302!
+http://db.rstudio.com/* https://solutions.rstudio.com/db/:splat 302!
+https://db.rstudio.com/* https://solutions.rstudio.com/db/:splat 302!
